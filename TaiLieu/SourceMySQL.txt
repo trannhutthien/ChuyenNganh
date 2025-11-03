@@ -1,0 +1,206 @@
+-- ==============================
+-- TẠO DATABASE
+-- ==============================
+DROP DATABASE IF EXISTS Elearning_KyNangCNTT;
+CREATE DATABASE Elearning_KyNangCNTT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE Elearning_KyNangCNTT;
+
+-- ==============================
+-- 1) NGƯỜI DÙNG & VAI TRÒ
+-- ==============================
+CREATE TABLE VaiTro (
+    VaiTroId INT AUTO_INCREMENT PRIMARY KEY,
+    MaVaiTro VARCHAR(50) UNIQUE NOT NULL,   -- ADMIN / STUDENT / EDITOR
+    TenVaiTro NVARCHAR(100) NOT NULL,
+    MoTa NVARCHAR(255)
+);
+
+CREATE TABLE NguoiDung (
+    NguoiDungId INT AUTO_INCREMENT PRIMARY KEY,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    MatKhauHash VARCHAR(255) NOT NULL,
+    HoTen NVARCHAR(150) NOT NULL,
+    LopKhoa NVARCHAR(100),
+    MucTieuHoc NVARCHAR(255),
+    AvatarUrl NVARCHAR(300),
+    TrangThai TINYINT DEFAULT 1,
+    TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE NguoiDung_VaiTro (
+    NguoiDungId INT NOT NULL,
+    VaiTroId INT NOT NULL,
+    PRIMARY KEY (NguoiDungId, VaiTroId),
+    FOREIGN KEY (NguoiDungId) REFERENCES NguoiDung(NguoiDungId) ON DELETE CASCADE,
+    FOREIGN KEY (VaiTroId) REFERENCES VaiTro(VaiTroId) ON DELETE CASCADE
+);
+
+-- ==============================
+-- 2) KỸ NĂNG — KHÓA HỌC (N–N)
+-- ==============================
+CREATE TABLE KyNang (
+    KyNangId INT AUTO_INCREMENT PRIMARY KEY,
+    TenKyNang NVARCHAR(150) UNIQUE NOT NULL,
+    MoTa NVARCHAR(500),
+    CapDo TINYINT DEFAULT 1 CHECK (CapDo BETWEEN 1 AND 3)
+);
+
+CREATE TABLE KhoaHoc (
+    KhoaHocId INT AUTO_INCREMENT PRIMARY KEY,
+    TieuDe NVARCHAR(200) NOT NULL,
+    TomTat NVARCHAR(500),
+    CapDo TINYINT DEFAULT 1 CHECK (CapDo BETWEEN 1 AND 3),
+    Tags NVARCHAR(300),
+    DieuKienTienQuyet NVARCHAR(300),
+    TrangThai TINYINT DEFAULT 2 CHECK (TrangThai IN (1,2,3)), -- 1=draft,2=published,3=archived
+    TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE KyNang_KhoaHoc (
+    KyNangId INT NOT NULL,
+    KhoaHocId INT NOT NULL,
+    PRIMARY KEY (KyNangId, KhoaHocId),
+    FOREIGN KEY (KyNangId) REFERENCES KyNang(KyNangId) ON DELETE CASCADE,
+    FOREIGN KEY (KhoaHocId) REFERENCES KhoaHoc(KhoaHocId) ON DELETE CASCADE
+);
+
+-- ==============================
+-- 3) BÀI HỌC — NGÂN HÀNG — CÂU HỎI — LỰA CHỌN
+-- ==============================
+CREATE TABLE BaiHoc (
+    BaiHocId INT AUTO_INCREMENT PRIMARY KEY,
+    KhoaHocId INT NOT NULL,
+    TieuDe NVARCHAR(200) NOT NULL,
+    NoiDung TEXT NOT NULL,
+    ThuTu INT DEFAULT 1,
+    TrangThai TINYINT DEFAULT 2 CHECK (TrangThai IN (1,2)),
+    TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (KhoaHocId) REFERENCES KhoaHoc(KhoaHocId) ON DELETE CASCADE,
+    UNIQUE (KhoaHocId, ThuTu)
+);
+
+CREATE TABLE NganHangCauHoi (
+    NganHangId INT AUTO_INCREMENT PRIMARY KEY,
+    BaiHocId INT NOT NULL,
+    TenNganHang NVARCHAR(200) NOT NULL,
+    MoTa NVARCHAR(300),
+    CapDoMacDinh TINYINT DEFAULT 1 CHECK (CapDoMacDinh BETWEEN 1 AND 3),
+    FOREIGN KEY (BaiHocId) REFERENCES BaiHoc(BaiHocId) ON DELETE CASCADE
+);
+
+CREATE TABLE CauHoi (
+    CauHoiId INT AUTO_INCREMENT PRIMARY KEY,
+    NganHangId INT NOT NULL,
+    Loai ENUM('MOT_DAP_AN','NHIEU_DAP_AN','DUNG_SAI','DIEN_KHUYET') NOT NULL,
+    DeBai TEXT NOT NULL,
+    GiaiThich TEXT,
+    DoKho TINYINT DEFAULT 1 CHECK (DoKho BETWEEN 1 AND 3),
+    ChuDeTags NVARCHAR(300),
+    ThuTu INT DEFAULT 1,
+    FOREIGN KEY (NganHangId) REFERENCES NganHangCauHoi(NganHangId) ON DELETE CASCADE,
+    -- đảm bảo trong 1 ngân hàng, thứ tự câu không trùng
+    UNIQUE KEY UX_CauHoi_NganHang_ThuTu (NganHangId, ThuTu)
+);
+
+CREATE TABLE LuaChon (
+    LuaChonId INT AUTO_INCREMENT PRIMARY KEY,
+    CauHoiId INT NOT NULL,
+    NoiDung TEXT NOT NULL,
+    DungHaySai BOOLEAN DEFAULT 0,
+    ThuTu INT DEFAULT 1,
+    FOREIGN KEY (CauHoiId) REFERENCES CauHoi(CauHoiId) ON DELETE CASCADE
+    -- GỢI Ý (nếu cần): UNIQUE (CauHoiId, ThuTu)
+);
+
+-- ==============================
+-- 4) BÀI KIỂM TRA — LẦN LÀM — TRẢ LỜI
+-- ==============================
+CREATE TABLE BaiKiemTra (
+    BaiKiemTraId INT AUTO_INCREMENT PRIMARY KEY,
+    BaiHocId INT NOT NULL,
+    TieuDe NVARCHAR(200) NOT NULL,
+    ThietLapJson JSON,
+    DiemDat DECIMAL(5,2) DEFAULT 5.00,
+    -- dùng chung hệ trạng thái với KHÓA HỌC
+    TrangThai TINYINT DEFAULT 2 CHECK (TrangThai IN (1,2,3)), -- 1=draft,2=published,3=archived
+    TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (BaiHocId) REFERENCES BaiHoc(BaiHocId) ON DELETE CASCADE
+);
+
+CREATE TABLE LanLamBai (
+    LanLamBaiId INT AUTO_INCREMENT PRIMARY KEY,
+    BaiKiemTraId INT NOT NULL,
+    NguoiDungId INT NOT NULL,
+    BatDauLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
+    NopBaiLuc DATETIME,
+    DiemSo DECIMAL(5,2),
+    ChiTietJson JSON,
+    TrangThai ENUM('INPROGRESS','SUBMITTED','CANCELLED') DEFAULT 'INPROGRESS',
+    FOREIGN KEY (BaiKiemTraId) REFERENCES BaiKiemTra(BaiKiemTraId) ON DELETE CASCADE,
+    FOREIGN KEY (NguoiDungId) REFERENCES NguoiDung(NguoiDungId) ON DELETE CASCADE
+);
+
+CREATE TABLE TraLoi (
+    TraLoiId INT AUTO_INCREMENT PRIMARY KEY,
+    LanLamBaiId INT NOT NULL,
+    CauHoiId INT NOT NULL,
+    LuaChonIds NVARCHAR(300),
+    DungHaySai BOOLEAN,
+    ThoiGianGiay INT,
+    FOREIGN KEY (LanLamBaiId) REFERENCES LanLamBai(LanLamBaiId) ON DELETE CASCADE,
+    FOREIGN KEY (CauHoiId) REFERENCES CauHoi(CauHoiId) ON DELETE CASCADE
+);
+
+-- ==============================
+-- 5) GHI DANH / TIẾN ĐỘ
+-- ==============================
+CREATE TABLE GhiDanh (
+    NguoiDungId INT NOT NULL,
+    KhoaHocId INT NOT NULL,
+    PhanTramHoanThanh DECIMAL(5,2) DEFAULT 0.00,
+    BaiHocCuoiCungId INT,
+    CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (NguoiDungId, KhoaHocId),
+    FOREIGN KEY (NguoiDungId) REFERENCES NguoiDung(NguoiDungId) ON DELETE CASCADE,
+    FOREIGN KEY (KhoaHocId) REFERENCES KhoaHoc(KhoaHocId) ON DELETE CASCADE,
+    FOREIGN KEY (BaiHocCuoiCungId) REFERENCES BaiHoc(BaiHocId)
+);
+
+-- ==============================
+-- 6) DỮ LIỆU MẪU
+-- ==============================
+INSERT INTO VaiTro (MaVaiTro, TenVaiTro) VALUES 
+('ADMIN','Quản trị'), ('STUDENT','Sinh viên');
+
+INSERT INTO KyNang (TenKyNang, MoTa, CapDo) VALUES
+('Frontend','Kỹ năng giao diện',1),
+('Backend','Kỹ năng máy chủ',1);
+
+INSERT INTO KhoaHoc (TieuDe, CapDo, TrangThai)
+VALUES ('JavaScript Cơ bản',1,2);
+
+INSERT INTO KyNang_KhoaHoc (KyNangId, KhoaHocId)
+VALUES (1,1),(2,1);
+
+INSERT INTO BaiHoc (KhoaHocId, TieuDe, NoiDung, ThuTu)
+VALUES (1,'Biến và kiểu dữ liệu','Nội dung minh họa...',1);
+
+INSERT INTO NganHangCauHoi (BaiHocId, TenNganHang)
+VALUES (1,'NH Biến & Kiểu dữ liệu');
+
+INSERT INTO CauHoi (NganHangId, Loai, DeBai, DoKho, ThuTu)
+VALUES 
+(1,'DUNG_SAI','Từ khóa let có thể khai báo lại trong cùng scope?',1,1),
+(1,'MOT_DAP_AN','Kiểu dữ liệu nào là primitive trong JS?',1,2);
+
+INSERT INTO LuaChon (CauHoiId, NoiDung, DungHaySai, ThuTu)
+VALUES
+(1,'Đúng',0,1),(1,'Sai',1,2),
+(2,'Array',0,1),(2,'Number',1,2),(2,'Object',0,3);
+
+INSERT INTO BaiKiemTra (BaiHocId, TieuDe, ThietLapJson, TrangThai)
+VALUES (1,'Quiz cuối bài 1',JSON_OBJECT('total',2),2);
