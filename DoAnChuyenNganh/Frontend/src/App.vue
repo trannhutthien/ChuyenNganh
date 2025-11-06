@@ -34,4 +34,4 @@ import AppFooter from './layouts/AppFooter.vue'
   display: flex;
   flex-direction: column;
 }
-</style>
+ </style>

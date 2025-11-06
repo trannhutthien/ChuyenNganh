@@ -65,13 +65,22 @@
       </button>
     </div>
   </header>
+
+  <!-- Modal Đăng ký -->
+  <RegisterModal 
+    :isOpen="showRegisterModal" 
+    @close="showRegisterModal = false"
+    @submit="handleRegisterSubmit"
+  />
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import RegisterModal from '../components/RegisterModal.vue'
 
 // State
 const searchQuery = ref('')
+const showRegisterModal = ref(false)
 
 // Methods
 const handleSearch = () => {
@@ -88,9 +97,12 @@ const handleLogin = () => {
 }
 
 const handleRegister = () => {
-  console.log('Chuyển đến trang đăng ký')
-  // Thêm logic chuyển trang đăng ký
-  // router.push('/register')
+  showRegisterModal.value = true
+}
+
+const handleRegisterSubmit = (data) => {
+  console.log('Dữ liệu đăng ký:', data)
+  // Thêm logic xử lý đăng ký (gọi API, etc.)
 }
 </script>
 

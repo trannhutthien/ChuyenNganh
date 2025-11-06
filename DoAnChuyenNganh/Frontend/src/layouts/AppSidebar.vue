@@ -2,12 +2,10 @@
   <aside class="w-[100px] bg-white border-r border-gray-200 sticky left-0 top-[65px] self-start z-40 shadow-sm h-[calc(100vh-65px)]">
     <nav class="h-full py-6 overflow-y-auto">
       <ul class="flex flex-col gap-2">
-        
-        <!-- Trang chủ -->
         <li>
           <a 
             href="/" 
-            class="flex flex-col items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
+            class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
             :class="{ 'text-primary bg-primary/10': isActive('/') }"
           >
             <svg 
@@ -32,7 +30,7 @@
         <li>
           <a 
             href="/lo-trinh" 
-            class="flex flex-col items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
+            class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
             :class="{ 'text-primary bg-primary/10': isActive('/lo-trinh') }"
           >
             <svg 
@@ -57,7 +55,7 @@
         <li>
           <a 
             href="/bai-viet" 
-            class="flex flex-col items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
+            class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
             :class="{ 'text-primary bg-primary/10': isActive('/bai-viet') }"
           >
             <svg 
@@ -94,10 +92,7 @@ const isActive = (path) => {
   return currentPath.value === path
 }
 
-// Lắng nghe thay đổi route (nếu dùng Vue Router sau này)
-// import { useRoute } from 'vue-router'
-// const route = useRoute()
-// const isActive = (path) => route.path === path
+
 </script>
 
 <style scoped>
