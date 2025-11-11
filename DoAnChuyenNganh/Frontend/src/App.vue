@@ -2,6 +2,7 @@
 import AppHeader from './layouts/AppHeader.vue'
 import AppSidebar from './layouts/AppSidebar.vue'
 import AppFooter from './layouts/AppFooter.vue'
+import HomePage from './views/HomePage.vue'
 </script>
 
 <template>
@@ -16,10 +17,8 @@ import AppFooter from './layouts/AppFooter.vue'
       
       <!-- Main Content bên phải -->
       <main class="flex-1 ml-[100px]">
-        <!-- Nội dung trang -->
-        <div class="min-h-[calc(100vh-65px)] flex items-center justify-center text-gray-500">
-          <p>Nội dung trang - Cuộn xuống để xem Footer</p>
-        </div>
+        <!-- HomePage với 4 rows -->
+        <HomePage />
       </main>
     </div>
     
