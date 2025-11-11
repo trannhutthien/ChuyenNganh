@@ -66,21 +66,32 @@
     </div>
   </header>
 
+  <!-- Modal Đăng nhập -->
+  <LoginModal 
+    :isOpen="showLoginModal" 
+    @close="showLoginModal = false"
+    @submit="handleLoginSubmit"
+    @switchToRegister="switchToRegister"
+  />
+
   <!-- Modal Đăng ký -->
   <RegisterModal 
     :isOpen="showRegisterModal" 
     @close="showRegisterModal = false"
     @submit="handleRegisterSubmit"
+    @switchToLogin="switchToLogin"
   />
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import RegisterModal from '../components/RegisterModal.vue'
+import LoginModal from '../components/LoginModal.vue'
 
 // State
 const searchQuery = ref('')
 const showRegisterModal = ref(false)
+const showLoginModal = ref(false)
 
 // Methods
 const handleSearch = () => {
@@ -91,18 +102,31 @@ const handleSearch = () => {
 }
 
 const handleLogin = () => {
-  console.log('Chuyển đến trang đăng nhập')
-  // Thêm logic chuyển trang đăng nhập
-  // router.push('/login')
+  showLoginModal.value = true
 }
 
 const handleRegister = () => {
   showRegisterModal.value = true
 }
 
+const handleLoginSubmit = (data) => {
+  console.log('Dữ liệu đăng nhập:', data)
+  // Thêm logic xử lý đăng nhập (gọi API, etc.)
+}
+
 const handleRegisterSubmit = (data) => {
   console.log('Dữ liệu đăng ký:', data)
   // Thêm logic xử lý đăng ký (gọi API, etc.)
+}
+
+const switchToRegister = () => {
+  showLoginModal.value = false
+  showRegisterModal.value = true
+}
+
+const switchToLogin = () => {
+  showRegisterModal.value = false
+  showLoginModal.value = true
 }
 </script>
 
