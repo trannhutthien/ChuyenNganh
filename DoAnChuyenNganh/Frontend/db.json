@@ -1,0 +1,223 @@
+{
+  "courses": [
+    {
+      "id": 1,
+      "title": "Lập trình Web với HTML, CSS, JavaScript",
+      "description": "Khóa học cơ bản về phát triển web từ đầu, học cách xây dựng giao diện web responsive và tương tác",
+      "instructor": "Nguyễn Văn A",
+      "category": "Web Development",
+      "level": "Beginner",
+      "duration": "40 giờ",
+      "price": 0,
+      "rating": 4.5,
+      "students": 1250,
+      "thumbnail": "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?w=500",
+      "tags": ["HTML", "CSS", "JavaScript"],
+      "createdAt": "2024-01-15",
+      "updatedAt": "2024-11-01"
+    },
+    {
+      "id": 2,
+      "title": "Vue.js từ Cơ Bản đến Nâng Cao",
+      "description": "Học Vue.js từ những kiến thức cơ bản đến các kỹ thuật nâng cao, xây dựng ứng dụng Single Page Application",
+      "instructor": "Trần Thị B",
+      "category": "Frontend",
+      "level": "Intermediate",
+      "duration": "60 giờ",
+      "price": 499000,
+      "rating": 4.8,
+      "students": 890,
+      "thumbnail": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=500",
+      "tags": ["Vue.js", "JavaScript", "Frontend"],
+      "createdAt": "2024-02-10",
+      "updatedAt": "2024-10-28"
+    },
+    {
+      "id": 3,
+      "title": "Node.js & Express - Backend Development",
+      "description": "Xây dựng RESTful API với Node.js và Express, kết nối database, authentication và authorization",
+      "instructor": "Lê Văn C",
+      "category": "Backend",
+      "level": "Intermediate",
+      "duration": "50 giờ",
+      "price": 599000,
+      "rating": 4.7,
+      "students": 650,
+      "thumbnail": "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=500",
+      "tags": ["Node.js", "Express", "Backend", "API"],
+      "createdAt": "2024-03-05",
+      "updatedAt": "2024-11-02"
+    },
+    {
+      "id": 4,
+      "title": "Python cho Data Science & Machine Learning",
+      "description": "Học Python từ cơ bản, phân tích dữ liệu với Pandas, NumPy và xây dựng mô hình Machine Learning",
+      "instructor": "Phạm Thị D",
+      "category": "Data Science",
+      "level": "Beginner",
+      "duration": "70 giờ",
+      "price": 799000,
+      "rating": 4.9,
+      "students": 1500,
+      "thumbnail": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500",
+      "tags": ["Python", "Data Science", "Machine Learning", "AI"],
+      "createdAt": "2024-01-20",
+      "updatedAt": "2024-10-30"
+    },
+    {
+      "id": 5,
+      "title": "React Native - Mobile App Development",
+      "description": "Phát triển ứng dụng di động đa nền tảng với React Native cho iOS và Android",
+      "instructor": "Hoàng Văn E",
+      "category": "Mobile",
+      "level": "Intermediate",
+      "duration": "55 giờ",
+      "price": 699000,
+      "rating": 4.6,
+      "students": 720,
+      "thumbnail": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500",
+      "tags": ["React Native", "Mobile", "JavaScript", "iOS", "Android"],
+      "createdAt": "2024-02-28",
+      "updatedAt": "2024-11-03"
+    },
+    {
+      "id": 6,
+      "title": "SQL & Database Design Fundamentals",
+      "description": "Học thiết kế database, viết query SQL hiệu quả và tối ưu hóa performance",
+      "instructor": "Võ Thị F",
+      "category": "Database",
+      "level": "Beginner",
+      "duration": "35 giờ",
+      "price": 399000,
+      "rating": 4.4,
+      "students": 980,
+      "thumbnail": "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=500",
+      "tags": ["SQL", "Database", "MySQL", "PostgreSQL"],
+      "createdAt": "2024-03-15",
+      "updatedAt": "2024-10-25"
+    },
+    {
+      "id": 7,
+      "title": "DevOps với Docker & Kubernetes",
+      "description": "Triển khai ứng dụng với Docker container và orchestration với Kubernetes",
+      "instructor": "Đặng Văn G",
+      "category": "DevOps",
+      "level": "Advanced",
+      "duration": "65 giờ",
+      "price": 899000,
+      "rating": 4.8,
+      "students": 450,
+      "thumbnail": "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=500",
+      "tags": ["Docker", "Kubernetes", "DevOps", "CI/CD"],
+      "createdAt": "2024-04-01",
+      "updatedAt": "2024-11-05"
+    },
+    {
+      "id": 8,
+      "title": "Tailwind CSS - Modern Web Design",
+      "description": "Thiết kế giao diện web hiện đại và responsive với Tailwind CSS utility-first framework",
+      "instructor": "Bùi Thị H",
+      "category": "Frontend",
+      "level": "Beginner",
+      "duration": "25 giờ",
+      "price": 299000,
+      "rating": 4.7,
+      "students": 1100,
+      "thumbnail": "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=500",
+      "tags": ["Tailwind CSS", "CSS", "Frontend", "UI/UX"],
+      "createdAt": "2024-04-20",
+      "updatedAt": "2024-11-04"
+    }
+  ],
+  "roadmaps": [
+    {
+      "id": 1,
+      "title": "Frontend Developer",
+      "description": "Lộ trình trở thành Frontend Developer chuyên nghiệp",
+      "level": "All Levels",
+      "duration": "6-12 tháng",
+      "courses": [1, 2, 8],
+      "skills": ["HTML", "CSS", "JavaScript", "Vue.js", "React", "Responsive Design"]
+    },
+    {
+      "id": 2,
+      "title": "Backend Developer",
+      "description": "Lộ trình phát triển Backend với Node.js và Database",
+      "level": "Intermediate",
+      "duration": "8-14 tháng",
+      "courses": [3, 6],
+      "skills": ["Node.js", "Express", "SQL", "API Design", "Authentication"]
+    },
+    {
+      "id": 3,
+      "title": "Full Stack Developer",
+      "description": "Lộ trình toàn diện từ Frontend đến Backend",
+      "level": "All Levels",
+      "duration": "12-18 tháng",
+      "courses": [1, 2, 3, 6, 8],
+      "skills": ["HTML", "CSS", "JavaScript", "Vue.js", "Node.js", "SQL", "DevOps"]
+    },
+    {
+      "id": 4,
+      "title": "Data Science & AI",
+      "description": "Lộ trình trở thành Data Scientist và AI Engineer",
+      "level": "Beginner to Advanced",
+      "duration": "10-16 tháng",
+      "courses": [4],
+      "skills": ["Python", "Pandas", "NumPy", "Machine Learning", "Deep Learning"]
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "title": "10 Tips để học lập trình hiệu quả",
+      "excerpt": "Những mẹo hữu ích giúp bạn học lập trình nhanh hơn và hiệu quả hơn...",
+      "content": "Nội dung bài viết đầy đủ...",
+      "author": "Nguyễn Văn A",
+      "category": "Tips & Tricks",
+      "tags": ["Learning", "Programming", "Tips"],
+      "thumbnail": "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=500",
+      "views": 2500,
+      "likes": 150,
+      "createdAt": "2024-10-15",
+      "updatedAt": "2024-10-15"
+    },
+    {
+      "id": 2,
+      "title": "Sự khác biệt giữa var, let và const trong JavaScript",
+      "excerpt": "Tìm hiểu sâu về 3 cách khai báo biến trong JavaScript...",
+      "content": "Nội dung bài viết đầy đủ...",
+      "author": "Trần Thị B",
+      "category": "JavaScript",
+      "tags": ["JavaScript", "ES6", "Variables"],
+      "thumbnail": "https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?w=500",
+      "views": 3200,
+      "likes": 280,
+      "createdAt": "2024-10-20",
+      "updatedAt": "2024-10-20"
+    },
+    {
+      "id": 3,
+      "title": "RESTful API Design Best Practices",
+      "excerpt": "Hướng dẫn thiết kế RESTful API chuẩn và chuyên nghiệp...",
+      "content": "Nội dung bài viết đầy đủ...",
+      "author": "Lê Văn C",
+      "category": "Backend",
+      "tags": ["API", "REST", "Best Practices"],
+      "thumbnail": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500",
+      "views": 1800,
+      "likes": 120,
+      "createdAt": "2024-10-25",
+      "updatedAt": "2024-10-25"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "email": "admin@example.com",
+      "role": "admin",
+      "createdAt": "2024-01-01"
+    }
+  ]
+}
