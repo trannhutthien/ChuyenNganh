@@ -1,29 +1,46 @@
 <script setup>
+import { useRoute } from 'vue-router'
+import { computed, watch } from 'vue'
 import AppHeader from './layouts/AppHeader.vue'
 import AppSidebar from './layouts/AppSidebar.vue'
 import AppFooter from './layouts/AppFooter.vue'
-import HomePage from './views/HomePage.vue'
+
+const route = useRoute()
+
+// Kiểm tra xem có phải trang học không
+const isLearningPage = computed(() => {
+  return route.path.startsWith('/learn')
+})
+
+// Debug: Log route changes
+watch(() => route.path, (newPath) => {
+  console.log('Current path:', newPath)
+  console.log('Is learning page:', isLearningPage.value)
+}, { immediate: true })
 </script>
 
 <template>
   <div id="app">
-    <!-- Header sticky ở trên cùng -->
+    <!-- Header luôn hiển thị -->
     <AppHeader />
     
     <!-- Container cho Sidebar + Main Content -->
     <div class="flex flex-1">
-      <!-- Sidebar bên trái -->
+      <!-- Sidebar luôn hiển thị -->
       <AppSidebar />
       
-      <!-- Main Content bên phải -->
-      <main class="flex-1 ml-[100px]">
-        <!-- HomePage với 4 rows -->
-        <HomePage />
+      <!-- Main Content bên phải - Thay đổi theo trang -->
+      <main 
+        class="flex-1 ml-[100px]"
+        :class="{ 'p-0': isLearningPage }"
+      >
+        <!-- Router View - Hiển thị các trang -->
+        <router-view />
       </main>
     </div>
     
-    <!-- Footer ở dưới cùng, dưới cả Sidebar và Content -->
-    <AppFooter />
+    <!-- Footer - Ẩn khi ở trang học, hiện khi ở trang khác -->
+    <AppFooter v-if="!isLearningPage" />
   </div>
 </template>
 
@@ -33,4 +50,4 @@ import HomePage from './views/HomePage.vue'
   display: flex;
   flex-direction: column;
 }
- </style>
+</style>

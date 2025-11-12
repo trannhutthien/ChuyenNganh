@@ -1,5 +1,5 @@
 -- ==============================
--- TẠO DATABASE
+-- TẠO DATABASE (không có dữ liệu mẫu)
 -- ==============================
 DROP DATABASE IF EXISTS Elearning_KyNangCNTT;
 CREATE DATABASE Elearning_KyNangCNTT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -21,7 +21,7 @@ CREATE TABLE NguoiDung (
     MatKhauHash VARCHAR(255) NOT NULL,
     HoTen NVARCHAR(150) NOT NULL,
     AvatarUrl NVARCHAR(300),
-    TrangThai TINYINT DEFAULT 1, -- 1=active,0=locked (tuỳ bạn dùng)
+    TrangThai TINYINT DEFAULT 1, -- 1=active, 0=locked (tuỳ bạn dùng)
     TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
     CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -47,10 +47,12 @@ CREATE TABLE KyNang (
 CREATE TABLE KhoaHoc (
     KhoaHocId INT AUTO_INCREMENT PRIMARY KEY,
     TieuDe NVARCHAR(200) NOT NULL,
+    HinhAnhUrl NVARCHAR(300),                    -- ảnh đại diện khóa học
     TomTat NVARCHAR(500),
     CapDo TINYINT DEFAULT 1 CHECK (CapDo BETWEEN 1 AND 3),
     Tags NVARCHAR(300),
     DieuKienTienQuyet NVARCHAR(300),
+    GiaTien DECIMAL(10,2) DEFAULT 0,             -- giá khóa học
     TrangThai TINYINT DEFAULT 2 CHECK (TrangThai IN (1,2,3)), -- 1=draft,2=published,3=archived
     TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
     CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -73,7 +75,6 @@ CREATE TABLE BaiHoc (
     TieuDe NVARCHAR(200) NOT NULL,
     NoiDung TEXT NOT NULL,
     ThuTu INT DEFAULT 1,
-    -- Thống nhất trạng thái
     TrangThai TINYINT DEFAULT 2 CHECK (TrangThai IN (1,2,3)), -- 1=draft,2=published,3=archived
     TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
     CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -104,8 +105,7 @@ CREATE TABLE CauHoi (
     ThuTu INT DEFAULT 1,
     FOREIGN KEY (NganHangId) REFERENCES NganHangCauHoi(NganHangId) ON DELETE CASCADE,
     FOREIGN KEY (BaiHocId) REFERENCES BaiHoc(BaiHocId),
-    -- đảm bảo trong 1 ngân hàng, thứ tự câu không trùng
-    UNIQUE KEY UX_CauHoi_NganHang_ThuTu (NganHangId, ThuTu)
+    UNIQUE KEY UX_CauHoi_NganHang_ThuTu (NganHangId, ThuTu) -- thứ tự không trùng trong 1 ngân hàng
 );
 
 CREATE TABLE LuaChon (
@@ -115,8 +115,7 @@ CREATE TABLE LuaChon (
     DungHaySai BOOLEAN DEFAULT 0,
     ThuTu INT DEFAULT 1,
     FOREIGN KEY (CauHoiId) REFERENCES CauHoi(CauHoiId) ON DELETE CASCADE,
-    -- đảm bảo trong 1 câu hỏi, thứ tự lựa chọn không trùng
-    UNIQUE KEY UX_LuaChon_CauHoi_ThuTu (CauHoiId, ThuTu)
+    UNIQUE KEY UX_LuaChon_CauHoi_ThuTu (CauHoiId, ThuTu) -- thứ tự lựa chọn không trùng trong 1 câu
 );
 
 -- ==============================
@@ -129,13 +128,12 @@ CREATE TABLE BaiKiemTra (
     TieuDe NVARCHAR(200) NOT NULL,
     ThietLapJson JSON,
     DiemDat DECIMAL(5,2) DEFAULT 5.00,
-    -- dùng chung hệ trạng thái
     TrangThai TINYINT DEFAULT 2 CHECK (TrangThai IN (1,2,3)), -- 1=draft,2=published,3=archived
     TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
     CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (KhoaHocId) REFERENCES KhoaHoc(KhoaHocId) ON DELETE CASCADE,
     FOREIGN KEY (BaiHocId) REFERENCES BaiHoc(BaiHocId) ON DELETE CASCADE
-    -- Quy ước:
+    -- Quy ước nghiệp vụ:
     --  - Quiz cuối bài:  KhoaHocId != NULL, BaiHocId != NULL
     --  - Quiz cấp khóa: KhoaHocId != NULL, BaiHocId IS NULL
 );
@@ -147,7 +145,7 @@ CREATE TABLE LanLamBai (
     BatDauLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
     NopBaiLuc DATETIME,
     DiemSo DECIMAL(5,2),
-    ChiTietJson JSON,
+    ChiTietJson JSON, -- snapshot bộ câu, cấu hình chấm...
     TrangThai ENUM('INPROGRESS','SUBMITTED','CANCELLED') DEFAULT 'INPROGRESS',
     FOREIGN KEY (BaiKiemTraId) REFERENCES BaiKiemTra(BaiKiemTraId) ON DELETE CASCADE,
     FOREIGN KEY (NguoiDungId) REFERENCES NguoiDung(NguoiDungId) ON DELETE CASCADE
@@ -157,7 +155,7 @@ CREATE TABLE TraLoi (
     TraLoiId INT AUTO_INCREMENT PRIMARY KEY,
     LanLamBaiId INT NOT NULL,
     CauHoiId INT NOT NULL,
-    LuaChonIds NVARCHAR(300),
+    LuaChonIds NVARCHAR(300), -- có thể đổi sang JSON nếu cần
     DungHaySai BOOLEAN,
     ThoiGianGiay INT,
     FOREIGN KEY (LanLamBaiId) REFERENCES LanLamBai(LanLamBaiId) ON DELETE CASCADE,
@@ -194,41 +192,3 @@ CREATE INDEX IX_LanLamBai_NguoiDungId ON LanLamBai(NguoiDungId);
 CREATE INDEX IX_TraLoi_LanLamBaiId ON TraLoi(LanLamBaiId);
 CREATE INDEX IX_TraLoi_CauHoiId ON TraLoi(CauHoiId);
 CREATE INDEX IX_GhiDanh_KhoaHocId ON GhiDanh(KhoaHocId);
-
--- ==============================
--- 7) DỮ LIỆU MẪU
--- ==============================
-INSERT INTO VaiTro (MaVaiTro, TenVaiTro) VALUES 
-('ADMIN','Quản trị'), ('STUDENT','Sinh viên');
-
-INSERT INTO KyNang (TenKyNang, MoTa, CapDo) VALUES
-('Frontend','Kỹ năng giao diện',1),
-('Backend','Kỹ năng máy chủ',1);
-
-INSERT INTO KhoaHoc (TieuDe, CapDo, TrangThai)
-VALUES ('JavaScript Cơ bản',1,2);
-
-INSERT INTO KyNang_KhoaHoc (KyNangId, KhoaHocId)
-VALUES (1,1),(2,1);
-
-INSERT INTO BaiHoc (KhoaHocId, TieuDe, NoiDung, ThuTu, TrangThai)
-VALUES (1,'Biến và kiểu dữ liệu','Nội dung minh họa...',1,2);
-
--- Ngân hàng câu hỏi của KHÓA HỌC
-INSERT INTO NganHangCauHoi (KhoaHocId, TenNganHang)
-VALUES (1,'NH JS cơ bản');
-
--- Câu hỏi thuộc ngân hàng và thuộc Bài học 1
-INSERT INTO CauHoi (NganHangId, BaiHocId, Loai, DeBai, DoKho, ThuTu)
-VALUES 
-(1,1,'DUNG_SAI','Từ khóa let có thể khai báo lại trong cùng scope?',1,1),
-(1,1,'MOT_DAP_AN','Kiểu dữ liệu nào là primitive trong JS?',1,2);
-
-INSERT INTO LuaChon (CauHoiId, NoiDung, DungHaySai, ThuTu)
-VALUES
-(1,'Đúng',0,1),(1,'Sai',1,2),
-(2,'Array',0,1),(2,'Number',1,2),(2,'Object',0,3);
-
--- Quiz cuối BÀI 1 trong KHÓA 1
-INSERT INTO BaiKiemTra (KhoaHocId, BaiHocId, TieuDe, ThietLapJson, TrangThai)
-VALUES (1,1,'Quiz cuối bài 1',JSON_OBJECT('total',2),2);

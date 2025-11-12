@@ -160,7 +160,10 @@
                     <span v-else class="text-lg font-bold text-primary">{{ formatPrice(course.price) }}</span>
                   </div>
                   
-                  <button class="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition-colors">
+                  <button 
+                    @click="startLearning(course.id)"
+                    class="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition-colors"
+                  >
                     Học ngay
                   </button>
                 </div>
@@ -259,7 +262,10 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import BannerSlider from '../components/BannerSlider.vue'
+
+const router = useRouter()
 
 // ========== KHÓA HỌC PRO (CÓ PHÍ) ==========
 const proCourses = ref([
@@ -353,6 +359,15 @@ const freeCourses = ref([
 // freeCourses.value.splice(0, 1)         // Xóa khỏi danh sách Free
 
 // ========== FUNCTIONS ==========
+/**
+ * Bắt đầu học khóa học
+ * @param {number} courseId - ID của khóa học
+ */
+const startLearning = (courseId) => {
+  // Chuyển hướng đến trang học với courseId
+  router.push({ name: 'CourseLearning', params: { courseId } })
+}
+
 /**
  * Format giá tiền theo định dạng Việt Nam
  * @param {number} price - Giá tiền
