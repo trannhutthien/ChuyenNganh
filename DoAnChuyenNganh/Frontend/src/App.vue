@@ -25,15 +25,12 @@ watch(() => route.path, (newPath) => {
     <AppHeader />
     
     <!-- Container cho Sidebar + Main Content -->
-    <div class="flex flex-1">
+    <div class="main-container">
       <!-- Sidebar luôn hiển thị -->
       <AppSidebar />
       
       <!-- Main Content bên phải - Thay đổi theo trang -->
-      <main 
-        class="flex-1 ml-[100px]"
-        :class="{ 'p-0': isLearningPage }"
-      >
+      <main class="main-content">
         <!-- Router View - Hiển thị các trang -->
         <router-view />
       </main>
@@ -49,5 +46,18 @@ watch(() => route.path, (newPath) => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.main-container {
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 100px;
+  width: calc(100% - 100px);
+  overflow-x: hidden;
 }
 </style>
