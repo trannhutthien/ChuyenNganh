@@ -1,9 +1,9 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { computed, watch } from 'vue'
-import AppHeader from './components/layout/AppHeader.vue'
-import AppSidebar from './components/layout/AppSidebar.vue'
-import AppFooter from './components/layout/AppFooter.vue'
+import AppHeader from './layouts/partials/Header.vue'
+import AppSidebar from './layouts/partials/Sidebar.vue'
+import AppFooter from './layouts/partials/Footer.vue'
 
 const route = useRoute()
 

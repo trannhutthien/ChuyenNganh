@@ -10,9 +10,9 @@
         <div class="text-white max-w-xl">
           <h2 class="text-5xl font-bold mb-4">Học Lập Trình Từ Cơ Bản</h2>
           <p class="text-xl mb-6 text-blue-100">Khóa học JavaScript, Python, Vue.js và nhiều hơn nữa</p>
-          <button class="px-8 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors">
+          <BaseButton variant="primary" size="lg" class="!bg-white !text-blue-600 hover:!bg-blue-50 !shadow-xl">
             Khám phá ngay
-          </button>
+          </BaseButton>
         </div>
         <div class="hidden md:block">
           <img src="https://placehold.co/400x300/4F46E5/FFF?text=Coding" alt="Banner 1" class="rounded-lg shadow-2xl">
@@ -24,9 +24,9 @@
         <div class="text-white max-w-xl">
           <h2 class="text-5xl font-bold mb-4">Lộ Trình Học Tập Chuyên Nghiệp</h2>
           <p class="text-xl mb-6 text-purple-100">Từ Junior đến Senior Developer</p>
-          <button class="px-8 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:bg-purple-50 transition-colors">
+          <BaseButton variant="primary" size="lg" class="!bg-white !text-purple-600 hover:!bg-purple-50 !shadow-xl">
             Xem lộ trình
-          </button>
+          </BaseButton>
         </div>
         <div class="hidden md:block">
           <img src="https://placehold.co/400x300/9333EA/FFF?text=Roadmap" alt="Banner 2" class="rounded-lg shadow-2xl">
@@ -38,9 +38,9 @@
         <div class="text-white max-w-xl">
           <h2 class="text-5xl font-bold mb-4">Khóa Học Miễn Phí</h2>
           <p class="text-xl mb-6 text-orange-100">Hơn 100+ khóa học chất lượng hoàn toàn miễn phí</p>
-          <button class="px-8 py-3 bg-white text-orange-600 rounded-xl font-semibold hover:bg-orange-50 transition-colors">
+          <BaseButton variant="primary" size="lg" class="!bg-white !text-orange-600 hover:!bg-orange-50 !shadow-xl">
             Học ngay
-          </button>
+          </BaseButton>
         </div>
         <div class="hidden md:block">
           <img src="https://placehold.co/400x300/EA580C/FFF?text=Free" alt="Banner 3" class="rounded-lg shadow-2xl">
@@ -83,6 +83,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import BaseButton from './BaseButton.vue'
 
 const currentSlide = ref(0)
 const totalSlides = 3

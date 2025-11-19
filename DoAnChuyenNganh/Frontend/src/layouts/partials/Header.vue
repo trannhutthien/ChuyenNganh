@@ -51,19 +51,21 @@
     <div class="flex-shrink-0 flex items-center gap-3">
       <!-- Khi CHƯA đăng nhập: Hiển thị button Đăng nhập & Đăng ký -->
       <div v-if="!isLoggedIn" class="flex items-center gap-3">
-        <button 
+        <BaseButton 
           @click="handleLogin"
-          class="px-5 py-2 text-sm font-medium text-primary border border-primary rounded-xl hover:bg-primary/10 transition-colors"
+          variant="outline"
+          size="sm"
         >
           Đăng nhập
-        </button>
+        </BaseButton>
 
-        <button 
+        <BaseButton 
           @click="handleRegister"
-          class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-600 transition-colors"
+          variant="primary"
+          size="sm"
         >
           Đăng ký
-        </button>
+        </BaseButton>
       </div>
 
       <!-- Khi ĐÃ đăng nhập: Hiển thị icon chuông thông báo & avatar -->
@@ -266,8 +268,9 @@
 
 <script setup>
 import { ref } from 'vue'
-import RegisterModal from '../RegisterModal.vue'
-import LoginModal from '../LoginModal.vue'
+import BaseButton from '../../components/ui/BaseButton.vue'
+import RegisterModal from '../../components/modal/RegisterModal.vue'
+import LoginModal from '../../components/modal/LoginModal.vue'
 
 // State
 const searchQuery = ref('')

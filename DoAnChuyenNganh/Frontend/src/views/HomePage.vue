@@ -160,12 +160,13 @@
                     <span v-else class="text-lg font-bold text-primary">{{ formatPrice(course.price) }}</span>
                   </div>
                   
-                  <button 
+                  <BaseButton 
                     @click="startLearning(course.id)"
-                    class="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition-colors"
+                    variant="primary"
+                    size="sm"
                   >
                     Học ngay
-                  </button>
+                  </BaseButton>
                 </div>
               </div>
             </div>
@@ -263,7 +264,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import BannerSlider from '../components/BannerSlider.vue'
+import BannerSlider from '../components/ui/BannerSlider.vue'
+import BaseButton from '../components/ui/BaseButton.vue'
 
 const router = useRouter()
 

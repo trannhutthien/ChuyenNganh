@@ -155,50 +155,62 @@
       <div class="bg-white border-t border-gray-200 px-6 py-4 shadow-sm">
         <div class="flex items-center justify-between">
           <!-- Nút Bài trước -->
-          <button 
+          <BaseButton 
             @click="previousLesson"
             :disabled="currentLessonIndex === 0"
-            class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            variant="secondary"
+            size="md"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-            </svg>
+            <template #icon>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+              </svg>
+            </template>
             Bài trước
-          </button>
+          </BaseButton>
 
           <!-- Đánh dấu hoàn thành -->
-          <button 
+          <BaseButton 
             @click="markAsCompleted"
-            class="px-6 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors flex items-center gap-2"
-            :class="{ 'bg-primary text-white': currentLesson.completed }"
+            :variant="currentLesson.completed ? 'primary' : 'outline'"
+            size="md"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-            </svg>
+            <template #icon>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+              </svg>
+            </template>
             {{ currentLesson.completed ? 'Đã hoàn thành' : 'Hoàn thành' }}
-          </button>
+          </BaseButton>
 
           <!-- Nút Bài tiếp theo hoặc Làm bài kiểm tra -->
-          <button 
+          <BaseButton 
             v-if="currentLessonIndex === lessons.length - 1"
             @click="goToQuiz"
-            class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transition-colors flex items-center gap-2"
+            variant="success"
+            size="md"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
+            <template #icon>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </template>
             Làm bài kiểm tra
-          </button>
-          <button 
+          </BaseButton>
+          <BaseButton 
             v-else
             @click="nextLesson"
-            class="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-600 transition-colors flex items-center gap-2"
+            variant="primary"
+            size="md"
+            icon-position="right"
           >
             Bài tiếp theo
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
+            <template #icon>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </template>
+          </BaseButton>
         </div>
       </div>
     </div>
@@ -250,6 +262,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import BaseButton from '../components/ui/BaseButton.vue'
 
 const router = useRouter()
 
