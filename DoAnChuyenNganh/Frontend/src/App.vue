@@ -21,7 +21,9 @@ watch(() => route.path, (newPath) => {
 
 <template>
   <div id="app">
-    <AppHeader />
+    <header class="w-full h-[65px] bg-gray-100 flex items-center px-4 sticky top-0 z-50 shadow-md">
+      <AppHeader />
+    </header>
     <div class="main-container">
       <AppSidebar />
       <main class="main-content">

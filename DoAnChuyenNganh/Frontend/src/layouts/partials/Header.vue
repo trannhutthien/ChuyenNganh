@@ -1,7 +1,6 @@
 <template>
-  <header class="w-full h-[65px] bg-gray-100 flex items-center px-4 sticky top-0 z-50 shadow-md">
-    <!-- Phần bên trái -->
-    <div class="flex-shrink-0">
+  <!-- Phần bên trái -->
+  <div class="flex-shrink-0">
       <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
         
         <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
@@ -247,7 +246,6 @@
         </div>
       </div>
     </div>
-  </header>
 
   <!-- Modal Đăng nhập -->
   <LoginModal 
