@@ -178,11 +178,21 @@
             {{ currentLesson.completed ? 'Đã hoàn thành' : 'Hoàn thành' }}
           </button>
 
-          <!-- Nút Bài tiếp theo -->
+          <!-- Nút Bài tiếp theo hoặc Làm bài kiểm tra -->
           <button 
+            v-if="currentLessonIndex === lessons.length - 1"
+            @click="goToQuiz"
+            class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transition-colors flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            Làm bài kiểm tra
+          </button>
+          <button 
+            v-else
             @click="nextLesson"
-            :disabled="currentLessonIndex === lessons.length - 1"
-            class="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            class="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-600 transition-colors flex items-center gap-2"
           >
             Bài tiếp theo
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
@@ -412,6 +422,12 @@ const previousLesson = () => {
 
 const markAsCompleted = () => {
   lessons.value[currentLessonIndex.value].completed = !lessons.value[currentLessonIndex.value].completed
+}
+
+const goToQuiz = () => {
+  // TODO: Lấy quizId từ course data khi có API
+  const quizId = 1 // Mock quiz ID
+  router.push(`/quiz/${quizId}`)
 }
 
 const goBack = () => {

@@ -1,9 +1,9 @@
 <script setup>
 import { useRoute } from 'vue-router'
-import { computed, watch } from 'vue'
-import AppHeader from './components/layout/AppHeader.vue'
-import AppSidebar from './components/layout/AppSidebar.vue'
-import AppFooter from './components/layout/AppFooter.vue'
+import { computed } from 'vue'
+import AppHeader from '../components/layout/AppHeader.vue'
+import AppSidebar from '../components/layout/AppSidebar.vue'
+import AppFooter from '../components/layout/AppFooter.vue'
 
 const route = useRoute()
 
@@ -11,32 +11,23 @@ const route = useRoute()
 const isLearningPage = computed(() => {
   return route.path.startsWith('/learn')
 })
-
-// Debug: Log route changes
-watch(() => route.path, (newPath) => {
-  console.log('Current path:', newPath)
-  console.log('Is learning page:', isLearningPage.value)
-}, { immediate: true })
 </script>
 
 <template>
-  <div id="app">
+  <div class="default-layout">
     <AppHeader />
     <div class="main-container">
       <AppSidebar />
       <main class="main-content">
-        <!-- Router View - Hiển thị các trang -->
-        <router-view />
+        <slot />
       </main>
     </div>
-    
-    <!-- Footer - Ẩn khi ở trang học, hiện khi ở trang khác -->
     <AppFooter v-if="!isLearningPage" />
   </div>
 </template>
 
 <style scoped>
-#app {
+.default-layout {
   min-height: 100vh;
   display: flex;
   flex-direction: column;

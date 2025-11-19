@@ -266,8 +266,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import RegisterModal from '../components/RegisterModal.vue'
-import LoginModal from '../components/LoginModal.vue'
+import RegisterModal from '../RegisterModal.vue'
+import LoginModal from '../LoginModal.vue'
 
 // State
 const searchQuery = ref('')
@@ -280,8 +280,8 @@ const isLoggedIn = ref(false)
 
 // Thông tin user hiện tại
 const currentUser = ref({
-  name: 'Nguyễn Văn A',
-  email: 'nguyenvana@example.com',
+  name: 'nguoidung',
+  email: 'nguoidung@example.com',
   avatar: 'https://i.pravatar.cc/150?img=12'
 })
 
@@ -313,7 +313,8 @@ const notifications = ref([
     message: 'Bạn đã hoàn thành "JavaScript Căn bản"',
     time: '1 ngày trước',
     read: true
-  }
+  },
+  
 ])
 
 // ========== USER MENU ==========
@@ -342,6 +343,7 @@ const handleLoginSubmit = (data) => {
   isLoggedIn.value = true
   showLoginModal.value = false
   
+  //*
   // Cập nhật thông tin user từ API
   currentUser.value = {
     name: data.email.split('@')[0],
