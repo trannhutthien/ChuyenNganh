@@ -135,7 +135,6 @@ const props = defineProps({
              value.hasOwnProperty('title')
     }
   },
-  // Card type: 'pro' hoặc 'free'
   type: {
     type: String,
     default: 'free',

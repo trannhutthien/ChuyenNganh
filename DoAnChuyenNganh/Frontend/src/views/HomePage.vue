@@ -110,11 +110,7 @@ import PostCard from '../components/home/PostCard.vue'
 
 const router = useRouter()
 
-// ========== FUNCTIONS ==========
-/**
- * Bắt đầu học khóa học
- * @param {number} courseId - ID của khóa học
- */
+
 const startLearning = (courseId) => {
   router.push({ name: 'CourseLearning', params: { courseId } })
 }
