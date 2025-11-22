@@ -1,27 +1,33 @@
-import { ref, computed } from 'vue'
+import { ref, computed, unref } from 'vue'
 
 /**
  * Composable for quiz navigation
  * Handles moving between questions and tracking current position
  */
-export function useQuizNavigation(totalQuestions = 0) {
+export function useQuizNavigation(questionsOrTotal = 0, initialIndex = 0) {
   // State
-  const currentIndex = ref(0)
+  const currentIndex = ref(initialIndex)
+
+  // Computed: Support both array of questions or total number
+  const totalQuestions = computed(() => {
+    const value = unref(questionsOrTotal)
+    return Array.isArray(value) ? value.length : (typeof value === 'number' ? value : 0)
+  })
 
   // Computed
   const currentQuestionNumber = computed(() => currentIndex.value + 1)
   
   const isFirst = computed(() => currentIndex.value === 0)
   
-  const isLast = computed(() => currentIndex.value === totalQuestions - 1)
+  const isLast = computed(() => currentIndex.value >= totalQuestions.value - 1)
   
   const canGoPrevious = computed(() => !isFirst.value)
   
   const canGoNext = computed(() => !isLast.value)
   
   const progress = computed(() => {
-    if (totalQuestions === 0) return 0
-    return Math.round(((currentIndex.value + 1) / totalQuestions) * 100)
+    if (totalQuestions.value === 0) return 0
+    return Math.round(((currentIndex.value + 1) / totalQuestions.value) * 100)
   })
 
   // Methods
@@ -42,7 +48,7 @@ export function useQuizNavigation(totalQuestions = 0) {
   }
 
   const goToQuestion = (index) => {
-    if (index >= 0 && index < totalQuestions) {
+    if (index >= 0 && index < totalQuestions.value) {
       currentIndex.value = index
       return true
     }
@@ -54,7 +60,7 @@ export function useQuizNavigation(totalQuestions = 0) {
   }
 
   const goToLast = () => {
-    currentIndex.value = totalQuestions - 1
+    currentIndex.value = totalQuestions.value - 1
   }
 
   /**
@@ -65,7 +71,7 @@ export function useQuizNavigation(totalQuestions = 0) {
     if (!isAnsweredCallback) return false
 
     // Search forward from current position
-    for (let i = currentIndex.value + 1; i < totalQuestions; i++) {
+    for (let i = currentIndex.value + 1; i < totalQuestions.value; i++) {
       if (!isAnsweredCallback(i)) {
         currentIndex.value = i
         return true
@@ -90,7 +96,7 @@ export function useQuizNavigation(totalQuestions = 0) {
   const goToFirstUnanswered = (isAnsweredCallback) => {
     if (!isAnsweredCallback) return false
 
-    for (let i = 0; i < totalQuestions; i++) {
+    for (let i = 0; i < totalQuestions.value; i++) {
       if (!isAnsweredCallback(i)) {
         currentIndex.value = i
         return true
@@ -130,7 +136,7 @@ export function useQuizNavigation(totalQuestions = 0) {
     return {
       current: currentIndex.value,
       number: currentQuestionNumber.value,
-      total: totalQuestions,
+      total: totalQuestions.value,
       isFirst: isFirst.value,
       isLast: isLast.value,
       canGoPrevious: canGoPrevious.value,

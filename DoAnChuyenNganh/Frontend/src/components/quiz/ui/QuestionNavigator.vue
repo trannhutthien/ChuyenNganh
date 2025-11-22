@@ -129,7 +129,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['select'])
+const emit = defineEmits(['navigate', 'select'])
 
 // Grid class dựa trên số cột
 const gridClass = computed(() => {
@@ -202,6 +202,7 @@ const unansweredCount = computed(() => {
 
 // Handler khi chọn câu hỏi
 const handleSelect = (index) => {
-  emit('select', index)
+  emit('navigate', index) // Emit 'navigate' để match với QuizPage
+  emit('select', index)   // Giữ lại 'select' cho backward compatibility
 }
 </script>

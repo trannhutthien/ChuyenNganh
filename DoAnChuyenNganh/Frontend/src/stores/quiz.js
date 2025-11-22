@@ -116,7 +116,9 @@ export const useQuizStore = defineStore('quiz', () => {
               { id: 3, text: 'data()' },
               { id: 4, text: 'computed()' },
               { id: 5, text: 'methods()' }
-            ]
+            ],
+            correct_answers: [1, 2, 4], // ref(), reactive(), computed()
+            explanation: 'ref(), reactive(), và computed() là các hàm cốt lõi của Composition API. data() và methods() là Options API.'
           },
           {
             id: 2,
@@ -126,13 +128,17 @@ export const useQuizStore = defineStore('quiz', () => {
             options: [
               { id: 6, text: 'Đúng' },
               { id: 7, text: 'Sai' }
-            ]
+            ],
+            correct_answer: 6, // Đúng
+            explanation: 'Vue 3 sử dụng Virtual DOM kết hợp với compiler-informed optimizations để tối ưu hiệu suất.'
           },
           {
             id: 3,
             type: 'fill_blank',
             text: 'Để tạo một biến reactive trong Composition API, ta sử dụng hàm ____',
-            points: 2
+            points: 2,
+            correct_answer: 'ref',
+            explanation: 'Có thể dùng ref() hoặc reactive(), nhưng ref() phổ biến hơn cho primitive values.'
           },
           {
             id: 4,
@@ -140,13 +146,21 @@ export const useQuizStore = defineStore('quiz', () => {
             text: 'Ghép các lifecycle hooks với mô tả phù hợp',
             points: 3,
             leftItems: ['onMounted', 'onUpdated', 'onUnmounted'],
-            rightItems: ['Component destroyed', 'Component mounted', 'Component updated']
+            rightItems: ['Component destroyed', 'Component mounted', 'Component updated'],
+            correct_pairs: {
+              'onMounted': 'Component mounted',
+              'onUpdated': 'Component updated',
+              'onUnmounted': 'Component destroyed'
+            },
+            explanation: 'onMounted chạy khi component được mount, onUpdated khi re-render, onUnmounted khi destroy.'
           },
           {
             id: 5,
             type: 'essay',
             text: 'Giải thích sự khác biệt giữa ref() và reactive() trong Vue 3 Composition API',
-            points: 5
+            points: 5,
+            correct_answer: null, // Cần chấm thủ công
+            explanation: 'ref() dùng cho primitive values và cần .value, reactive() dùng cho objects và không cần .value.'
           }
         ]
       }
@@ -256,14 +270,14 @@ export const useQuizStore = defineStore('quiz', () => {
     } catch (err) {
       console.error('API Error, using mock grading:', err)
       
-      // MOCK: Calculate result locally
+      // MOCK: Calculate result locally with smart grading
       const timeTaken = (quiz.value?.duration_minutes || 0) * 60 - timeLeft.value
       let correctCount = 0
       let totalPoints = 0
       let earnedPoints = 0
       const details = []
       
-      questions.value.forEach(q => {
+      questions.value.forEach((q, index) => {
         totalPoints += q.points
         const userAnswer = userAnswers.value[q.id]
         let isCorrect = false
@@ -272,22 +286,34 @@ export const useQuizStore = defineStore('quiz', () => {
         let correctAnswer = ''
         
         if (q.type === 'multiple_choice') {
-          const correctIds = [1, 2, 4] // Mock correct answers
-          isCorrect = JSON.stringify(userAnswer?.sort()) === JSON.stringify(correctIds.sort())
-          yourAnswer = q.options.filter(o => userAnswer?.includes(o.id)).map(o => o.text).join(', ') || 'Không có'
-          correctAnswer = 'ref(), reactive(), computed()'
+          // Use actual correct_answers from question data
+          const correctIds = q.correct_answers || []
+          const userIds = Array.isArray(userAnswer) ? userAnswer : []
+          isCorrect = JSON.stringify([...userIds].sort()) === JSON.stringify([...correctIds].sort())
+          yourAnswer = q.options?.filter(o => userIds.includes(o.id)).map(o => o.text).join(', ') || 'Không có'
+          correctAnswer = q.options?.filter(o => correctIds.includes(o.id)).map(o => o.text).join(', ') || 'Không có'
         } else if (q.type === 'true_false') {
-          const correctId = 6 // "Đúng"
+          // Use actual correct_answer from question data
+          const correctId = q.correct_answer
           isCorrect = userAnswer === correctId
-          yourAnswer = q.options.find(o => o.id === userAnswer)?.text || 'Không có'
-          correctAnswer = 'Đúng'
+          yourAnswer = q.options?.find(o => o.id === userAnswer)?.text || 'Không có'
+          correctAnswer = q.options?.find(o => o.id === correctId)?.text || 'Không có'
         } else if (q.type === 'fill_blank') {
-          const validAnswers = ['ref', 'reactive']
-          isCorrect = validAnswers.some(ans => userAnswer?.toLowerCase().includes(ans.toLowerCase()))
-          yourAnswer = userAnswer || 'Không có'
-          correctAnswer = 'ref hoặc reactive'
+          // Use actual correct_answer from question data
+          const correctText = q.correct_answer || ''
+          const userText = userAnswer || ''
+          isCorrect = userText.trim().toLowerCase() === correctText.trim().toLowerCase()
+          yourAnswer = userText || 'Không có'
+          correctAnswer = correctText
+        } else if (q.type === 'matching') {
+          // Check if all pairs match correctly
+          const correctPairs = q.correct_pairs || {}
+          const userPairs = userAnswer || {}
+          isCorrect = JSON.stringify(userPairs) === JSON.stringify(correctPairs)
+          yourAnswer = JSON.stringify(userPairs)
+          correctAnswer = JSON.stringify(correctPairs)
         } else if (q.type === 'essay') {
-          isCorrect = null
+          isCorrect = null // Needs manual grading
           yourAnswer = userAnswer || 'Không có'
           correctAnswer = 'Chờ giảng viên chấm'
         }
@@ -299,17 +325,18 @@ export const useQuizStore = defineStore('quiz', () => {
         }
         
         details.push({
+          question_number: index + 1,
           question_text: q.text,
           your_answer: yourAnswer,
           correct_answer: correctAnswer,
           is_correct: isCorrect,
           points_earned: pointsEarned,
           points_max: q.points,
-          explanation: 'Giải thích chi tiết sẽ được hiển thị từ database'
+          explanation: q.explanation || 'Giải thích sẽ được cập nhật'
         })
       })
       
-      const score = Math.round((earnedPoints / totalPoints) * 100)
+      const score = totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0
       
       const mockResult = {
         score,

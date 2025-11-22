@@ -75,7 +75,7 @@
       <div class="flex gap-6">
         <!-- Question Navigator Sidebar -->
         <aside class="w-64 flex-shrink-0">
-          <div class="sticky top-6">
+          <div class="sticky top-6 space-y-4">
             <QuestionNavigator
               :questions="quizStore.questions"
               :currentIndex="navigation.currentIndex.value"
@@ -83,6 +83,19 @@
               :markedQuestions="answer.markedQuestions.value"
               @navigate="navigation.goToQuestion"
             />
+            
+            <!-- Submit Button (Always visible) -->
+            <BaseButton
+              variant="success"
+              size="lg"
+              class="w-full shadow-lg hover:shadow-xl transition-all"
+              @click="showSubmitConfirm = true"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Nộp bài
+            </BaseButton>
           </div>
         </aside>
 
@@ -178,6 +191,7 @@
                     v-else
                     variant="primary"
                     size="md"
+                    :disabled="!navigation.canGoNext.value"
                     @click="navigation.goToNext()"
                   >
                     Câu tiếp
@@ -194,14 +208,14 @@
     </div>
 
     <!-- Result Screen -->
-    <div v-else-if="quizStore.hasSubmitted && submit.result.value" class="container mx-auto px-4 py-8">
+    <div v-else-if="quizStore.hasSubmitted && quizStore.quizResult" class="container mx-auto px-4 py-8">
       <QuizResult
-        :result="submit.result.value"
+        :result="quizStore.quizResult"
         :passingScore="quiz?.passing_score || 70"
       >
         <template #details>
           <ResultDetailList
-            :details="submit.result.value.details || []"
+            :details="quizStore.quizResult.details || []"
             showFilters
           />
         </template>
@@ -231,7 +245,7 @@
           </BaseButton>
 
           <BaseButton
-            v-if="submit.result.value.passed"
+            v-if="quizStore.quizResult?.passed"
             variant="success"
             size="lg"
             @click="handleDownloadCertificate"
@@ -368,15 +382,10 @@ const handleSubmitQuiz = async () => {
     timer.stop()
     autoSave.stop()
     
-    const timeTaken = timer.elapsedTime.value
-    const result = await submit.submitQuiz(
-      quizStore.attemptId,
-      answer.userAnswers.value,
-      quizStore.questions,
-      timeTaken
-    )
+    // Gọi store submitQuiz (có mock grading built-in)
+    const result = await quizStore.submitQuiz()
     
-    quizStore.markAsSubmitted()
+    console.log('Quiz submitted successfully:', result)
   } catch (error) {
     console.error('Failed to submit quiz:', error)
   }
