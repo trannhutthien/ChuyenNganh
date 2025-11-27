@@ -100,16 +100,22 @@
           </div>
 
           <!-- Error Message -->
-          <div v-if="errorMessage" class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-            {{ errorMessage }}
+          <div v-if="formError || props.error" class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+            {{ formError || props.error }}
           </div>
 
           <!-- Submit Button -->
           <button
             type="submit"
-            class="w-full bg-primary hover:bg-primary-600 text-white font-semibold py-3 rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+            :disabled="props.loading"
+            :class="[
+              'w-full text-white font-semibold py-3 rounded-lg transition-all shadow-lg',
+              props.loading
+                ? 'bg-primary/70 cursor-not-allowed'
+                : 'bg-primary hover:bg-primary-600 transform hover:scale-[1.02] active:scale-[0.98] hover:shadow-xl'
+            ]"
           >
-            Đăng nhập
+            {{ props.loading ? 'Đang xử lý...' : 'Đăng nhập' }}
           </button>
 
           <!-- Chưa có tài khoản -->
@@ -168,6 +174,14 @@ const props = defineProps({
   isOpen: {
     type: Boolean,
     default: false
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  error: {
+    type: String,
+    default: ''
   }
 })
 
@@ -182,7 +196,7 @@ const formData = ref({
 
 const showPassword = ref(false)
 const rememberMe = ref(false)
-const errorMessage = ref('')
+const formError = ref('')
 
 // Methods
 const closeModal = () => {
@@ -195,29 +209,31 @@ const resetForm = () => {
     email: '',
     password: ''
   }
-  errorMessage.value = ''
+  formError.value = ''
   showPassword.value = false
   rememberMe.value = false
 }
 
 const handleSubmit = () => {
-  errorMessage.value = ''
+  formError.value = ''
 
   // Validation
   if (!formData.value.email.trim()) {
-    errorMessage.value = 'Vui lòng nhập email'
+    formError.value = 'Vui lòng nhập email'
     return
   }
 
   if (!formData.value.password.trim()) {
-    errorMessage.value = 'Vui lòng nhập mật khẩu'
+    formError.value = 'Vui lòng nhập mật khẩu'
     return
   }
 
   if (formData.value.password.length < 6) {
-    errorMessage.value = 'Mật khẩu phải có ít nhất 6 ký tự'
+    formError.value = 'Mật khẩu phải có ít nhất 6 ký tự'
     return
   }
+
+  formError.value = ''
 
   // Emit data
   emit('submit', {
@@ -225,9 +241,6 @@ const handleSubmit = () => {
     password: formData.value.password,
     rememberMe: rememberMe.value
   })
-
-  console.log('Đăng nhập thành công:', formData.value)
-  closeModal()
 }
 
 // Prevent body scroll when modal is open
@@ -236,7 +249,15 @@ watch(() => props.isOpen, (newVal) => {
     document.body.style.overflow = 'hidden'
   } else {
     document.body.style.overflow = ''
+    resetForm()
   }
+})
+
+watch(() => props.error, (newVal) => {
+  if (!newVal) {
+    return
+  }
+  formError.value = ''
 })
 </script>
 

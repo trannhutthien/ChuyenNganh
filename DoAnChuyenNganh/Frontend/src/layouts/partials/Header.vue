@@ -250,6 +250,8 @@
   <!-- Modal Đăng nhập -->
   <LoginModal 
     :isOpen="showLoginModal" 
+    :loading="loginLoading"
+    :error="loginError"
     @close="showLoginModal = false"
     @submit="handleLoginSubmit"
     @switchToRegister="switchToRegister"
@@ -265,15 +267,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import RegisterModal from '../../components/modal/RegisterModal.vue'
 import LoginModal from '../../components/modal/LoginModal.vue'
+import { authService } from '../../services/courseService.js'
 
 // State
 const searchQuery = ref('')
 const showRegisterModal = ref(false)
 const showLoginModal = ref(false)
+const loginLoading = ref(false)
+const loginError = ref('')
 
 // ========== AUTH STATE ==========
 // Trạng thái đăng nhập - Đổi thành true để test giao diện đã đăng nhập
@@ -337,19 +342,48 @@ const handleRegister = () => {
   showRegisterModal.value = true
 }
 
-const handleLoginSubmit = (data) => {
-  console.log('Dữ liệu đăng nhập:', data)
-  // TODO: Call API đăng nhập
-  // Giả lập đăng nhập thành công
-  isLoggedIn.value = true
-  showLoginModal.value = false
+const handleLoginSubmit = async (data) => {
+  loginLoading.value = true
+  loginError.value = ''
   
-  //*
-  // Cập nhật thông tin user từ API
-  currentUser.value = {
-    name: data.email.split('@')[0],
-    email: data.email,
-    avatar: 'https://i.pravatar.cc/150?img=12'
+  try {
+    // Call backend API (response interceptor already unwraps .data)
+    const response = await authService.login(data.email, data.password)
+    
+    // Check role STUDENT (backend already checked, but double verification)
+    if (!response.user.roles.includes('STUDENT')) {
+      loginError.value = 'Không phải học viên'
+      return
+    }
+    
+    // Save token and user data to localStorage
+    localStorage.setItem('access_token', response.token)
+    localStorage.setItem('user', JSON.stringify(response.user))
+    
+    // Update UI state
+    isLoggedIn.value = true
+    currentUser.value = {
+      name: response.user.name,
+      email: response.user.email,
+      avatar: 'https://i.pravatar.cc/150?img=12'
+    }
+    
+    // Close modal on success
+    showLoginModal.value = false
+    loginError.value = ''
+    
+    console.log('Đăng nhập thành công:', response.user)
+  } catch (error) {
+    console.error('Lỗi đăng nhập:', error)
+    
+    // Handle error response
+    if (error.message) {
+      loginError.value = error.message
+    } else {
+      loginError.value = 'Đăng nhập thất bại'
+    }
+  } finally {
+    loginLoading.value = false
   }
 }
 
@@ -382,17 +416,24 @@ const toggleUserMenu = () => {
   showNotifications.value = false // Đóng notifications khi mở user menu
 }
 
-const handleLogout = () => {
-  // TODO: Call API logout
-  isLoggedIn.value = false
-  showUserMenu.value = false
-  currentUser.value = null
-  
-  // Xóa token từ localStorage
-  localStorage.removeItem('access_token')
-  localStorage.removeItem('user')
-  
-  console.log('Đã đăng xuất')
+const handleLogout = async () => {
+  try {
+    // Call backend logout API
+    await authService.logout()
+  } catch (error) {
+    console.error('Lỗi logout:', error)
+  } finally {
+    // Clear local state regardless of API result
+    isLoggedIn.value = false
+    showUserMenu.value = false
+    currentUser.value = null
+    
+    // Clear localStorage
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('user')
+    
+    console.log('Đã đăng xuất')
+  }
 }
 
 // Đóng dropdown khi click bên ngoài
@@ -400,6 +441,29 @@ window.addEventListener('click', (e) => {
   if (!e.target.closest('.relative')) {
     showNotifications.value = false
     showUserMenu.value = false
+  }
+})
+
+// Restore login state on component mount
+onMounted(() => {
+  const token = localStorage.getItem('access_token')
+  const savedUser = localStorage.getItem('user')
+  
+  if (token && savedUser) {
+    try {
+      const userData = JSON.parse(savedUser)
+      isLoggedIn.value = true
+      currentUser.value = {
+        name: userData.name,
+        email: userData.email,
+        avatar: 'https://i.pravatar.cc/150?img=12'
+      }
+      console.log('Đã khôi phục phiên đăng nhập')
+    } catch (error) {
+      console.error('Lỗi khôi phục phiên:', error)
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('user')
+    }
   }
 })
 </script>
