@@ -259,7 +259,9 @@
 
   <!-- Modal Đăng ký -->
   <RegisterModal 
-    :isOpen="showRegisterModal" 
+    :isOpen="showRegisterModal"
+    :loading="registerLoading"
+    :error="registerError"
     @close="showRegisterModal = false"
     @submit="handleRegisterSubmit"
     @switchToLogin="switchToLogin"
@@ -279,6 +281,8 @@ const showRegisterModal = ref(false)
 const showLoginModal = ref(false)
 const loginLoading = ref(false)
 const loginError = ref('')
+const registerLoading = ref(false)
+const registerError = ref('')
 
 // ========== AUTH STATE ==========
 // Trạng thái đăng nhập - Đổi thành true để test giao diện đã đăng nhập
@@ -387,11 +391,49 @@ const handleLoginSubmit = async (data) => {
   }
 }
 
-const handleRegisterSubmit = (data) => {
-  console.log('Dữ liệu đăng ký:', data)
-  // TODO: Call API đăng ký
-  showRegisterModal.value = false
-  // Sau khi đăng ký thành công, có thể tự động đăng nhập
+const handleRegisterSubmit = async (data) => {
+  registerLoading.value = true
+  registerError.value = ''
+  
+  try {
+    // Call backend API
+    const response = await authService.register(data)
+    
+    // Kiểm tra role STUDENT (backend đã gán mặc định)
+    if (!response.user.roles.includes('STUDENT')) {
+      registerError.value = 'Lỗi: Không thể gán role STUDENT'
+      return
+    }
+    
+    // Lưu token + user vào localStorage
+    localStorage.setItem('access_token', response.token)
+    localStorage.setItem('user', JSON.stringify(response.user))
+    
+    // Cập nhật state
+    isLoggedIn.value = true
+    currentUser.value = {
+      name: response.user.name,
+      email: response.user.email,
+      avatar: 'https://i.pravatar.cc/150?img=12'
+    }
+    
+    // Đóng modal
+    showRegisterModal.value = false
+    registerError.value = ''
+    
+    console.log('Đăng ký thành công:', response.user)
+  } catch (error) {
+    console.error('Lỗi đăng ký:', error)
+    
+    // Xử lý lỗi
+    if (error.message) {
+      registerError.value = error.message
+    } else {
+      registerError.value = 'Đăng ký thất bại'
+    }
+  } finally {
+    registerLoading.value = false
+  }
 }
 
 const switchToRegister = () => {

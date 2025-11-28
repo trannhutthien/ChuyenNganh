@@ -20,6 +20,10 @@ class NguoiDung extends Authenticatable
     protected $table = 'NguoiDung';
     protected $primaryKey = 'NguoiDungId';
 
+    // Map timestamps sang tên cột tiếng Việt
+    const CREATED_AT = 'TaoLuc';
+    const UPDATED_AT = 'CapNhatLuc';
+
     protected $fillable = [
         'Email',
         'MatKhauHash',
