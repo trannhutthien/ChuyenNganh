@@ -100,160 +100,73 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BannerSlider from '../components/ui/BannerSlider.vue'
 import SectionHeader from '../components/home/SectionHeader.vue'
 import CourseCard from '../components/home/CourseCard.vue'
 import RoadmapCard from '../components/home/RoadmapCard.vue'
 import PostCard from '../components/home/PostCard.vue'
+import { courseService } from '../services/courseService.js'
 
 const router = useRouter()
 
+// Loading states
+const loadingPro = ref(false)
+const loadingFree = ref(false)
 
 const startLearning = (courseId) => {
   router.push({ name: 'CourseLearning', params: { courseId } })
 }
 
 // ========== KHÓA HỌC PRO (CÓ PHÍ) ==========
-const proCourses = ref([
-  {
-    id: 1,
-    icon: '⚡',
-    title: 'Vue.js 3 Composition API - Master Class',
-    description: 'Khóa học Vue.js 3 chuyên sâu từ cơ bản đến nâng cao, dự án thực tế',
-    students: '2,456',
-    price: 799000,
-    originalPrice: 1499000
-  },
-  {
-    id: 2,
-    icon: '🚀',
-    title: 'Node.js & Express - Backend Master',
-    description: 'Xây dựng RESTful API chuyên nghiệp với Node.js, MongoDB',
-    students: '1,823',
-    price: 999000,
-    originalPrice: 1799000
-  },
-  {
-    id: 3,
-    icon: '🎯',
-    title: 'React Native - Mobile App Development',
-    description: 'Phát triển ứng dụng di động đa nền tảng với React Native',
-    students: '1,567',
-    price: 1299000,
-    originalPrice: null
-  },
-  {
-    id: 4,
-    icon: '💎',
-    title: 'Full-stack MEVN - Dự án thực tế',
-    description: 'MongoDB, Express, Vue.js, Node.js - Xây dựng ứng dụng hoàn chỉnh',
-    students: '945',
-    price: 1599000,
-    originalPrice: 2499000
-  }
-])
+const proCourses = ref([])
 
 // ========== KHÓA HỌC CƠ BẢN (MIỄN PHÍ) ==========
-const freeCourses = ref([
-  {
-    id: 5,
-    icon: '📘',
-    title: 'HTML & CSS Cơ bản',
-    description: 'Bắt đầu với HTML5 và CSS3, xây dựng trang web đầu tiên',
-    students: '5,234',
-    price: 0,
-    originalPrice: null
-  },
-  {
-    id: 6,
-    icon: '💛',
-    title: 'JavaScript Căn bản',
-    description: 'Nền tảng JavaScript từ đầu, biến, hàm, vòng lặp, DOM',
-    students: '4,567',
-    price: null,
-    originalPrice: null
-  },
-  {
-    id: 7,
-    icon: '🐍',
-    title: 'Python Cho Người Mới Bắt Đầu',
-    description: 'Học Python từ con số 0, cú pháp cơ bản và thực hành',
-    students: '3,891',
-    price: 0,
-    originalPrice: null
-  },
-  {
-    id: 8,
-    icon: '🎨',
-    title: 'Thiết kế UI/UX với Figma',
-    description: 'Tạo giao diện đẹp mắt với công cụ Figma miễn phí',
-    students: '2,345',
-    price: 0,
-    originalPrice: null
-  }
-])
+const freeCourses = ref([])
 
 // ========== LỘ TRÌNH HỌC TẬP ==========
-const roadmaps = ref([
-  {
-    id: 1,
-    icon: '🎨',
-    title: 'Frontend Developer',
-    description: 'Lộ trình trở thành Frontend Developer chuyên nghiệp',
-    courses: 12
-  },
-  {
-    id: 2,
-    icon: '⚙️',
-    title: 'Backend Developer',
-    description: 'Xây dựng hệ thống backend mạnh mẽ và bảo mật',
-    courses: 15
-  },
-  {
-    id: 3,
-    icon: '📱',
-    title: 'Mobile Developer',
-    description: 'Phát triển ứng dụng di động iOS và Android',
-    courses: 10
-  }
-])
+const roadmaps = ref([])
 
 // ========== BÀI VIẾT MỚI NHẤT ==========
-const posts = ref([
-  {
-    id: 1,
-    title: '10 Mẹo tối ưu hiệu suất Vue.js',
-    excerpt: 'Những kỹ thuật giúp ứng dụng Vue.js của bạn chạy nhanh hơn và hiệu quả hơn',
-    category: 'Vue.js',
-    date: '5 ngày trước',
-    author: {
-      name: 'Nguyễn Văn A',
-      avatar: 'https://i.pravatar.cc/150?img=1'
-    }
-  },
-  {
-    id: 2,
-    title: 'Cách sử dụng Async/Await trong JavaScript',
-    excerpt: 'Hiểu rõ về bất đồng bộ trong JavaScript và cách sử dụng async/await',
-    category: 'JavaScript',
-    date: '1 tuần trước',
-    author: {
-      name: 'Trần Thị B',
-      avatar: 'https://i.pravatar.cc/150?img=2'
-    }
-  },
-  {
-    id: 3,
-    title: 'REST API vs GraphQL: Nên chọn gì?',
-    excerpt: 'So sánh chi tiết giữa REST API và GraphQL để lựa chọn phù hợp',
-    category: 'Backend',
-    date: '2 tuần trước',
-    author: {
-      name: 'Lê Văn C',
-      avatar: 'https://i.pravatar.cc/150?img=3'
-    }
+const posts = ref([])
+
+// Fetch khóa học Pro từ backend
+const fetchProCourses = async () => {
+  loadingPro.value = true
+  try {
+    const response = await courseService.getProCourses(4)
+    // response đã được unwrap bởi interceptor, nên data nằm trực tiếp trong response
+    proCourses.value = response.data || response || []
+    console.log('Pro courses:', proCourses.value)
+  } catch (error) {
+    console.error('Lỗi lấy khóa học Pro:', error)
+    proCourses.value = []
+  } finally {
+    loadingPro.value = false
   }
-])
+}
+
+// Fetch khóa học miễn phí từ backend
+const fetchFreeCourses = async () => {
+  loadingFree.value = true
+  try {
+    const response = await courseService.getFreeCourses(4)
+    // response đã được unwrap bởi interceptor, nên data nằm trực tiếp trong response
+    freeCourses.value = response.data || response || []
+    console.log('Free courses:', freeCourses.value)
+  } catch (error) {
+    console.error('Lỗi lấy khóa học miễn phí:', error)
+    freeCourses.value = []
+  } finally {
+    loadingFree.value = false
+  }
+}
+
+// Gọi API khi component mount
+onMounted(() => {
+  fetchProCourses()
+  fetchFreeCourses()
+  // TODO: Fetch roadmaps và posts khi có API
+})
 </script>

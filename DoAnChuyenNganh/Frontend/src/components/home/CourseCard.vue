@@ -10,10 +10,20 @@
       class="h-48 flex items-center justify-center relative overflow-hidden"
       :class="thumbnailClass"
     >
+      <!-- Nếu có ảnh thumbnail từ backend -->
+      <img 
+        v-if="course.thumbnail && !isIconOnly"
+        :src="getImageUrl(course.thumbnail)"
+        :alt="course.title"
+        class="w-full h-full object-cover group-hover:scale-110 transition-transform"
+        @error="handleImageError"
+      />
+      <!-- Fallback: Hiển thị icon -->
       <span 
+        v-else
         class="text-white text-4xl font-bold group-hover:scale-110 transition-transform"
       >
-        {{ course.icon }}
+        {{ course.icon || '📚' }}
       </span>
       
       <!-- Badge (PRO/FREE) -->
@@ -122,7 +132,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 // Props
 const props = defineProps({
@@ -168,7 +178,23 @@ const badgeText = computed(() => {
   return props.type === 'pro' ? 'PRO' : 'FREE'
 })
 
+// State cho image error
+const isIconOnly = ref(false)
+
 // Helper functions
+const getImageUrl = (thumbnail) => {
+  // Nếu đã là URL đầy đủ
+  if (thumbnail.startsWith('http')) {
+    return thumbnail
+  }
+  // Nếu là tên file, thêm base URL
+  return `http://127.0.0.1:8000/storage/courses/${thumbnail}`
+}
+
+const handleImageError = () => {
+  isIconOnly.value = true
+}
+
 const formatPrice = (price) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',

@@ -12,6 +12,16 @@ export const courseService = {
     return api.get(`/courses/${id}`)
   },
 
+  // Lấy khóa học Pro (có phí)
+  getProCourses(limit = 8) {
+    return api.get('/courses/pro', { params: { limit } })
+  },
+
+  // Lấy khóa học miễn phí
+  getFreeCourses(limit = 8) {
+    return api.get('/courses/free', { params: { limit } })
+  },
+
   // Lấy khóa học theo category
   getByCategory(category, params = {}) {
     return api.get(`/courses/category/${category}`, { params })

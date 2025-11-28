@@ -3,13 +3,26 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\KhoaHocController;
 
+// ========== AUTH ROUTES ==========
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+// ========== KHÓA HỌC ROUTES (PUBLIC) ==========
+Route::prefix('courses')->group(function () {
+    Route::get('/', [KhoaHocController::class, 'index']);           // Lấy tất cả khóa học
+    Route::get('/pro', [KhoaHocController::class, 'getProCourses']);    // Khóa học Pro
+    Route::get('/free', [KhoaHocController::class, 'getFreeCourses']);  // Khóa học miễn phí
+    Route::get('/popular', [KhoaHocController::class, 'getPopular']);   // Khóa học phổ biến
+    Route::get('/latest', [KhoaHocController::class, 'getLatest']);     // Khóa học mới nhất
+    Route::get('/search', [KhoaHocController::class, 'search']);        // Tìm kiếm
+    Route::get('/{id}', [KhoaHocController::class, 'show']);            // Chi tiết khóa học
 });
 
 
