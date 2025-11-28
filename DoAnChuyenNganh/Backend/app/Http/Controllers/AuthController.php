@@ -30,9 +30,14 @@ class AuthController extends Controller
         // 4. Lấy role
         $roles = $user->vaiTros->pluck('MaVaiTro');
 
-        // 5. Chỉ cho phép STUDENT
-        if (!$roles->contains('STUDENT')) {
-            return response()->json(['message' => 'Không phải học viên'], 403);
+        // 5. Cho phép STUDENT hoặc ADMIN đăng nhập
+        $allowedRoles = ['STUDENT', 'ADMIN'];
+        $hasAccess = $roles->contains(function ($role) use ($allowedRoles) {
+            return in_array($role, $allowedRoles);
+        });
+
+        if (!$hasAccess) {
+            return response()->json(['message' => 'Tài khoản không có quyền truy cập'], 403);
         }
 
         // 6. Tạo token

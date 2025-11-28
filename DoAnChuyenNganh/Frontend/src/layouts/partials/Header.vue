@@ -354,9 +354,10 @@ const handleLoginSubmit = async (data) => {
     // Call backend API (response interceptor already unwraps .data)
     const response = await authService.login(data.email, data.password)
     
-    // Check role STUDENT (backend already checked, but double verification)
-    if (!response.user.roles.includes('STUDENT')) {
-      loginError.value = 'Không phải học viên'
+    // Cho phép STUDENT hoặc ADMIN đăng nhập
+    const hasValidRole = response.user.roles.includes('STUDENT') || response.user.roles.includes('ADMIN')
+    if (!hasValidRole) {
+      loginError.value = 'Tài khoản không có quyền truy cập'
       return
     }
     
@@ -371,6 +372,9 @@ const handleLoginSubmit = async (data) => {
       email: response.user.email,
       avatar: 'https://i.pravatar.cc/150?img=12'
     }
+    
+    // Emit event để Sidebar cập nhật roles
+    window.dispatchEvent(new Event('auth-changed'))
     
     // Close modal on success
     showLoginModal.value = false
@@ -473,6 +477,9 @@ const handleLogout = async () => {
     // Clear localStorage
     localStorage.removeItem('access_token')
     localStorage.removeItem('user')
+    
+    // Emit event để Sidebar cập nhật roles
+    window.dispatchEvent(new Event('auth-changed'))
     
     console.log('Đã đăng xuất')
   }
