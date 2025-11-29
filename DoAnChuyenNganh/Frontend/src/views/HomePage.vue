@@ -126,10 +126,66 @@ const proCourses = ref([])
 const freeCourses = ref([])
 
 // ========== LỘ TRÌNH HỌC TẬP ==========
-const roadmaps = ref([])
+const roadmaps = ref([
+  {
+    id: 1,
+    icon: '🎨',
+    title: 'Frontend Developer',
+    description: 'Lộ trình trở thành Frontend Developer chuyên nghiệp',
+    courses: 12
+  },
+  {
+    id: 2,
+    icon: '⚙️',
+    title: 'Backend Developer',
+    description: 'Xây dựng hệ thống backend mạnh mẽ và bảo mật',
+    courses: 15
+  },
+  {
+    id: 3,
+    icon: '📱',
+    title: 'Mobile Developer',
+    description: 'Phát triển ứng dụng di động iOS và Android',
+    courses: 10
+  }
+])
 
 // ========== BÀI VIẾT MỚI NHẤT ==========
-const posts = ref([])
+const posts = ref([
+  {
+    id: 1,
+    title: '10 Mẹo tối ưu hiệu suất Vue.js',
+    excerpt: 'Những kỹ thuật giúp ứng dụng Vue.js của bạn chạy nhanh hơn và hiệu quả hơn',
+    category: 'Vue.js',
+    date: '5 ngày trước',
+    author: {
+      name: 'Nguyễn Văn A',
+      avatar: 'https://i.pravatar.cc/150?img=1'
+    }
+  },
+  {
+    id: 2,
+    title: 'Cách sử dụng Async/Await trong JavaScript',
+    excerpt: 'Hiểu rõ về bất đồng bộ trong JavaScript và cách sử dụng async/await',
+    category: 'JavaScript',
+    date: '1 tuần trước',
+    author: {
+      name: 'Trần Thị B',
+      avatar: 'https://i.pravatar.cc/150?img=2'
+    }
+  },
+  {
+    id: 3,
+    title: 'REST API vs GraphQL: Nên chọn gì?',
+    excerpt: 'So sánh chi tiết giữa REST API và GraphQL để lựa chọn phù hợp',
+    category: 'Backend',
+    date: '2 tuần trước',
+    author: {
+      name: 'Lê Văn C',
+      avatar: 'https://i.pravatar.cc/150?img=3'
+    }
+  }
+])
 
 // Fetch khóa học Pro từ backend
 const fetchProCourses = async () => {

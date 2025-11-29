@@ -28,6 +28,11 @@ const routes = [
     name: 'CourseManagement',
     component: CourseManagementPage,
     meta: { requiresAuth: true, roles: ['ADMIN', 'EDITOR'] }
+  },
+  // Catch-all route - redirect về trang chủ nếu không tìm thấy route
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
   }
 ]
 

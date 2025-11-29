@@ -73,7 +73,6 @@ CREATE TABLE BaiHoc (
     BaiHocId INT AUTO_INCREMENT PRIMARY KEY,
     KhoaHocId INT NOT NULL,
     TieuDe NVARCHAR(200) NOT NULL,
-    NoiDung TEXT NOT NULL,
     ThuTu INT DEFAULT 1,
     TrangThai TINYINT DEFAULT 2 CHECK (TrangThai IN (1,2,3)), -- 1=draft,2=published,3=archived
     TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -81,6 +80,41 @@ CREATE TABLE BaiHoc (
     FOREIGN KEY (KhoaHocId) REFERENCES KhoaHoc(KhoaHocId) ON DELETE CASCADE,
     UNIQUE (KhoaHocId, ThuTu)
 );
+
+-- ==============================
+-- BẢNG NỘI DUNG BÀI HỌC (BLOCK)
+-- ==============================
+CREATE TABLE NoiDungBaiHoc (
+    NoiDungId INT AUTO_INCREMENT PRIMARY KEY,
+    BaiHocId INT NOT NULL,
+
+    -- loại nội dung: tiêu đề, tiêu đề nhỏ, đoạn văn, hình ảnh, video, trích dẫn...
+    LoaiNoiDung ENUM(
+        'heading',
+        'subheading',
+        'paragraph',
+        'image',
+        'video',
+        'quote',
+        'list'
+    ) NOT NULL,
+
+    -- nội dung text hoặc URL hoặc JSON tùy loại
+    NoiDung TEXT,
+
+    -- thứ tự hiển thị trong bài học
+    ThuTu INT DEFAULT 1,
+
+    TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (BaiHocId) REFERENCES BaiHoc(BaiHocId) ON DELETE CASCADE
+);
+
+-- Index tối ưu truy vấn
+CREATE INDEX IX_NoiDungBaiHoc_BaiHocId ON NoiDungBaiHoc(BaiHocId);
+CREATE INDEX IX_NoiDungBaiHoc_ThuTu ON NoiDungBaiHoc(ThuTu);
+
 
 -- Ngân hàng câu hỏi thuộc KHÓA HỌC
 CREATE TABLE NganHangCauHoi (
