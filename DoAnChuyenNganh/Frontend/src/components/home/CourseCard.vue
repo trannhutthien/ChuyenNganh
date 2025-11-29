@@ -1,13 +1,13 @@
 <template>
   <!-- Course Card - Thẻ khóa học -->
   <div 
-    class="bg-white rounded-xl overflow-hidden cursor-pointer group transition-all"
+    class="bg-white rounded-lg overflow-hidden cursor-pointer group transition-all"
     :class="cardClass"
     @click="$emit('click', course.id)"
   >
     <!-- Thumbnail -->
     <div 
-      class="h-48 flex items-center justify-center relative overflow-hidden"
+      class="h-32 flex items-center justify-center relative overflow-hidden"
       :class="thumbnailClass"
     >
       <!-- Nếu có ảnh thumbnail từ backend -->
@@ -21,14 +21,14 @@
       <!-- Fallback: Hiển thị icon -->
       <span 
         v-else
-        class="text-white text-4xl font-bold group-hover:scale-110 transition-transform"
+        class="text-white text-3xl font-bold group-hover:scale-110 transition-transform"
       >
         {{ course.icon || '📚' }}
       </span>
       
       <!-- Badge (PRO/FREE) -->
       <div 
-        class="absolute top-3 right-3 px-2 py-1 text-xs font-bold rounded-md"
+        class="absolute top-2 right-2 px-1.5 py-0.5 text-[10px] font-bold rounded"
         :class="badgeClass"
       >
         {{ badgeText }}
@@ -36,28 +36,28 @@
     </div>
     
     <!-- Content -->
-    <div class="p-4">
+    <div class="p-3">
       <!-- Title -->
-      <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">
+      <h3 class="font-semibold text-gray-800 mb-1 text-sm line-clamp-2">
         {{ course.title }}
       </h3>
       
       <!-- Description -->
-      <p class="text-sm text-gray-600 mb-3 line-clamp-2">
+      <p class="text-xs text-gray-600 mb-2 line-clamp-2">
         {{ course.description }}
       </p>
       
-      <!-- Stats & Rating -->
-      <div class="flex items-center justify-between mb-3">
+      <!-- Stats -->
+      <div class="flex items-center justify-between mb-2">
         <!-- Students count -->
-        <span class="text-xs text-gray-500 flex items-center gap-1">
+        <span class="text-[10px] text-gray-500 flex items-center gap-1">
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
             fill="none" 
             viewBox="0 0 24 24" 
             stroke-width="1.5" 
             stroke="currentColor" 
-            class="w-4 h-4"
+            class="w-3 h-3"
           >
             <path 
               stroke-linecap="round" 
@@ -69,14 +69,14 @@
         </span>
         
         <!-- Rating stars -->
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-0.5">
           <svg 
             v-for="i in 5" 
             :key="i" 
             xmlns="http://www.w3.org/2000/svg" 
             viewBox="0 0 24 24" 
             fill="currentColor" 
-            class="w-4 h-4 text-yellow-400"
+            class="w-3 h-3 text-yellow-400"
           >
             <path 
               fill-rule="evenodd" 
@@ -88,14 +88,14 @@
       </div>
       
       <!-- Price Section -->
-      <div class="pt-3 border-t border-gray-200">
+      <div class="pt-2 border-t border-gray-200">
         <slot name="price">
           <!-- Default price display -->
           <div class="flex items-center justify-between">
             <!-- Free course -->
             <span 
               v-if="!course.price || course.price === 0" 
-              class="text-lg font-bold text-green-600"
+              class="text-sm font-bold text-green-600"
             >
               Miễn phí
             </span>
@@ -104,15 +104,15 @@
             <div v-else>
               <!-- With discount -->
               <div v-if="course.originalPrice" class="flex flex-col">
-                <span class="text-xs text-gray-400 line-through">
+                <span class="text-[10px] text-gray-400 line-through">
                   {{ formatPrice(course.originalPrice) }}
                 </span>
-                <span class="text-lg font-bold text-primary">
+                <span class="text-sm font-bold text-primary">
                   {{ formatPrice(course.price) }}
                 </span>
               </div>
               <!-- Without discount -->
-              <span v-else class="text-lg font-bold text-primary">
+              <span v-else class="text-sm font-bold text-primary">
                 {{ formatPrice(course.price) }}
               </span>
             </div>
@@ -120,7 +120,7 @@
             <!-- Discount badge -->
             <span 
               v-if="course.originalPrice && course.price" 
-              class="px-2 py-1 bg-red-500 text-white text-xs font-bold rounded"
+              class="px-1 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded"
             >
               -{{ calculateDiscount(course.originalPrice, course.price) }}%
             </span>

@@ -8,7 +8,7 @@ use App\Models\KhoaHoc;
 class KhoaHocController extends Controller
 {
     /**
-     * Lấy tất cả khóa học (có phân trang)
+     * Lấy tất cả khóa học active (có phân trang)
      */
     public function index(Request $request)
     {
@@ -16,6 +16,31 @@ class KhoaHocController extends Controller
         
         $khoaHocs = KhoaHoc::with(['baiHocs'])
             ->active()
+            ->orderBy('TaoLuc', 'desc')
+            ->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'data' => $khoaHocs->map(function ($khoaHoc) {
+                return $this->formatKhoaHoc($khoaHoc);
+            }),
+            'pagination' => [
+                'total' => $khoaHocs->total(),
+                'per_page' => $khoaHocs->perPage(),
+                'current_page' => $khoaHocs->currentPage(),
+                'last_page' => $khoaHocs->lastPage()
+            ]
+        ]);
+    }
+
+    /**
+     * Lấy tất cả khóa học (bao gồm cả active và inactive) - dành cho admin
+     */
+    public function getAll(Request $request)
+    {
+        $perPage = $request->get('per_page', 20);
+        
+        $khoaHocs = KhoaHoc::with(['baiHocs'])
             ->orderBy('TaoLuc', 'desc')
             ->paginate($perPage);
 

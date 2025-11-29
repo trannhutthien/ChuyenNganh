@@ -1,42 +1,42 @@
 <template>
   <!-- Post Card - Thẻ bài viết -->
   <div 
-    class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+    class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
     @click="$emit('click', post.id)"
   >
     <!-- Thumbnail -->
     <div 
-      class="h-48 bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center"
+      class="h-32 bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center"
     >
-      <span class="text-white text-5xl">{{ post.icon || '📝' }}</span>
+      <span class="text-white text-3xl">{{ post.icon || '📝' }}</span>
     </div>
     
     <!-- Content -->
-    <div class="p-5">
+    <div class="p-3">
       <!-- Category & Date -->
-      <div class="flex items-center gap-2 mb-3">
-        <span class="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full font-semibold">
+      <div class="flex items-center gap-1 mb-2">
+        <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full font-semibold">
           {{ post.category }}
         </span>
         <span class="text-xs text-gray-500">{{ post.date }}</span>
       </div>
       
       <!-- Title -->
-      <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">
+      <h3 class="text-sm font-bold text-gray-800 mb-1 line-clamp-2">
         {{ post.title }}
       </h3>
       
       <!-- Excerpt -->
-      <p class="text-sm text-gray-600 line-clamp-3 mb-4">
+      <p class="text-xs text-gray-600 line-clamp-2 mb-2">
         {{ post.excerpt }}
       </p>
       
       <!-- Author -->
-      <div class="flex items-center gap-2 text-sm text-gray-500">
+      <div class="flex items-center gap-1 text-xs text-gray-500">
         <img 
           :src="post.author.avatar" 
           :alt="post.author.name" 
-          class="w-6 h-6 rounded-full object-cover"
+          class="w-5 h-5 rounded-full object-cover"
         >
         <span>{{ post.author.name }}</span>
       </div>
