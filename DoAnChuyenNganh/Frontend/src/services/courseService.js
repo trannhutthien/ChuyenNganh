@@ -17,6 +17,16 @@ export const courseService = {
     return api.get(`/courses/${courseId}/lessons`)
   },
 
+  // Lấy chi tiết bài học theo ID
+  getLessonById(lessonId) {
+    return api.get(`/lessons/${lessonId}`)
+  },
+
+  // Lấy nội dung chi tiết của bài học
+  getLessonContent(lessonId) {
+    return api.get(`/lessons/${lessonId}/content`)
+  },
+
   // Lấy khóa học Pro (có phí)
   getProCourses(limit = 8) {
     return api.get('/courses/pro', { params: { limit } })

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KhoaHocController;
+use App\Http\Controllers\BaiHocController;
 
 // ========== AUTH ROUTES ==========
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -27,4 +28,8 @@ Route::prefix('courses')->group(function () {
     Route::get('/{id}/lessons', [KhoaHocController::class, 'getLessons']); // Lấy bài học của khóa học
 });
 
-
+// ========== BÀI HỌC ROUTES (PUBLIC) ==========
+Route::prefix('lessons')->group(function () {
+    Route::get('/{id}', [BaiHocController::class, 'show']);             // Chi tiết bài học
+    Route::get('/{id}/content', [BaiHocController::class, 'getContent']); // Nội dung chi tiết bài học
+});

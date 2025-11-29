@@ -37,6 +37,14 @@ class BaiHoc extends Model
     }
 
     /**
+     * Quan hệ với NoiDungBaiHoc (nội dung chi tiết của bài học)
+     */
+    public function noiDungs()
+    {
+        return $this->hasMany(NoiDungBaiHoc::class, 'BaiHocId', 'BaiHocId')->orderBy('ThuTu', 'asc');
+    }
+
+    /**
      * Quan hệ với tiến độ học của người dùng
      */
     public function tienDoHocs()
