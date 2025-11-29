@@ -12,6 +12,11 @@ export const courseService = {
     return api.get(`/courses/${id}`)
   },
 
+  // Lấy danh sách bài học của khóa học
+  getLessons(courseId) {
+    return api.get(`/courses/${courseId}/lessons`)
+  },
+
   // Lấy khóa học Pro (có phí)
   getProCourses(limit = 8) {
     return api.get('/courses/pro', { params: { limit } })

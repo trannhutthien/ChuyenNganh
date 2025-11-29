@@ -221,4 +221,53 @@ class KhoaHocController extends Controller
             'createdAt' => $khoaHoc->TaoLuc
         ];
     }
+
+    /**
+     * Lấy danh sách bài học của một khóa học
+     */
+    public function getLessons($courseId)
+    {
+        $khoaHoc = KhoaHoc::find($courseId);
+
+        if (!$khoaHoc) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy khóa học'
+            ], 404);
+        }
+
+        $baiHocs = \App\Models\BaiHoc::where('KhoaHocId', $courseId)
+            ->orderBy('ThuTu', 'asc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'course' => [
+                'id' => $khoaHoc->KhoaHocId,
+                'title' => $khoaHoc->TieuDe,
+            ],
+            'data' => $baiHocs->map(function ($baiHoc) {
+                return $this->formatBaiHoc($baiHoc);
+            })
+        ]);
+    }
+
+    /**
+     * Format dữ liệu bài học để trả về frontend
+     */
+    private function formatBaiHoc($baiHoc)
+    {
+        return [
+            'id' => $baiHoc->BaiHocId,
+            'title' => $baiHoc->TieuDe,
+            'description' => $baiHoc->MoTa,
+            'content' => $baiHoc->NoiDung,
+            'type' => $baiHoc->LoaiBaiHoc,
+            'order' => $baiHoc->ThuTu,
+            'duration' => $baiHoc->ThoiLuong,
+            'videoUrl' => $baiHoc->VideoUrl,
+            'status' => $baiHoc->TrangThai,
+            'completed' => false // TODO: Kiểm tra tiến độ học của user
+        ];
+    }
 }

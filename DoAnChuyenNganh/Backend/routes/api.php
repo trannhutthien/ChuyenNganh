@@ -24,6 +24,7 @@ Route::prefix('courses')->group(function () {
     Route::get('/latest', [KhoaHocController::class, 'getLatest']);     // Khóa học mới nhất
     Route::get('/search', [KhoaHocController::class, 'search']);        // Tìm kiếm
     Route::get('/{id}', [KhoaHocController::class, 'show']);            // Chi tiết khóa học
+    Route::get('/{id}/lessons', [KhoaHocController::class, 'getLessons']); // Lấy bài học của khóa học
 });
 
 

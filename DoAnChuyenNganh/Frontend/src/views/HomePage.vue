@@ -25,7 +25,7 @@
             :key="course.id"
             :course="course"
             type="pro"
-            @click="startLearning(course.id)"
+            @click="startLearning"
           />
         </div>
       </div>
@@ -49,7 +49,7 @@
             :key="course.id"
             :course="course"
             type="free"
-            @click="startLearning(course.id)"
+            @click="startLearning"
           />
         </div>
       </div>
@@ -114,7 +114,8 @@ const loadingPro = ref(false)
 const loadingFree = ref(false)
 
 const startLearning = (courseId) => {
-  router.push({ name: 'CourseLearning', params: { courseId } })
+  console.log('Navigating to course:', courseId)
+  router.push({ name: 'CourseLearning', params: { courseId: courseId } })
 }
 
 // ========== KHÓA HỌC PRO (CÓ PHÍ) ==========
