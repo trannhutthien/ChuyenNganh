@@ -41,7 +41,9 @@
         </div>
 
         <!-- Nút bài kiểm tra cuối khóa -->
-        <div class="mt-4 px-2">
+        <!-- File: LessonSidebar.vue - Dòng 44-54 -->
+        <!-- Chỉ hiển thị khi có bài kiểm tra (hasBaiKiemTra = true) -->
+        <div v-if="hasBaiKiemTra" class="mt-4 px-2">
           <BaseButton 
             variant="primary" 
             class="w-full"
@@ -69,6 +71,12 @@ defineProps({
   currentIndex: {
     type: Number,
     required: true
+  },
+  // File: LessonSidebar.vue - Dòng 72-77
+  // Có bài kiểm tra cuối khóa hay không (từ API backend)
+  hasBaiKiemTra: {
+    type: Boolean,
+    default: false
   }
 })
 

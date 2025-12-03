@@ -126,9 +126,12 @@
       </div>
 
       <!-- Cột BÊN PHẢI - Danh sách bài học -->
+      <!-- File: CourseLearningPage.vue - Dòng 129-136 -->
+      <!-- Truyền prop hasBaiKiemTra để kiểm soát hiển thị nút làm bài kiểm tra -->
       <LessonSidebar
         :lessons="lessons"
         :current-index="currentLessonIndex"
+        :has-bai-kiem-tra="hasBaiKiemTra"
         @select-lesson="selectLesson"
         @start-final-exam="goToFinalExam"
       />
@@ -158,6 +161,9 @@ const error = ref(null)
 const lessons = ref([])
 const lessonContents = ref([])  // Nội dung chi tiết của bài học hiện tại
 const finalExam = ref(null)     // Thông tin bài kiểm tra cuối khóa
+// File: CourseLearningPage.vue - Dòng 164
+// Biến kiểm tra khóa học này có bài kiểm tra cuối khóa hay không
+const hasBaiKiemTra = ref(false)
 
 // ========== COMPUTED ==========
 const currentLesson = computed(() => {
@@ -244,15 +250,22 @@ const loadLessons = async (courseId) => {
   }
 }
 
-// Load thông tin bài kiểm tra cuối khóa
+// File: CourseLearningPage.vue - Dòng 254-270
+// Load thông tin bài kiểm tra cuối khóa từ API
+// Nếu có bài kiểm tra -> hasBaiKiemTra = true -> hiển thị nút làm bài
+// Nếu không có -> hasBaiKiemTra = false -> ẩn nút làm bài
 const loadFinalExam = async (courseId) => {
   try {
     const response = await quizService.getFinalExam(courseId)
     console.log('Final exam response:', response)
     finalExam.value = response.baiKiemTra || null
+    // Cập nhật hasBaiKiemTra dựa trên kết quả API
+    hasBaiKiemTra.value = !!response.baiKiemTra
   } catch (err) {
     console.log('No final exam found or error:', err)
     finalExam.value = null
+    // Không có bài kiểm tra -> ẩn nút
+    hasBaiKiemTra.value = false
   }
 }
 
