@@ -39,24 +39,31 @@
             <div class="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></div>
           </div>
         </div>
+
+        <!-- Nút bài kiểm tra cuối khóa -->
+        <div class="mt-4 px-2">
+          <BaseButton 
+            variant="primary" 
+            class="w-full"
+            @click="$emit('start-final-exam')"
+          >
+            📝 Làm bài kiểm tra cuối khóa
+          </BaseButton>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import BaseButton from '../ui/BaseButton.vue'
+
 // Props
-const props = defineProps({
+defineProps({
   // Danh sách các bài học
   lessons: {
     type: Array,
-    required: true,
-    validator: (value) => {
-      return value.every(lesson => 
-        lesson.hasOwnProperty('id') && 
-        lesson.hasOwnProperty('title')
-      )
-    }
+    required: true
   },
   // Index bài học hiện tại (bắt đầu từ 0)
   currentIndex: {
@@ -66,8 +73,9 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits([
-  'select-lesson' // Emit khi người dùng click vào bài học, trả về index
+defineEmits([
+  'select-lesson',      // Emit khi người dùng click vào bài học
+  'start-final-exam'    // Emit khi click nút làm bài kiểm tra cuối khóa
 ])
 </script>
 

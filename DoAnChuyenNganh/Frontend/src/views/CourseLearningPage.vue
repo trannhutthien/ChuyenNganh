@@ -130,6 +130,7 @@
         :lessons="lessons"
         :current-index="currentLessonIndex"
         @select-lesson="selectLesson"
+        @start-final-exam="goToFinalExam"
       />
     </template>
   </div>
@@ -141,6 +142,7 @@ import { useRouter, useRoute } from 'vue-router'
 import LessonSidebar from '../components/course/LessonSidebar.vue'
 import LessonContentItem from '../components/course/LessonContentItem.vue'
 import { courseService } from '../services/courseService.js'
+import quizService from '../services/quizService.js'
 
 const router = useRouter()
 const route = useRoute()
@@ -155,6 +157,7 @@ const error = ref(null)
 // ========== DATA - Load từ API ==========
 const lessons = ref([])
 const lessonContents = ref([])  // Nội dung chi tiết của bài học hiện tại
+const finalExam = ref(null)     // Thông tin bài kiểm tra cuối khóa
 
 // ========== COMPUTED ==========
 const currentLesson = computed(() => {
@@ -203,6 +206,12 @@ const goToQuiz = () => {
   router.push(`/quiz/${quizId}`)
 }
 
+// Đi đến trang bài kiểm tra cuối khóa
+const goToFinalExam = () => {
+  const quizId = 1 // TODO: Lấy quiz ID thực tế
+  router.push(`/quiz/${quizId}`)
+}
+
 // ========== API CALLS ==========
 const loadLessons = async (courseId) => {
   loading.value = true
@@ -224,11 +233,26 @@ const loadLessons = async (courseId) => {
     if (lessons.value.length > 0) {
       await loadLessonContent(lessons.value[0].id)
     }
+
+    // Load thông tin bài kiểm tra cuối khóa
+    await loadFinalExam(courseId)
   } catch (err) {
     console.error('Error loading lessons:', err)
     error.value = 'Không thể tải bài học. Vui lòng thử lại.'
   } finally {
     loading.value = false
+  }
+}
+
+// Load thông tin bài kiểm tra cuối khóa
+const loadFinalExam = async (courseId) => {
+  try {
+    const response = await quizService.getFinalExam(courseId)
+    console.log('Final exam response:', response)
+    finalExam.value = response.baiKiemTra || null
+  } catch (err) {
+    console.log('No final exam found or error:', err)
+    finalExam.value = null
   }
 }
 

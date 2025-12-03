@@ -269,7 +269,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import RegisterModal from '../../components/modal/RegisterModal.vue'
 import LoginModal from '../../components/modal/LoginModal.vue'
@@ -514,6 +514,43 @@ onMounted(() => {
       localStorage.removeItem('user')
     }
   }
+  
+  // File: Header.vue - Dòng 510-530
+  // Lắng nghe event 'auth-changed' để cập nhật UI khi đăng nhập/đăng xuất từ component khác (VD: QuizPage)
+  window.addEventListener('auth-changed', handleAuthChanged)
+})
+
+// File: Header.vue - Dòng 532-550
+// Hàm xử lý khi nhận event 'auth-changed' từ component khác
+const handleAuthChanged = () => {
+  const token = localStorage.getItem('access_token')
+  const savedUser = localStorage.getItem('user')
+  
+  if (token && savedUser) {
+    // Đã đăng nhập -> cập nhật UI hiển thị avatar
+    try {
+      const userData = JSON.parse(savedUser)
+      isLoggedIn.value = true
+      currentUser.value = {
+        name: userData.name,
+        email: userData.email,
+        avatar: 'https://i.pravatar.cc/150?img=12'
+      }
+      console.log('Header: Cập nhật UI sau khi đăng nhập')
+    } catch (error) {
+      console.error('Header: Lỗi parse user data:', error)
+    }
+  } else {
+    // Đã đăng xuất -> cập nhật UI hiển thị nút đăng nhập/đăng ký
+    isLoggedIn.value = false
+    currentUser.value = null
+    console.log('Header: Cập nhật UI sau khi đăng xuất')
+  }
+}
+
+// Cleanup listener khi component unmount
+onUnmounted(() => {
+  window.removeEventListener('auth-changed', handleAuthChanged)
 })
 </script>
 

@@ -5,6 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KhoaHocController;
 use App\Http\Controllers\BaiHocController;
+use App\Http\Controllers\NganHangCauHoiController;
+use App\Http\Controllers\BaiKiemTraController;
+use App\Http\Controllers\LanLamBaiController;
+use App\Http\Controllers\BaiKiemTraCuoiKhoaController;
 
 // ========== AUTH ROUTES ==========
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -32,4 +36,69 @@ Route::prefix('courses')->group(function () {
 Route::prefix('lessons')->group(function () {
     Route::get('/{id}', [BaiHocController::class, 'show']);             // Chi tiết bài học
     Route::get('/{id}/content', [BaiHocController::class, 'getContent']); // Nội dung chi tiết bài học
+});
+
+// ========== NGÂN HÀNG CÂU HỎI ROUTES ==========
+Route::prefix('ngan-hang-cau-hoi')->group(function () {
+    // Public routes
+    Route::get('/', [NganHangCauHoiController::class, 'index']);                    // Lấy tất cả ngân hàng
+    Route::get('/khoa-hoc/{khoaHocId}', [NganHangCauHoiController::class, 'getByKhoaHoc']); // Lấy theo khóa học
+    Route::get('/{id}', [NganHangCauHoiController::class, 'show']);                 // Chi tiết ngân hàng
+    Route::get('/{id}/cau-hoi', [NganHangCauHoiController::class, 'getCauHois']);   // Lấy câu hỏi trong ngân hàng
+    Route::get('/{id}/random', [NganHangCauHoiController::class, 'getRandomCauHois']); // Lấy câu hỏi ngẫu nhiên
+});
+
+// ========== NGÂN HÀNG CÂU HỎI ROUTES (PROTECTED) ==========
+Route::middleware('auth:sanctum')->prefix('ngan-hang-cau-hoi')->group(function () {
+    // CRUD ngân hàng câu hỏi
+    Route::post('/', [NganHangCauHoiController::class, 'store']);                   // Tạo ngân hàng
+    Route::put('/{id}', [NganHangCauHoiController::class, 'update']);               // Cập nhật ngân hàng
+    Route::delete('/{id}', [NganHangCauHoiController::class, 'destroy']);           // Xóa ngân hàng
+    
+    // CRUD câu hỏi trong ngân hàng
+    Route::post('/{nganHangId}/cau-hoi', [NganHangCauHoiController::class, 'storeCauHoi']);           // Thêm câu hỏi
+    Route::put('/{nganHangId}/cau-hoi/{cauHoiId}', [NganHangCauHoiController::class, 'updateCauHoi']); // Cập nhật câu hỏi
+    Route::delete('/{nganHangId}/cau-hoi/{cauHoiId}', [NganHangCauHoiController::class, 'destroyCauHoi']); // Xóa câu hỏi
+});
+
+// ========== BÀI KIỂM TRA ROUTES (PUBLIC) ==========
+Route::prefix('bai-kiem-tra')->group(function () {
+    Route::get('/', [BaiKiemTraController::class, 'index']);                        // Danh sách bài kiểm tra
+    Route::get('/khoa-hoc/{khoaHocId}', [BaiKiemTraController::class, 'getByKhoaHoc']); // Bài kiểm tra theo khóa học
+    Route::get('/bai-hoc/{baiHocId}', [BaiKiemTraController::class, 'getByBaiHoc']);    // Bài kiểm tra theo bài học
+    Route::get('/{id}', [BaiKiemTraController::class, 'show']);                     // Chi tiết bài kiểm tra
+    Route::get('/{id}/cau-hoi', [BaiKiemTraController::class, 'getCauHois']);       // Lấy câu hỏi của bài kiểm tra
+});
+
+// ========== BÀI KIỂM TRA ROUTES (PROTECTED) ==========
+Route::middleware('auth:sanctum')->prefix('bai-kiem-tra')->group(function () {
+    // CRUD bài kiểm tra (Admin/Editor)
+    Route::post('/', [BaiKiemTraController::class, 'store']);                       // Tạo bài kiểm tra
+    Route::put('/{id}', [BaiKiemTraController::class, 'update']);                   // Cập nhật bài kiểm tra
+    Route::delete('/{id}', [BaiKiemTraController::class, 'destroy']);               // Xóa bài kiểm tra
+    Route::post('/{id}/cau-hoi', [BaiKiemTraController::class, 'addCauHoi']);       // Thêm câu hỏi vào bài kiểm tra
+    Route::delete('/{id}/cau-hoi/{cauHoiId}', [BaiKiemTraController::class, 'removeCauHoi']); // Xóa câu hỏi khỏi bài kiểm tra
+});
+
+// ========== LÀM BÀI KIỂM TRA ROUTES (PROTECTED) ==========
+Route::middleware('auth:sanctum')->prefix('lam-bai')->group(function () {
+    Route::post('/bat-dau', [LanLamBaiController::class, 'batDauLamBai']);          // Bắt đầu làm bài
+    Route::post('/{lanLamBaiId}/tra-loi', [LanLamBaiController::class, 'luuTraLoi']); // Lưu câu trả lời
+    Route::post('/{lanLamBaiId}/nop-bai', [LanLamBaiController::class, 'nopBai']);   // Nộp bài
+    Route::get('/{lanLamBaiId}/ket-qua', [LanLamBaiController::class, 'xemKetQua']); // Xem kết quả
+    Route::get('/lich-su', [LanLamBaiController::class, 'lichSuLamBai']);           // Lịch sử làm bài
+    Route::get('/lich-su/{baiKiemTraId}', [LanLamBaiController::class, 'lichSuTheoBaiKiemTra']); // Lịch sử theo bài kiểm tra
+    Route::get('/dang-lam/{baiKiemTraId}', [LanLamBaiController::class, 'getLanLamBaiDangLam']); // Lấy bài đang làm
+});
+
+// ========== BÀI KIỂM TRA CUỐI KHÓA ROUTES ==========
+Route::prefix('khoa-hoc/{khoaHocId}/kiem-tra-cuoi-khoa')->group(function () {
+    Route::get('/', [BaiKiemTraCuoiKhoaController::class, 'getBaiKiemTraCuoiKhoa']); // Lấy thông tin bài kiểm tra cuối khóa
+});
+
+Route::middleware('auth:sanctum')->prefix('kiem-tra-cuoi-khoa')->group(function () {
+    Route::post('/{baiKiemTraId}/bat-dau', [BaiKiemTraCuoiKhoaController::class, 'batDauLamBai']);    // Bắt đầu làm bài
+    Route::post('/{lanLamBaiId}/tra-loi', [BaiKiemTraCuoiKhoaController::class, 'luuTraLoi']);       // Lưu câu trả lời
+    Route::post('/{lanLamBaiId}/nop-bai', [BaiKiemTraCuoiKhoaController::class, 'nopBai']);          // Nộp bài
+    Route::get('/{lanLamBaiId}/ket-qua', [BaiKiemTraCuoiKhoaController::class, 'xemKetQua']);        // Xem kết quả
 });

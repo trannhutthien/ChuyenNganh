@@ -145,6 +145,54 @@ export const quizService = {
    */
   deleteQuiz(quizId) {
     return api.delete(`/quiz/${quizId}`)
+  },
+
+  // ========== BÀI KIỂM TRA CUỐI KHÓA ==========
+
+  /**
+   * Lấy thông tin bài kiểm tra cuối khóa của một khóa học
+   * @param {number|string} courseId - ID của khóa học
+   * @returns {Promise} Thông tin bài kiểm tra và điều kiện làm bài
+   */
+  getFinalExam(courseId) {
+    return api.get(`/khoa-hoc/${courseId}/kiem-tra-cuoi-khoa`)
+  },
+
+  /**
+   * Bắt đầu làm bài kiểm tra cuối khóa
+   * @param {number|string} examId - ID của bài kiểm tra
+   * @returns {Promise} Thông tin lần làm bài và câu hỏi
+   */
+  startFinalExam(examId) {
+    return api.post(`/kiem-tra-cuoi-khoa/${examId}/bat-dau`)
+  },
+
+  /**
+   * Lưu câu trả lời bài kiểm tra cuối khóa
+   * @param {number|string} attemptId - ID lần làm bài
+   * @param {Object} answer - Câu trả lời { cauHoiId, luaChonIds, thoiGianGiay }
+   * @returns {Promise}
+   */
+  saveFinalExamAnswer(attemptId, answer) {
+    return api.post(`/kiem-tra-cuoi-khoa/${attemptId}/tra-loi`, answer)
+  },
+
+  /**
+   * Nộp bài kiểm tra cuối khóa
+   * @param {number|string} attemptId - ID lần làm bài
+   * @returns {Promise} Kết quả bài kiểm tra
+   */
+  submitFinalExam(attemptId) {
+    return api.post(`/kiem-tra-cuoi-khoa/${attemptId}/nop-bai`)
+  },
+
+  /**
+   * Xem kết quả chi tiết bài kiểm tra cuối khóa
+   * @param {number|string} attemptId - ID lần làm bài
+   * @returns {Promise} Kết quả chi tiết
+   */
+  getFinalExamResult(attemptId) {
+    return api.get(`/kiem-tra-cuoi-khoa/${attemptId}/ket-qua`)
   }
 }
 

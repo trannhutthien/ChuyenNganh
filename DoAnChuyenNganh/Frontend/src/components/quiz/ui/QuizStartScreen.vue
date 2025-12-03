@@ -162,9 +162,18 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['start'])
+const emit = defineEmits(['start', 'require-login'])
 
 const handleStart = () => {
+  // File: QuizStartScreen.vue - Dòng 168-178
+  // Kiểm tra đã đăng nhập chưa (dùng access_token giống Header.vue)
+  const token = localStorage.getItem('access_token')
+  if (!token) {
+    // Chưa đăng nhập -> yêu cầu mở LoginModal
+    emit('require-login')
+    return
+  }
+  // Đã đăng nhập -> bắt đầu làm bài
   emit('start')
 }
 </script>

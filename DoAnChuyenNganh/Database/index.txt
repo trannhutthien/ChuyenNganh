@@ -15,17 +15,7 @@ CREATE TABLE VaiTro (
     MoTa NVARCHAR(255)
 );
 
-CREATE TABLE NguoiDung (
-    NguoiDungId INT AUTO_INCREMENT PRIMARY KEY,
-    Email VARCHAR(255) UNIQUE NOT NULL,
-    MatKhauHash VARCHAR(255) NOT NULL,
-    HoTen NVARCHAR(150) NOT NULL,
-    AvatarUrl NVARCHAR(300),
-    TrangThai TINYINT DEFAULT 1, -- 1=active, 0=locked (tuỳ bạn dùng)
-    TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
-    CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
+RƯ5FVT6FC4X
 CREATE TABLE NguoiDung_VaiTro (
     NguoiDungId INT NOT NULL,
     VaiTroId INT NOT NULL,
@@ -189,7 +179,7 @@ CREATE TABLE TraLoi (
     TraLoiId INT AUTO_INCREMENT PRIMARY KEY,
     LanLamBaiId INT NOT NULL,
     CauHoiId INT NOT NULL,
-    LuaChonIds NVARCHAR(300), -- có thể đổi sang JSON nếu cần
+    LuaChonIds JSON,  
     DungHaySai BOOLEAN,
     ThoiGianGiay INT,
     FOREIGN KEY (LanLamBaiId) REFERENCES LanLamBai(LanLamBaiId) ON DELETE CASCADE,

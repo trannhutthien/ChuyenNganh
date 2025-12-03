@@ -43,12 +43,15 @@
     </div>
 
     <!-- Start Screen -->
+    <!-- File: QuizPage.vue - Dòng 45-70 -->
+    <!-- Thêm @require-login để xử lý khi chưa đăng nhập -->
     <QuizStartScreen
       v-else-if="!quizStore.hasStarted"
       :title="quiz?.title"
       :subtitle="quiz?.description"
       :loading="quizStore.isLoading"
       @start="handleStartQuiz"
+      @require-login="handleRequireLogin"
     >
       <template #instructions>
         <li>Bạn có <strong>{{ quiz?.duration_minutes }} phút</strong> để hoàn thành {{ quiz?.total_questions }} câu hỏi</li>
@@ -281,6 +284,19 @@
         <p class="text-gray-600">Bạn có chắc chắn muốn nộp bài không?</p>
       </div>
     </ConfirmModal>
+
+    <!-- Login Modal -->
+    <!-- File: QuizPage.vue - Dòng 287-298 -->
+    <!-- Modal đăng nhập hiển thị khi người dùng chưa đăng nhập mà nhấn "Bắt đầu làm bài" -->
+    <!-- Props: isOpen (điều khiển hiển thị), loading (trạng thái đang xử lý), error (thông báo lỗi) -->
+    <!-- Events: @close (đóng modal), @submit (gửi form đăng nhập) -->
+    <LoginModal
+      :isOpen="showLoginModal"
+      :loading="loginLoading"
+      :error="loginError"
+      @close="showLoginModal = false"
+      @submit="handleLoginSubmit"
+    />
   </div>
 </template>
 
@@ -289,6 +305,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 // Components
+// File: QuizPage.vue - Dòng 295-305
+// Import các component UI cho quiz
 import QuizHeader from '@/components/quiz/ui/QuizHeader.vue'
 import QuizTimer from '@/components/quiz/ui/QuizTimer.vue'
 import QuizProgress from '@/components/quiz/ui/QuizProgress.vue'
@@ -299,6 +317,8 @@ import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import QuizResult from '@/components/quiz/ui/result/QuizResult.vue'
 import ResultDetailList from '@/components/quiz/ui/result/ResultDetailList.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
+// Import LoginModal để hiển thị khi chưa đăng nhập
+import LoginModal from '@/components/modal/LoginModal.vue'
 
 // Question Types
 import MultipleChoice from '@/components/quiz/ui/questions/MultipleChoice.vue'
@@ -322,7 +342,10 @@ const route = useRoute()
 const quizStore = useQuizStore()
 
 // ========== LOCAL STATE ==========
+// File: QuizPage.vue - Dòng 331-340
 const showSubmitConfirm = ref(false)
+// Biến điều khiển hiển thị LoginModal khi chưa đăng nhập
+const showLoginModal = ref(false)
 const quiz = computed(() => quizStore.quiz)
 const currentQuestion = computed(() => {
   const questions = quizStore.questions
@@ -361,6 +384,66 @@ const navigation = useQuizNavigation(
 )
 
 // ========== METHODS ==========
+// File: QuizPage.vue - Dòng 374-390
+// Xử lý khi người dùng chưa đăng nhập nhấn nút "Bắt đầu làm bài"
+// Hàm này được gọi từ event @require-login của QuizStartScreen
+const handleRequireLogin = () => {
+  showLoginModal.value = true
+}
+
+// Xử lý sau khi đăng nhập thành công từ LoginModal
+const handleLoginSuccess = () => {
+  showLoginModal.value = false
+  // Sau khi đăng nhập thành công, tự động bắt đầu làm bài
+  handleStartQuiz()
+}
+
+// File: QuizPage.vue - Dòng 400-440
+// Xử lý khi người dùng submit form đăng nhập từ LoginModal
+// Logic giống y chang Header.vue để đảm bảo nhất quán
+import { authService } from '@/services/courseService.js'
+const loginLoading = ref(false)
+const loginError = ref('')
+
+const handleLoginSubmit = async (data) => {
+  loginLoading.value = true
+  loginError.value = ''
+  
+  try {
+    // Gọi API đăng nhập (giống Header.vue)
+    const response = await authService.login(data.email, data.password)
+    
+    // Kiểm tra role (giống Header.vue)
+    const hasValidRole = response.user.roles.includes('STUDENT') || response.user.roles.includes('ADMIN')
+    if (!hasValidRole) {
+      loginError.value = 'Tài khoản không có quyền truy cập'
+      return
+    }
+    
+    // Lưu token và user vào localStorage (giống Header.vue - dùng access_token)
+    localStorage.setItem('access_token', response.token)
+    localStorage.setItem('user', JSON.stringify(response.user))
+    
+    // Emit event để các component khác biết đã đăng nhập (giống Header.vue)
+    window.dispatchEvent(new Event('auth-changed'))
+    
+    // Đóng modal và bắt đầu làm bài
+    handleLoginSuccess()
+    
+    console.log('Đăng nhập thành công:', response.user)
+  } catch (error) {
+    console.error('Login failed:', error)
+    // Xử lý lỗi (giống Header.vue)
+    if (error.message) {
+      loginError.value = error.message
+    } else {
+      loginError.value = 'Đăng nhập thất bại'
+    }
+  } finally {
+    loginLoading.value = false
+  }
+}
+
 const handleStartQuiz = async () => {
   try {
     await quizStore.startQuiz()
