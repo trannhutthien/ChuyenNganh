@@ -6,6 +6,7 @@ use App\Models\LanLamBai;
 use App\Models\BaiKiemTra;
 use App\Models\TraLoi;
 use App\Models\CauHoi;
+use App\Models\NganHangCauHoi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,8 @@ class LanLamBaiController extends Controller
 {
     /**
      * Bắt đầu làm bài kiểm tra
+     * - Nếu bài kiểm tra thuộc khóa học (BaiHocId = NULL): Lấy câu hỏi từ các ngân hàng của khóa học
+     * - Nếu bài kiểm tra thuộc bài học: Lấy câu hỏi từ ngân hàng của bài học đó
      */
     public function batDauLamBai(Request $request)
     {
@@ -29,7 +32,7 @@ class LanLamBaiController extends Controller
         $baiKiemTra = BaiKiemTra::find($request->baiKiemTraId);
 
         // Kiểm tra bài kiểm tra có công khai không
-        if ($baiKiemTra->TrangThai !== 'CONG_KHAI') {
+        if ($baiKiemTra->TrangThai !== BaiKiemTra::TRANG_THAI_CONG_KHAI) {
             return response()->json(['message' => 'Bài kiểm tra không khả dụng'], 403);
         }
 
@@ -50,26 +53,187 @@ class LanLamBaiController extends Controller
                 // Tự động nộp bài
                 $this->nopBaiInternal($lanLamBaiDangLam);
             } else {
-                // Trả về bài làm dở
+                // Trả về bài làm dở kèm câu hỏi
                 return response()->json([
                     'message' => 'Bạn có bài làm dở, đang tiếp tục...',
-                    'data' => $this->formatLanLamBai($lanLamBaiDangLam, true)
+                    'data' => $this->formatLanLamBai($lanLamBaiDangLam, true),
+                    'cauHois' => $this->getCauHoiTuChiTiet($lanLamBaiDangLam)
                 ]);
             }
         }
 
-        // Tạo lần làm bài mới
-        $lanLamBai = LanLamBai::create([
-            'BaiKiemTraId' => $request->baiKiemTraId,
-            'NguoiDungId' => $nguoiDungId,
-            'ThoiGianBatDau' => now(),
-            'TrangThai' => LanLamBai::TRANG_THAI_DANG_LAM
-        ]);
+        // Lấy câu hỏi từ ngân hàng theo loại bài kiểm tra
+        $cauHois = $this->layCauHoiTuNganHang($baiKiemTra);
+
+        if (empty($cauHois)) {
+            return response()->json(['message' => 'Bài kiểm tra chưa có câu hỏi'], 400);
+        }
+
+        // Tạo lần làm bài mới với snapshot câu hỏi
+        $lanLamBai = DB::transaction(function () use ($baiKiemTra, $nguoiDungId, $cauHois) {
+            // Lưu snapshot câu hỏi vào ChiTietJson
+            $chiTietJson = [
+                'cauHoiIds' => collect($cauHois)->pluck('CauHoiId')->toArray(),
+                'soCauHoi' => count($cauHois),
+                'thietLap' => $baiKiemTra->getThietLap()
+            ];
+
+            $lanLamBai = LanLamBai::create([
+                'BaiKiemTraId' => $baiKiemTra->BaiKiemTraId,
+                'NguoiDungId' => $nguoiDungId,
+                'BatDauLuc' => now(),
+                'ChiTietJson' => $chiTietJson,
+                'TrangThai' => LanLamBai::TRANG_THAI_DANG_LAM
+            ]);
+
+            return $lanLamBai;
+        });
 
         return response()->json([
             'message' => 'Bắt đầu làm bài thành công',
-            'data' => $this->formatLanLamBai($lanLamBai, true)
+            'data' => $this->formatLanLamBai($lanLamBai, true),
+            'cauHois' => $this->formatCauHoisForQuiz($cauHois, $baiKiemTra)
         ], 201);
+    }
+
+    /**
+     * Lấy câu hỏi từ ngân hàng dựa vào loại bài kiểm tra
+     * - Bài kiểm tra cuối khóa (BaiHocId = NULL): Lấy từ tất cả ngân hàng của khóa học
+     * - Bài kiểm tra bài học: Lấy từ ngân hàng của bài học đó
+     */
+    private function layCauHoiTuNganHang(BaiKiemTra $baiKiemTra)
+    {
+        $thietLap = $baiKiemTra->getThietLap();
+        $soCauHoi = $thietLap['soCauHoi'] ?? 10;
+        $xaoTronCauHoi = $thietLap['xaoTronCauHoi'] ?? true;
+
+        // Kiểm tra bài kiểm tra thuộc khóa học hay bài học
+        if ($baiKiemTra->laBaiKiemTraCuoiKhoa()) {
+            // Bài kiểm tra cuối khóa: Lấy từ tất cả ngân hàng của khóa học
+            $khoaHocId = $baiKiemTra->KhoaHocId;
+            $nganHangIds = $thietLap['nganHangIds'] ?? null;
+
+            $query = NganHangCauHoi::where('KhoaHocId', $khoaHocId);
+            if ($nganHangIds && is_array($nganHangIds)) {
+                $query->whereIn('NganHangId', $nganHangIds);
+            }
+            $nganHangIdList = $query->pluck('NganHangId')->toArray();
+
+        } else {
+            // Bài kiểm tra bài học: Lấy từ ngân hàng của bài học đó
+            $baiHocId = $baiKiemTra->BaiHocId;
+            
+            // Lấy ngân hàng câu hỏi liên kết với bài học
+            // Câu hỏi có BaiHocId = baiHocId hoặc nằm trong ngân hàng của khóa học
+            $nganHangIdList = CauHoi::where('BaiHocId', $baiHocId)
+                ->distinct()
+                ->pluck('NganHangId')
+                ->toArray();
+
+            // Nếu không có câu hỏi riêng cho bài học, lấy từ ngân hàng của khóa học
+            if (empty($nganHangIdList)) {
+                $khoaHocId = $baiKiemTra->khoaHoc?->KhoaHocId ?? $baiKiemTra->baiHoc?->khoaHoc?->KhoaHocId;
+                if ($khoaHocId) {
+                    $nganHangIdList = NganHangCauHoi::where('KhoaHocId', $khoaHocId)
+                        ->pluck('NganHangId')
+                        ->toArray();
+                }
+            }
+        }
+
+        if (empty($nganHangIdList)) {
+            return [];
+        }
+
+        // Lấy câu hỏi từ các ngân hàng
+        $cauHoiQuery = CauHoi::whereIn('NganHangId', $nganHangIdList)
+            ->with('luaChons');
+
+        // Nếu bài kiểm tra thuộc bài học, ưu tiên câu hỏi của bài học đó
+        if (!$baiKiemTra->laBaiKiemTraCuoiKhoa() && $baiKiemTra->BaiHocId) {
+            $cauHoiQuery->orderByRaw("CASE WHEN BaiHocId = ? THEN 0 ELSE 1 END", [$baiKiemTra->BaiHocId]);
+        }
+
+        // Lấy câu hỏi ngẫu nhiên
+        $cauHois = $cauHoiQuery->inRandomOrder()
+            ->limit($soCauHoi)
+            ->get();
+
+        // Xáo trộn nếu cần
+        if ($xaoTronCauHoi) {
+            $cauHois = $cauHois->shuffle();
+        }
+
+        return $cauHois->values()->all();
+    }
+
+    /**
+     * Format câu hỏi cho quiz (không hiện đáp án đúng)
+     */
+    private function formatCauHoisForQuiz($cauHois, BaiKiemTra $baiKiemTra)
+    {
+        $thietLap = $baiKiemTra->getThietLap();
+        $xaoTronDapAn = $thietLap['xaoTronDapAn'] ?? true;
+
+        return collect($cauHois)->map(function ($cauHoi, $index) use ($xaoTronDapAn) {
+            $luaChons = $cauHoi->luaChons;
+            
+            if ($xaoTronDapAn) {
+                $luaChons = $luaChons->shuffle();
+            }
+
+            return [
+                'id' => $cauHoi->CauHoiId,
+                'stt' => $index + 1,
+                'type' => $this->mapLoaiCauHoi($cauHoi->Loai),
+                'text' => $cauHoi->DeBai,
+                'doKho' => $cauHoi->DoKho,
+                'points' => 1, // Có thể lấy từ thietLap nếu cần
+                'options' => $luaChons->map(function ($luaChon) {
+                    return [
+                        'id' => $luaChon->LuaChonId,
+                        'text' => $luaChon->NoiDung
+                    ];
+                })->values()
+            ];
+        })->values();
+    }
+
+    /**
+     * Map loại câu hỏi từ database sang frontend
+     */
+    private function mapLoaiCauHoi($loai)
+    {
+        $map = [
+            'MOT_DAP_AN' => 'multiple_choice',
+            'NHIEU_DAP_AN' => 'multiple_choice',
+            'DUNG_SAI' => 'true_false',
+            'DIEN_KHUYET' => 'fill_blank'
+        ];
+
+        return $map[$loai] ?? 'multiple_choice';
+    }
+
+    /**
+     * Lấy câu hỏi từ ChiTietJson của lần làm bài (cho bài làm dở)
+     */
+    private function getCauHoiTuChiTiet(LanLamBai $lanLamBai)
+    {
+        $chiTietJson = $lanLamBai->ChiTietJson ?? [];
+        $cauHoiIds = $chiTietJson['cauHoiIds'] ?? [];
+        
+        if (empty($cauHoiIds)) {
+            return [];
+        }
+
+        $cauHois = CauHoi::whereIn('CauHoiId', $cauHoiIds)
+            ->with('luaChons')
+            ->get()
+            ->sortBy(function ($item) use ($cauHoiIds) {
+                return array_search($item->CauHoiId, $cauHoiIds);
+            });
+
+        return $this->formatCauHoisForQuiz($cauHois->values(), $lanLamBai->baiKiemTra);
     }
 
     /**

@@ -1,86 +1,89 @@
 import api from './api'
 
 /**
- * Quiz Service - Xử lý các API liên quan đến quiz
+ * Quiz Service - Xử lý các API liên quan đến quiz/bài kiểm tra
+ * File: quizService.js
  */
 export const quizService = {
   /**
-   * Lấy thông tin quiz theo ID
-   * @param {number|string} quizId - ID của quiz
-   * @returns {Promise} Quiz data với questions
+   * Lấy thông tin bài kiểm tra theo ID
+   * API: GET /api/bai-kiem-tra/{id}
+   * @param {number|string} quizId - ID của bài kiểm tra
+   * @returns {Promise} Quiz data
    */
   fetchQuiz(quizId) {
-    return api.get(`/quiz/${quizId}`)
+    return api.get(`/bai-kiem-tra/${quizId}`)
   },
 
   /**
-   * Bắt đầu quiz mới
-   * @param {number|string} quizId - ID của quiz
-   * @returns {Promise} Attempt data với attemptId
+   * Bắt đầu làm bài kiểm tra
+   * API: POST /api/lam-bai/bat-dau
+   * Backend sẽ trả về câu hỏi từ database dựa vào ThietLapJson
+   * @param {number|string} quizId - ID của bài kiểm tra
+   * @returns {Promise} { data: lanLamBai, cauHois: [...] }
    */
   startQuiz(quizId) {
-    return api.post(`/quiz/${quizId}/start`)
+    return api.post('/lam-bai/bat-dau', { baiKiemTraId: quizId })
   },
 
   /**
-   * Submit quiz và nhận kết quả
-   * @param {number|string} attemptId - ID của attempt
-   * @param {Object} answers - User answers { questionId: answer }
-   * @param {number} timeTaken - Thời gian làm bài (giây)
-   * @returns {Promise} Result data với score, passed, details
+   * Lưu câu trả lời
+   * API: POST /api/lam-bai/{lanLamBaiId}/tra-loi
+   * @param {number|string} attemptId - ID lần làm bài
+   * @param {Object} answer - { cauHoiId, luaChonIds, noiDungTraLoi }
+   * @returns {Promise}
    */
-  submitQuiz(attemptId, answers, timeTaken = 0) {
-    return api.post(`/quiz/attempt/${attemptId}/submit`, {
-      answers,
-      time_taken: timeTaken
-    })
+  saveAnswer(attemptId, answer) {
+    return api.post(`/lam-bai/${attemptId}/tra-loi`, answer)
   },
 
   /**
-   * Lưu tiến trình làm bài (auto-save)
-   * @param {number|string} attemptId - ID của attempt
-   * @param {Object} data - Progress data
-   * @param {Object} data.answers - Current answers
-   * @param {Array} data.markedQuestions - Marked question IDs
-   * @param {number} data.currentQuestionIndex - Current question index
-   * @param {number} data.timeLeft - Remaining time (seconds)
-   * @returns {Promise} Save confirmation
+   * Nộp bài kiểm tra
+   * API: POST /api/lam-bai/{lanLamBaiId}/nop-bai
+   * @param {number|string} attemptId - ID lần làm bài
+   * @returns {Promise} Kết quả bài kiểm tra
    */
-  saveProgress(attemptId, data) {
-    return api.patch(`/quiz/attempt/${attemptId}/auto-save`, {
-      answers: data.answers || {},
-      marked_questions: data.markedQuestions || [],
-      current_question_index: data.currentQuestionIndex || 0,
-      time_left: data.timeLeft || 0,
-      saved_at: new Date().toISOString()
-    })
+  submitQuiz(attemptId) {
+    return api.post(`/lam-bai/${attemptId}/nop-bai`)
   },
 
   /**
-   * Khôi phục quiz đang làm dở
-   * @param {number|string} attemptId - ID của attempt
-   * @returns {Promise} Saved progress data
-   */
-  resumeQuiz(attemptId) {
-    return api.get(`/quiz/attempt/${attemptId}/resume`)
-  },
-
-  /**
-   * Lấy kết quả quiz theo attemptId
-   * @param {number|string} attemptId - ID của attempt
-   * @returns {Promise} Result data với score, details, time_taken
+   * Xem kết quả bài kiểm tra
+   * API: GET /api/lam-bai/{lanLamBaiId}/ket-qua
+   * @param {number|string} attemptId - ID lần làm bài
+   * @returns {Promise}
    */
   getQuizResult(attemptId) {
-    return api.get(`/quiz/attempt/${attemptId}/result`)
+    return api.get(`/lam-bai/${attemptId}/ket-qua`)
   },
 
   /**
-   * Lấy lịch sử làm quiz
-   * @param {number|string} quizId - ID của quiz
-   * @returns {Promise} Array of attempts với scores, dates
+   * Lấy bài làm đang thực hiện (nếu có)
+   * API: GET /api/lam-bai/dang-lam/{baiKiemTraId}
+   * @param {number|string} quizId - ID bài kiểm tra
+   * @returns {Promise}
    */
-  getQuizHistory(quizId) {
-    return api.get(`/quiz/${quizId}/history`)
+  getInProgressAttempt(quizId) {
+    return api.get(`/lam-bai/dang-lam/${quizId}`)
+  },
+
+  /**
+   * Lấy lịch sử làm bài
+   * API: GET /api/lam-bai/lich-su
+   * @returns {Promise}
+   */
+  getHistory() {
+    return api.get('/lam-bai/lich-su')
+  },
+
+  /**
+   * Lấy lịch sử làm bài theo bài kiểm tra
+   * API: GET /api/lam-bai/lich-su/{baiKiemTraId}
+   * @param {number|string} quizId - ID bài kiểm tra
+   * @returns {Promise}
+   */
+  getHistoryByQuiz(quizId) {
+    return api.get(`/lam-bai/lich-su/${quizId}`)
   },
 
   /**

@@ -176,7 +176,8 @@ export const useQuizStore = defineStore('quiz', () => {
   }
   
   /**
-   * Bắt đầu quiz
+   * Bắt đầu quiz - Gọi API và nhận câu hỏi từ database
+   * File: quiz.js - Dòng 180-220
    */
   async function startQuiz() {
     if (!quizId.value) {
@@ -187,28 +188,33 @@ export const useQuizStore = defineStore('quiz', () => {
     error.value = null
     
     try {
-      const data = await quizService.startQuiz(quizId.value)
-      attemptId.value = data.attempt_id || data.id
+      // Gọi API bắt đầu làm bài - Backend trả về câu hỏi từ database
+      const response = await quizService.startQuiz(quizId.value)
+      
+      // Lấy thông tin lần làm bài
+      attemptId.value = response.data?.id || response.data?.LanLamBaiId
+      
+      // Lấy câu hỏi từ response (đã được format từ backend)
+      if (response.cauHois && response.cauHois.length > 0) {
+        questions.value = response.cauHois
+        console.log('Loaded questions from database:', questions.value.length)
+      }
+      
+      // Cập nhật thời gian từ thietLap
+      const thietLap = response.data?.thietLap || quiz.value?.thietLap || {}
+      const thoiGianPhut = thietLap.thoiGianLamBai || quiz.value?.duration_minutes || 30
+      timeLeft.value = thoiGianPhut * 60
+      
       quizStarted.value = true
-      timeLeft.value = (quiz.value?.duration_minutes || 0) * 60
       
       // Initialize empty answers
       initializeAnswers()
       
-      return data
+      return response
     } catch (err) {
-      console.error('API Error, using mock attempt:', err)
-      
-      // MOCK: Tạo attempt ID giả
-      attemptId.value = Date.now()
-      quizStarted.value = true
-      timeLeft.value = (quiz.value?.duration_minutes || 0) * 60
-      
-      // Initialize empty answers
-      initializeAnswers()
-      
-      error.value = null
-      return { attempt_id: attemptId.value }
+      console.error('API Error:', err)
+      error.value = err.message || 'Không thể bắt đầu bài kiểm tra'
+      throw err
     } finally {
       isLoading.value = false
     }
