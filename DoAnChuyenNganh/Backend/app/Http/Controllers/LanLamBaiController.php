@@ -36,31 +36,16 @@ class LanLamBaiController extends Controller
             return response()->json(['message' => 'Bài kiểm tra không khả dụng'], 403);
         }
 
-        // Kiểm tra còn lượt làm bài không
-        if (!$baiKiemTra->conLuotLamBai($nguoiDungId)) {
-            return response()->json(['message' => 'Bạn đã hết lượt làm bài kiểm tra này'], 403);
-        }
+        // Kiểm tra còn lượt làm bài không (sau này sẽ giới hạn 3 lần)
+        // if (!$baiKiemTra->conLuotLamBai($nguoiDungId)) {
+        //     return response()->json(['message' => 'Bạn đã hết lượt làm bài kiểm tra này'], 403);
+        // }
 
-        // Kiểm tra có bài làm dở không
-        $lanLamBaiDangLam = LanLamBai::where('BaiKiemTraId', $request->baiKiemTraId)
+        // Tự động hủy các bài làm dở trước đó (nếu có)
+        LanLamBai::where('BaiKiemTraId', $request->baiKiemTraId)
             ->where('NguoiDungId', $nguoiDungId)
             ->dangLam()
-            ->first();
-
-        if ($lanLamBaiDangLam) {
-            // Kiểm tra đã hết giờ chưa
-            if ($lanLamBaiDangLam->daHetGio()) {
-                // Tự động nộp bài
-                $this->nopBaiInternal($lanLamBaiDangLam);
-            } else {
-                // Trả về bài làm dở kèm câu hỏi
-                return response()->json([
-                    'message' => 'Bạn có bài làm dở, đang tiếp tục...',
-                    'data' => $this->formatLanLamBai($lanLamBaiDangLam, true),
-                    'cauHois' => $this->getCauHoiTuChiTiet($lanLamBaiDangLam)
-                ]);
-            }
-        }
+            ->update(['TrangThai' => LanLamBai::TRANG_THAI_HUY]);
 
         // Lấy câu hỏi từ ngân hàng theo loại bài kiểm tra
         $cauHois = $this->layCauHoiTuNganHang($baiKiemTra);
@@ -281,9 +266,8 @@ class LanLamBaiController extends Controller
                 'CauHoiId' => $request->cauHoiId
             ],
             [
-                'LuaChonIds' => $request->luaChonIds ? implode(',', $request->luaChonIds) : null,
-                'NoiDungTraLoi' => $request->noiDungTraLoi,
-                'ThoiGianTraLoi' => now()
+                'LuaChonIds' => $request->luaChonIds ?? [],  // Lưu dạng JSON array
+                'ThoiGianGiay' => $request->thoiGianGiay ?? 0
             ]
         );
 
@@ -292,8 +276,8 @@ class LanLamBaiController extends Controller
             'data' => [
                 'id' => $traLoi->TraLoiId,
                 'cauHoiId' => $traLoi->CauHoiId,
-                'luaChonIds' => $traLoi->luaChonIdsArray,
-                'noiDungTraLoi' => $traLoi->NoiDungTraLoi
+                'luaChonIds' => $traLoi->LuaChonIds ?? [],
+                'thoiGianGiay' => $traLoi->ThoiGianGiay
             ]
         ]);
     }

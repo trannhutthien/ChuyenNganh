@@ -470,29 +470,68 @@ export const useQuizStore = defineStore('quiz', () => {
   }
   
   /**
-   * Navigate to question
+   * Navigate to question - Lưu câu trả lời trước khi chuyển
    */
-  function goToQuestion(index) {
+  async function goToQuestion(index) {
     if (index >= 0 && index < totalQuestions.value) {
+      // Lưu câu trả lời hiện tại trước khi chuyển
+      await saveCurrentAnswer()
       currentQuestionIndex.value = index
     }
   }
   
   /**
-   * Next question
+   * Next question - Lưu câu trả lời hiện tại lên server trước khi chuyển câu
    */
-  function nextQuestion() {
+  async function nextQuestion() {
+    // Lưu câu trả lời hiện tại lên server
+    await saveCurrentAnswer()
+    
+    // Chuyển sang câu tiếp theo
     if (currentQuestionIndex.value < totalQuestions.value - 1) {
       currentQuestionIndex.value++
     }
   }
   
   /**
-   * Previous question
+   * Previous question - Lưu câu trả lời hiện tại trước khi quay lại
    */
-  function previousQuestion() {
+  async function previousQuestion() {
+    // Lưu câu trả lời hiện tại lên server
+    await saveCurrentAnswer()
+    
     if (currentQuestionIndex.value > 0) {
       currentQuestionIndex.value--
+    }
+  }
+  
+  /**
+   * Lưu câu trả lời hiện tại lên server
+   */
+  async function saveCurrentAnswer() {
+    const question = currentQuestion.value
+    if (!question || !attemptId.value) return
+    
+    const answer = userAnswers.value[question.id]
+    
+    // Chỉ lưu nếu có câu trả lời
+    if (!answer || (Array.isArray(answer) && answer.length === 0)) return
+    
+    try {
+      // Chuẩn bị dữ liệu gửi lên server
+      const payload = {
+        cauHoiId: question.id,
+        luaChonIds: Array.isArray(answer) ? answer : [answer], // Chuyển thành mảng
+        thoiGianGiay: 0 // TODO: Tính thời gian làm câu này
+      }
+      
+      console.log('Saving answer:', payload)
+      
+      await quizService.saveAnswer(attemptId.value, payload)
+      console.log('Answer saved successfully for question', question.id)
+    } catch (err) {
+      console.error('Error saving answer:', err)
+      // Không throw lỗi để không block việc chuyển câu
     }
   }
   
@@ -625,6 +664,7 @@ export const useQuizStore = defineStore('quiz', () => {
     goToQuestion,
     nextQuestion,
     previousQuestion,
+    saveCurrentAnswer,
     initializeAnswers,
     startTimer,
     stopTimer,

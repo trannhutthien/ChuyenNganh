@@ -74,11 +74,12 @@ class KhoaHoc extends Model
     }
 
     /**
-     * Scope: Lọc khóa học đang hoạt động (TrangThai = 1)
+     * Scope: Lọc khóa học đang hoạt động (TrangThai = 1 hoặc 2)
+     * TrangThai: 1 = active, 2 = đã xuất bản/published
      */
     public function scopeActive($query)
     {
-        return $query->where('TrangThai', 1);
+        return $query->whereIn('TrangThai', [1, 2]);
     }
 
     /**

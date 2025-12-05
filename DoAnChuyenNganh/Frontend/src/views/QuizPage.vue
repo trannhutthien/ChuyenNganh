@@ -155,7 +155,7 @@
                   variant="secondary"
                   size="md"
                   :disabled="!navigation.canGoPrevious.value"
-                  @click="navigation.goToPrevious()"
+                  @click="handlePreviousQuestion"
                 >
                   <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -195,7 +195,7 @@
                     variant="primary"
                     size="md"
                     :disabled="!navigation.canGoNext.value"
-                    @click="navigation.goToNext()"
+                    @click="handleNextQuestion"
                   >
                     Câu tiếp
                     <svg class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -396,6 +396,48 @@ const handleLoginSuccess = () => {
   showLoginModal.value = false
   // Sau khi đăng nhập thành công, tự động bắt đầu làm bài
   handleStartQuiz()
+}
+
+// ========== NAVIGATION HANDLERS ==========
+// Lưu câu trả lời trước khi chuyển câu
+import { quizService } from '@/services/quizService'
+
+const handleNextQuestion = async () => {
+  // Lưu câu trả lời hiện tại lên server
+  await saveCurrentAnswerToServer()
+  // Chuyển sang câu tiếp
+  navigation.goToNext()
+}
+
+const handlePreviousQuestion = async () => {
+  // Lưu câu trả lời hiện tại lên server
+  await saveCurrentAnswerToServer()
+  // Quay lại câu trước
+  navigation.goToPrevious()
+}
+
+const saveCurrentAnswerToServer = async () => {
+  const question = currentQuestion.value
+  if (!question || !quizStore.attemptId) return
+  
+  const userAnswer = answer.userAnswers.value[question.id]
+  
+  // Chỉ lưu nếu có câu trả lời
+  if (!userAnswer || (Array.isArray(userAnswer) && userAnswer.length === 0)) return
+  
+  try {
+    const payload = {
+      cauHoiId: question.id,
+      luaChonIds: Array.isArray(userAnswer) ? userAnswer : [userAnswer],
+      thoiGianGiay: 0
+    }
+    
+    console.log('Saving answer to server:', payload)
+    await quizService.saveAnswer(quizStore.attemptId, payload)
+    console.log('Answer saved successfully')
+  } catch (err) {
+    console.error('Error saving answer:', err)
+  }
 }
 
 // File: QuizPage.vue - Dòng 400-440

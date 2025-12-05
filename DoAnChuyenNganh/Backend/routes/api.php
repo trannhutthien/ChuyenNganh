@@ -20,6 +20,20 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // ========== KHÓA HỌC ROUTES (PUBLIC) ==========
+// Route với prefix 'khoa-hoc' (tiếng Việt - cho frontend hiện tại)
+Route::prefix('khoa-hoc')->group(function () {
+    Route::get('/', [KhoaHocController::class, 'index']);           // Lấy tất cả khóa học active
+    Route::get('/all', [KhoaHocController::class, 'getAll']);       // Lấy tất cả khóa học (bao gồm inactive)
+    Route::get('/pro', [KhoaHocController::class, 'getProCourses']);    // Khóa học Pro
+    Route::get('/free', [KhoaHocController::class, 'getFreeCourses']);  // Khóa học miễn phí
+    Route::get('/popular', [KhoaHocController::class, 'getPopular']);   // Khóa học phổ biến
+    Route::get('/latest', [KhoaHocController::class, 'getLatest']);     // Khóa học mới nhất
+    Route::get('/search', [KhoaHocController::class, 'search']);        // Tìm kiếm
+    Route::get('/{id}', [KhoaHocController::class, 'show']);            // Chi tiết khóa học
+    Route::get('/{id}/lessons', [KhoaHocController::class, 'getLessons']); // Lấy bài học của khóa học
+});
+
+// Route với prefix 'courses' (tiếng Anh - alias)
 Route::prefix('courses')->group(function () {
     Route::get('/', [KhoaHocController::class, 'index']);           // Lấy tất cả khóa học active
     Route::get('/all', [KhoaHocController::class, 'getAll']);       // Lấy tất cả khóa học (bao gồm inactive)

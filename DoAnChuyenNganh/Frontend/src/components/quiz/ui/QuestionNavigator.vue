@@ -44,22 +44,22 @@
     <!-- Legend -->
     <div class="px-4 pb-4 space-y-2">
       <div class="flex items-center gap-2 text-xs text-gray-600">
-        <span class="w-5 h-5 rounded bg-primary border-2 border-primary"></span>
+        <span class="w-5 h-5 rounded bg-primary/20 border-2 border-primary/50"></span>
+        <span>Chưa trả lời</span>
+      </div>
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <span class="w-5 h-5 rounded bg-white border-2 border-primary shadow-md"></span>
         <span>Đang làm</span>
       </div>
       <div class="flex items-center gap-2 text-xs text-gray-600">
-        <span class="w-5 h-5 rounded bg-green-100 border border-green-300 text-green-700 font-semibold flex items-center justify-center">✓</span>
+        <span class="w-5 h-5 rounded bg-primary border-2 border-primary"></span>
         <span>Đã trả lời</span>
       </div>
       <div class="flex items-center gap-2 text-xs text-gray-600">
-        <span class="relative w-5 h-5 rounded bg-gray-100 border border-gray-300 flex items-center justify-center">
+        <span class="relative w-5 h-5 rounded bg-primary/20 border-2 border-primary/50 flex items-center justify-center">
           <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-amber-500 rounded-full"></span>
         </span>
         <span>Đánh dấu</span>
-      </div>
-      <div class="flex items-center gap-2 text-xs text-gray-600">
-        <span class="w-5 h-5 rounded bg-white border border-gray-300"></span>
-        <span>Chưa trả lời</span>
       </div>
     </div>
 
@@ -159,17 +159,17 @@ const isMarked = (questionId) => {
 const getQuestionClass = (question, index) => {
   const classes = []
   
-  // Active state
+  // Active state (đang làm) - nền trắng, viền xanh đậm
   if (props.currentIndex === index) {
-    classes.push('bg-primary text-white border-2 border-primary shadow-lg scale-110')
+    classes.push('bg-white text-primary border-2 border-primary shadow-lg scale-110')
   }
-  // Answered state
+  // Answered state (đã trả lời) - nền xanh đậm (primary)
   else if (isAnswered(question.id)) {
-    classes.push('bg-green-100 text-green-700 border border-green-300 hover:bg-green-200')
+    classes.push('bg-primary text-white border-2 border-primary hover:bg-primary/90')
   }
-  // Unanswered state
+  // Unanswered state (chưa trả lời) - nền xanh nhạt
   else {
-    classes.push('bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400')
+    classes.push('bg-primary/20 text-primary border-2 border-primary/50 hover:bg-primary/30')
   }
 
   return classes.join(' ')
