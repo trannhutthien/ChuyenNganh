@@ -249,7 +249,7 @@ export const useQuizStore = defineStore('quiz', () => {
   }
   
   /**
-   * Submit quiz
+   * Submit quiz - Nộp bài và nhận kết quả từ backend
    */
   async function submitQuiz() {
     if (!attemptId.value) {
@@ -260,13 +260,29 @@ export const useQuizStore = defineStore('quiz', () => {
     error.value = null
     
     try {
-      const timeTaken = (quiz.value?.duration_minutes || 0) * 60 - timeLeft.value
+      // Gọi API nộp bài - Backend sẽ chấm điểm và trả về kết quả
+      const response = await quizService.submitQuiz(attemptId.value)
       
-      const result = await quizService.submitQuiz(
-        attemptId.value,
-        userAnswers.value,
-        timeTaken
-      )
+      console.log('Submit response from backend:', response)
+      
+      // Backend trả về: { message, data: { diem, soCauDung, tongSoCau, dat, thoiGianLam, diemDat, ... } }
+      const data = response.data || response
+      
+      console.log('Backend data:', data)
+      
+      // Chuyển đổi response từ backend sang format frontend cần
+      const result = {
+        score: Number(data.diem) || 0,                                    // Điểm (thang 10)
+        max_score: 10,                                                     // Thang điểm tối đa
+        passed: Boolean(data.dat),                                         // Đạt hay không
+        correct_answers: Number(data.soCauDung) || 0,                     // Số câu đúng
+        total_questions: Number(data.tongSoCau) || questions.value.length, // Tổng số câu
+        time_taken: String(data.thoiGianLam || '0 phút'),                 // Thời gian làm bài
+        passing_score: Number(data.diemDat) || 5,                         // Điểm đạt yêu cầu (thang 10)
+        details: []                                                        // Chi tiết (có thể lấy từ API khác)
+      }
+      
+      console.log('Formatted result:', result)
       
       quizResult.value = result
       quizSubmitted.value = true

@@ -52,10 +52,10 @@
             {{ result.passed ? 'Chúc mừng! Bạn đã đạt' : 'Rất tiếc! Bạn chưa đạt' }}
           </h1>
 
-          <!-- Score -->
+          <!-- Score - Điểm động theo thang điểm -->
           <div class="relative text-6xl md:text-7xl font-extrabold mb-2">
-            {{ result.score }}
-            <span class="text-3xl md:text-4xl opacity-80">/100</span>
+            {{ typeof result.score === 'number' ? result.score.toFixed(2) : result.score }}
+            <span class="text-3xl md:text-4xl opacity-80">/{{ result.max_score || 10 }}</span>
           </div>
 
           <p class="relative text-lg opacity-90">
@@ -72,7 +72,7 @@
               {{ result.correct_answers }}<span class="text-gray-400">/{{ result.total_questions }}</span>
             </div>
             <div class="mt-2 text-xs text-gray-500">
-              {{ Math.round((result.correct_answers / result.total_questions) * 100) }}% chính xác
+              {{ result.total_questions > 0 ? Math.round((result.correct_answers / result.total_questions) * 100) : 0 }}% chính xác
             </div>
           </div>
 
@@ -91,7 +91,7 @@
           <div class="text-center p-4 bg-white rounded-xl shadow-sm border border-gray-200">
             <div class="text-sm font-medium text-gray-600 mb-2">Điểm đạt yêu cầu</div>
             <div class="text-3xl font-bold text-amber-600">
-              {{ passingScore }}%
+              {{ passingScore }}/10
             </div>
             <div class="mt-2 text-xs text-gray-500">
               {{ result.passed ? 'Đã đạt' : 'Chưa đạt' }}
@@ -153,18 +153,30 @@ const props = defineProps({
     type: Object,
     required: true,
     validator: (value) => {
-      return value.score !== undefined && 
+      console.log('QuizResult validator - received value:', value)
+      // Chỉ yêu cầu các field cơ bản
+      const isValid = value.score !== undefined && 
              value.passed !== undefined &&
              value.correct_answers !== undefined &&
-             value.total_questions !== undefined &&
-             value.time_taken !== undefined
+             value.total_questions !== undefined
+      
+      if (!isValid) {
+        console.error('QuizResult validation failed:', {
+          score: value.score,
+          passed: value.passed,
+          correct_answers: value.correct_answers,
+          total_questions: value.total_questions,
+          time_taken: value.time_taken
+        })
+      }
+      return isValid
     }
   },
 
-  // Điểm đạt yêu cầu
+  // Điểm đạt yêu cầu (thang 10)
   passingScore: {
     type: Number,
-    default: 70
+    default: 5
   },
 
   // Hiển thị chi tiết mặc định

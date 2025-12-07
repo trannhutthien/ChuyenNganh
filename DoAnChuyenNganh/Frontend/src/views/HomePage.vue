@@ -1,15 +1,15 @@
 <template>
   <div class="w-full">
     <!-- Row 1: Banner Slider - Quảng cáo khóa học -->
-    <section class="w-full px-4 py-6 bg-gray-50">
-      <div class="max-w-7xl mx-auto">
+    <section class="w-full py-6 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4">
         <BannerSlider />
       </div>
     </section>
 
     <!-- Row 2: Khóa học Pro (Có phí) -->
-    <section class="w-full px-4 py-8 bg-white">
-      <div class="max-w-7xl mx-auto">
+    <section class="w-full py-8 bg-white">
+      <div class="max-w-7xl mx-auto px-4">
         <SectionHeader 
           title="Khóa học Pro"
           description="Khóa học chuyên sâu, chất lượng cao"
@@ -32,8 +32,8 @@
     </section>
 
     <!-- Row 3: Khóa học Cơ bản (Miễn phí) -->
-    <section class="w-full px-4 py-8 bg-gray-50">
-      <div class="max-w-7xl mx-auto">
+    <section class="w-full py-8 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4">
         <SectionHeader 
           title="Khóa học Cơ bản"
           description="Học lập trình hoàn toàn miễn phí"
@@ -56,8 +56,8 @@
     </section>
 
     <!-- Row 4: Lộ trình học tập -->
-    <section class="w-full px-4 py-8 bg-white">
-      <div class="max-w-7xl mx-auto">
+    <section class="w-full py-8 bg-white">
+      <div class="max-w-7xl mx-auto px-4">
         <SectionHeader 
           title="Lộ trình học tập"
           description="Định hướng phát triển sự nghiệp"
@@ -76,8 +76,8 @@
     </section>
 
     <!-- Row 5: Bài viết mới nhất -->
-    <section class="w-full px-4 py-8 bg-gray-50">
-      <div class="max-w-7xl mx-auto">
+    <section class="w-full py-8 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4">
         <SectionHeader 
           title="Bài viết mới nhất"
           description="Chia sẻ kiến thức và kinh nghiệm"

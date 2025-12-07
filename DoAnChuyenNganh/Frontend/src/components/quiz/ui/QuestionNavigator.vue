@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
     <!-- Header -->
     <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
@@ -83,45 +83,45 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  // Danh sách câu hỏi
+  // Danh sĂ¡ch cĂ¢u há»i
   questions: {
     type: Array,
     required: true,
     validator: (value) => value.every(q => q.id !== undefined)
   },
 
-  // Index câu hỏi hiện tại
+  // Index cĂ¢u há»i hiá»‡n táº¡i
   currentIndex: {
     type: Number,
     required: true,
     validator: (value) => value >= 0
   },
 
-  // Object chứa câu trả lời {questionId: answer}
+  // Object chá»©a cĂ¢u tráº£ lá»i {questionId: answer}
   answers: {
     type: Object,
     default: () => ({})
   },
 
-  // Array chứa ID câu hỏi đã đánh dấu
+  // Array chá»©a ID cĂ¢u há»i Ä‘Ă£ Ä‘Ă¡nh dáº¥u
   markedQuestions: {
     type: Array,
     default: () => []
   },
 
-  // Tiêu đề
+  // TiĂªu Ä‘á»
   title: {
     type: String,
-    default: 'Danh sách câu hỏi'
+    default: 'Danh sĂ¡ch cĂ¢u há»i'
   },
 
-  // Hiển thị thống kê
+  // Hiá»ƒn thá»‹ thá»‘ng kĂª
   showStats: {
     type: Boolean,
     default: true
   },
 
-  // Số cột grid
+  // Sá»‘ cá»™t grid
   columns: {
     type: Number,
     default: 5,
@@ -131,7 +131,7 @@ const props = defineProps({
 
 const emit = defineEmits(['navigate', 'select'])
 
-// Grid class dựa trên số cột
+// Grid class dá»±a trĂªn sá»‘ cá»™t
 const gridClass = computed(() => {
   const cols = {
     3: 'grid-cols-3',
@@ -144,30 +144,34 @@ const gridClass = computed(() => {
   return cols[props.columns] || cols[5]
 })
 
-// Kiểm tra câu hỏi đã trả lời chưa
+// Kiá»ƒm tra cĂ¢u há»i Ä‘Ă£ tráº£ lá»i chÆ°a
 const isAnswered = (questionId) => {
   const answer = props.answers[questionId]
-  return answer !== undefined && answer !== null && answer !== ''
+  if (answer === undefined || answer === null) return false
+  if (Array.isArray(answer)) return answer.length > 0
+  if (typeof answer === 'string') return answer.trim() !== ''
+  if (typeof answer === 'object') return Object.keys(answer).length > 0
+  return true
 }
 
-// Kiểm tra câu hỏi đã đánh dấu chưa
+// Kiá»ƒm tra cĂ¢u há»i Ä‘Ă£ Ä‘Ă¡nh dáº¥u chÆ°a
 const isMarked = (questionId) => {
   return props.markedQuestions.includes(questionId)
 }
 
-// Class cho từng câu hỏi
+// Class cho tá»«ng cĂ¢u há»i
 const getQuestionClass = (question, index) => {
   const classes = []
   
-  // Active state (đang làm) - nền trắng, viền xanh đậm
+  // Active state (Ä‘ang lĂ m) - ná»n tráº¯ng, viá»n xanh Ä‘áº­m
   if (props.currentIndex === index) {
     classes.push('bg-white text-primary border-2 border-primary shadow-lg scale-110')
   }
-  // Answered state (đã trả lời) - nền xanh đậm (primary)
+  // Answered state (Ä‘Ă£ tráº£ lá»i) - ná»n xanh Ä‘áº­m (primary)
   else if (isAnswered(question.id)) {
     classes.push('bg-primary text-white border-2 border-primary hover:bg-primary/90')
   }
-  // Unanswered state (chưa trả lời) - nền xanh nhạt
+  // Unanswered state (chÆ°a tráº£ lá»i) - ná»n xanh nháº¡t
   else {
     classes.push('bg-primary/20 text-primary border-2 border-primary/50 hover:bg-primary/30')
   }
@@ -175,34 +179,36 @@ const getQuestionClass = (question, index) => {
   return classes.join(' ')
 }
 
-// Tooltip cho từng câu hỏi
+// Tooltip cho tá»«ng cĂ¢u há»i
 const getQuestionTooltip = (question, index) => {
-  const parts = [`Câu ${index + 1}`]
+  const parts = [`CĂ¢u ${index + 1}`]
   
   if (isAnswered(question.id)) {
-    parts.push('(Đã trả lời)')
+    parts.push('(ÄĂ£ tráº£ lá»i)')
   }
   
   if (isMarked(question.id)) {
-    parts.push('(Đã đánh dấu)')
+    parts.push('(ÄĂ£ Ä‘Ă¡nh dáº¥u)')
   }
   
   return parts.join(' ')
 }
 
-// Số câu đã trả lời
+// Sá»‘ cĂ¢u Ä‘Ă£ tráº£ lá»i
 const answeredCount = computed(() => {
   return props.questions.filter(q => isAnswered(q.id)).length
 })
 
-// Số câu chưa trả lời
+// Sá»‘ cĂ¢u chÆ°a tráº£ lá»i
 const unansweredCount = computed(() => {
   return props.questions.length - answeredCount.value
 })
 
-// Handler khi chọn câu hỏi
+// Handler khi chá»n cĂ¢u há»i
 const handleSelect = (index) => {
-  emit('navigate', index) // Emit 'navigate' để match với QuizPage
-  emit('select', index)   // Giữ lại 'select' cho backward compatibility
+  emit('navigate', index) // Emit 'navigate' Ä‘á»ƒ match vá»›i QuizPage
+  emit('select', index)   // Giá»¯ láº¡i 'select' cho backward compatibility
 }
 </script>
+
+

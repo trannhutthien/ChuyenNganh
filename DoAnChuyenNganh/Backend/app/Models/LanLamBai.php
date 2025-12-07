@@ -148,4 +148,35 @@ class LanLamBai extends Model
         $this->ChiTietJson = $chiTiet;
         return $this;
     }
+
+    /**
+     * Tính điểm dựa trên số câu đúng
+     * Điểm = (soCauDung / tongSoCau) * 10
+     */
+    public function tinhDiem()
+    {
+        // Lấy tất cả câu trả lời của lần làm bài này
+        $traLois = $this->traLois;
+        
+        // Đếm số câu đúng (DungHaySai = true/1)
+        $soCauDung = $traLois->where('DungHaySai', true)->count();
+        
+        // Lấy tổng số câu từ ChiTietJson
+        $chiTiet = $this->ChiTietJson ?? [];
+        $tongSoCau = $chiTiet['soCauHoi'] ?? $traLois->count();
+        
+        // Nếu tongSoCau = 0, lấy từ số câu trả lời
+        if ($tongSoCau == 0) {
+            $tongSoCau = $traLois->count();
+        }
+        
+        // Tính điểm: (soCauDung / tongSoCau) * 10, làm tròn 2 chữ số
+        $diem = $tongSoCau > 0 ? round(($soCauDung / $tongSoCau) * 10, 2) : 0;
+        
+        return [
+            'diem' => $diem,
+            'soCauDung' => $soCauDung,
+            'tongSoCau' => $tongSoCau
+        ];
+    }
 }

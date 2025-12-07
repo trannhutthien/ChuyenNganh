@@ -313,50 +313,56 @@ class LanLamBaiController extends Controller
 
     /**
      * Xử lý nộp bài nội bộ
+     * Logic chấm điểm:
+     * 1. Lấy tất cả câu trả lời của lần làm bài
+     * 2. Với mỗi câu trả lời, kiểm tra lựa chọn có đúng không
+     * 3. Tính điểm: (soCauDung / tongSoCau) * 10
      */
     private function nopBaiInternal(LanLamBai $lanLamBai)
     {
         return DB::transaction(function () use ($lanLamBai) {
             // Chấm điểm từng câu trả lời
-            $traLois = $lanLamBai->traLois()->with('cauHoi')->get();
+            $traLois = $lanLamBai->traLois()->with('cauHoi.luaChons')->get();
             
             foreach ($traLois as $traLoi) {
-                // Lấy điểm từ bảng BaiKiemTra_CauHoi
-                $diemCauHoi = DB::table('BaiKiemTra_CauHoi')
-                    ->where('BaiKiemTraId', $lanLamBai->BaiKiemTraId)
-                    ->where('CauHoiId', $traLoi->CauHoiId)
-                    ->value('Diem') ?? 1;
-
-                $traLoi->chamDiem($diemCauHoi);
+                // Gọi phương thức chamDiem() của model TraLoi
+                $traLoi->chamDiem();
             }
 
+            // Refresh lại để lấy kết quả chấm điểm mới
+            $lanLamBai->load('traLois');
+            
             // Tính tổng điểm
             $ketQua = $lanLamBai->tinhDiem();
 
-            // Cập nhật trạng thái
-            $trangThai = $lanLamBai->daHetGio() 
-                ? LanLamBai::TRANG_THAI_HET_GIO 
-                : LanLamBai::TRANG_THAI_HOAN_THANH;
-
+            // Cập nhật điểm vào bảng LanLamBai
             $lanLamBai->update([
-                'ThoiGianKetThuc' => now(),
-                'TrangThai' => $trangThai
+                'DiemSo' => $ketQua['diem'],
+                'NopBaiLuc' => now(),
+                'TrangThai' => LanLamBai::TRANG_THAI_HOAN_THANH
             ]);
 
             // Kiểm tra đạt hay không
             $baiKiemTra = $lanLamBai->baiKiemTra;
-            $dat = $ketQua['diem'] >= ($baiKiemTra->DiemDat ?? 0);
+            $diemDat = $baiKiemTra->DiemDat ?? 5;
+            $dat = $ketQua['diem'] >= $diemDat;
+
+            // Tính thời gian làm bài
+            $thoiGianLam = $lanLamBai->BatDauLuc 
+                ? now()->diffInMinutes($lanLamBai->BatDauLuc) 
+                : 0;
 
             return [
                 'lanLamBaiId' => $lanLamBai->LanLamBaiId,
                 'diem' => $ketQua['diem'],
                 'soCauDung' => $ketQua['soCauDung'],
                 'tongSoCau' => $ketQua['tongSoCau'],
-                'diemDat' => $baiKiemTra->DiemDat,
+                'diemDat' => $diemDat,
                 'dat' => $dat,
-                'trangThai' => $trangThai,
-                'thoiGianBatDau' => $lanLamBai->ThoiGianBatDau,
-                'thoiGianKetThuc' => $lanLamBai->ThoiGianKetThuc
+                'trangThai' => LanLamBai::TRANG_THAI_HOAN_THANH,
+                'thoiGianLam' => $thoiGianLam . ' phút',
+                'batDauLuc' => $lanLamBai->BatDauLuc,
+                'nopBaiLuc' => $lanLamBai->NopBaiLuc
             ];
         });
     }

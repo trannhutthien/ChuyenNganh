@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+﻿import { ref, computed } from 'vue'
 
 /**
  * Composable for managing quiz answers and marked questions
@@ -8,6 +8,7 @@ export function useQuizAnswer(questions = []) {
   // State
   const userAnswers = ref({})
   const markedQuestions = ref([])
+  const serverAnsweredCount = ref(null)
 
   // Computed: Số câu đã trả lời
   const answeredCount = computed(() => {

@@ -214,7 +214,7 @@
     <div v-else-if="quizStore.hasSubmitted && quizStore.quizResult" class="container mx-auto px-4 py-8">
       <QuizResult
         :result="quizStore.quizResult"
-        :passingScore="quiz?.passing_score || 70"
+        :passingScore="Number(quizStore.quizResult?.passing_score) || 5"
       >
         <template #details>
           <ResultDetailList

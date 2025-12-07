@@ -1,0 +1,220 @@
+@startuml
+skinparam linetype ortho
+skinparam entityStyle rect
+
+' ===========================
+'   BẢNG NGUOIDUNG & VAI TRÒ
+' ===========================
+entity "NguoiDung" {
+  * NguoiDungId : INT
+  --
+  Email : varchar(255)
+  MatKhauHash : varchar(255)
+  HoTen : nvarchar(150)
+  AvatarUrl : nvarchar(300)
+  TrangThai : tinyint
+  TaoLuc : datetime
+  CapNhatLuc : datetime
+}
+
+entity "VaiTro" {
+  * VaiTroId : INT
+  --
+  MaVaiTro : varchar(50)
+  TenVaiTro : nvarchar(100)
+  MoTa : nvarchar(255)
+}
+
+entity "NguoiDung_VaiTro" {
+  * NguoiDungId : INT
+  * VaiTroId : INT
+}
+
+NguoiDung ||--o{ NguoiDung_VaiTro
+VaiTro    ||--o{ NguoiDung_VaiTro
+
+
+' ===========================
+'   KỸ NĂNG - KHÓA HỌC
+' ===========================
+entity "KyNang" {
+  * KyNangId : INT
+  --
+  TenKyNang : nvarchar(150)
+  MoTa : nvarchar(500)
+  CapDo : tinyint
+}
+
+entity "KhoaHoc" {
+  * KhoaHocId : INT
+  --
+  TieuDe : nvarchar(200)
+  HinhAnhUrl : nvarchar(300)
+  TomTat : nvarchar(500)
+  CapDo : tinyint
+  Tags : nvarchar(300)
+  DieuKienTienQuyet : nvarchar(300)
+  GiaTien : decimal
+  TrangThai : tinyint
+  TaoLuc : datetime
+  CapNhatLuc : datetime
+}
+
+entity "KyNang_KhoaHoc" {
+  * KyNangId : INT
+  * KhoaHocId : INT
+}
+
+KyNang  ||--o{ KyNang_KhoaHoc
+KhoaHoc ||--o{ KyNang_KhoaHoc
+
+
+' ===========================
+'    BÀI HỌC & NỘI DUNG
+' ===========================
+entity "BaiHoc" {
+  * BaiHocId : INT
+  --
+  KhoaHocId : INT
+  TieuDe : nvarchar(200)
+  ThuTu : int
+  TrangThai : tinyint
+  TaoLuc : datetime
+  CapNhatLuc : datetime
+}
+
+KhoaHoc ||--o{ BaiHoc
+
+entity "NoiDungBaiHoc" {
+  * NoiDungId : INT
+  --
+  BaiHocId : INT
+  LoaiNoiDung : enum
+  NoiDung : text
+  ThuTu : int
+  TaoLuc : datetime
+  CapNhatLuc : datetime
+}
+
+BaiHoc ||--o{ NoiDungBaiHoc
+
+
+' ===========================
+'   NGÂN HÀNG CÂU HỎI & CÂU HỎI
+' ===========================
+entity "NganHangCauHoi" {
+  * NganHangId : INT
+  --
+  KhoaHocId : INT
+  TenNganHang : nvarchar(200)
+  MoTa : nvarchar(300)
+  CapDoMacDinh : tinyint
+}
+
+KhoaHoc ||--o{ NganHangCauHoi
+
+entity "CauHoi" {
+  * CauHoiId : INT
+  --
+  NganHangId : INT
+  BaiHocId : INT
+  Loai : enum
+  DeBai : text
+  GiaiThich : text
+  DoKho : tinyint
+  ChuDeTags : nvarchar(300)
+  ThuTu : int
+}
+
+NganHangCauHoi ||--o{ CauHoi
+BaiHoc ||--o{ CauHoi
+
+
+' ===========================
+'     LỰA CHỌN
+' ===========================
+entity "LuaChon" {
+  * LuaChonId : INT
+  --
+  CauHoiId : INT
+  NoiDung : text
+  DungHaySai : boolean
+  ThuTu : int
+}
+
+CauHoi ||--o{ LuaChon
+
+
+' ===========================
+'     BÀI KIỂM TRA
+' ===========================
+entity "BaiKiemTra" {
+  * BaiKiemTraId : INT
+  --
+  KhoaHocId : INT
+  BaiHocId : INT
+  TieuDe : nvarchar(200)
+  ThietLapJson : json
+  DiemDat : decimal
+  TrangThai : tinyint
+  TaoLuc : datetime
+  CapNhatLuc : datetime
+}
+
+KhoaHoc ||--o{ BaiKiemTra
+BaiHoc ||--o{ BaiKiemTra
+
+
+' ===========================
+'   LẦN LÀM BÀI
+' ===========================
+entity "LanLamBai" {
+  * LanLamBaiId : INT
+  --
+  BaiKiemTraId : INT
+  NguoiDungId : INT
+  BatDauLuc : datetime
+  NopBaiLuc : datetime
+  DiemSo : decimal
+  ChiTietJson : json
+  TrangThai : enum
+}
+
+BaiKiemTra ||--o{ LanLamBai
+NguoiDung  ||--o{ LanLamBai
+
+
+' ===========================
+'      TRẢ LỜI
+' ===========================
+entity "TraLoi" {
+  * TraLoiId : INT
+  --
+  LanLamBaiId : INT
+  CauHoiId : INT
+  LuaChonIds : json
+  DungHaySai : boolean
+  ThoiGianGiay : int
+}
+
+LanLamBai ||--o{ TraLoi
+CauHoi    ||--o{ TraLoi
+
+
+' ===========================
+'        GHI DANH
+' ===========================
+entity "GhiDanh" {
+  * NguoiDungId : INT
+  * KhoaHocId : INT
+  --
+  PhanTramHoanThanh : decimal
+  BaiHocCuoiCungId : INT
+  CapNhatLuc : datetime
+}
+
+NguoiDung ||--o{ GhiDanh
+KhoaHoc   ||--o{ GhiDanh
+BaiHoc    ||--o{ GhiDanh : "last lesson"
+
+@enduml
