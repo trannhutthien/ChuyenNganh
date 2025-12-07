@@ -304,6 +304,33 @@ class LanLamBaiController extends Controller
         }
 
         $result = $this->nopBaiInternal($lanLamBai);
+        
+        // Reload để lấy chi tiết câu trả lời
+        $lanLamBai->load(['traLois.cauHoi.luaChons']);
+        
+        // Build chi tiết câu hỏi
+        $chiTiet = $lanLamBai->traLois->map(function ($traLoi, $index) {
+            $cauHoi = $traLoi->cauHoi;
+            $luaChonDaChon = $traLoi->luaChonIdsArray ?? [];
+            
+            return [
+                'questionNumber' => $index + 1,
+                'cauHoiId' => $cauHoi->CauHoiId,
+                'noiDung' => $cauHoi->DeBai,
+                'isCorrect' => $traLoi->DungHaySai === true || $traLoi->DungHaySai === 1,
+                'giaiThich' => $cauHoi->GiaiThich,
+                'luaChons' => $cauHoi->luaChons->map(function ($luaChon) use ($luaChonDaChon) {
+                    return [
+                        'id' => $luaChon->LuaChonId,
+                        'noiDung' => $luaChon->NoiDung,
+                        'isCorrect' => $luaChon->DungHaySai === true || $luaChon->DungHaySai === 1,
+                        'isUserAnswer' => in_array($luaChon->LuaChonId, $luaChonDaChon)
+                    ];
+                })->values()->all()
+            ];
+        })->values()->all();
+        
+        $result['chiTiet'] = $chiTiet;
 
         return response()->json([
             'message' => 'Nộp bài thành công',

@@ -270,6 +270,22 @@ export const useQuizStore = defineStore('quiz', () => {
       
       console.log('Backend data:', data)
       
+      // Parse chi tiết từ backend (đã được chấm điểm)
+      const questionDetails = (data.chiTiet || []).map(item => ({
+        question_number: item.questionNumber,
+        question_text: item.noiDung,
+        is_correct: item.isCorrect,
+        explanation: item.giaiThich || null,
+        options: (item.luaChons || []).map(lc => ({
+          id: lc.id,
+          text: lc.noiDung,
+          is_correct: lc.isCorrect,
+          is_user_answer: lc.isUserAnswer
+        }))
+      }))
+      
+      console.log('Question details from backend:', questionDetails)
+      
       // Chuyển đổi response từ backend sang format frontend cần
       const result = {
         score: Number(data.diem) || 0,                                    // Điểm (thang 10)
@@ -279,7 +295,7 @@ export const useQuizStore = defineStore('quiz', () => {
         total_questions: Number(data.tongSoCau) || questions.value.length, // Tổng số câu
         time_taken: String(data.thoiGianLam || '0 phút'),                 // Thời gian làm bài
         passing_score: Number(data.diemDat) || 5,                         // Điểm đạt yêu cầu (thang 10)
-        details: []                                                        // Chi tiết (có thể lấy từ API khác)
+        question_details: questionDetails                                  // Chi tiết từ backend (đã chấm điểm)
       }
       
       console.log('Formatted result:', result)
@@ -628,6 +644,67 @@ export const useQuizStore = defineStore('quiz', () => {
     error.value = null
     lastSavedAt.value = null
     saveCount.value = 0
+  }
+
+  /**
+   * Xây dựng chi tiết câu hỏi cho kết quả
+   */
+  function buildQuestionDetails() {
+    console.log('Building question details...')
+    console.log('Questions:', questions.value.length)
+    console.log('User answers:', userAnswers.value)
+    
+    if (!questions.value || questions.value.length === 0) {
+      console.warn('No questions available')
+      return []
+    }
+    
+    return questions.value.map((question, index) => {
+      console.log(`Processing question ${index + 1}:`, question)
+      
+      const userAnswer = userAnswers.value[question.id]
+      const luaChons = question.luaChons || question.options || []
+      
+      console.log(`Question ${index + 1} - User answer:`, userAnswer)
+      console.log(`Question ${index + 1} - Options:`, luaChons)
+      
+      // Xác định câu trả lời đúng và câu user chọn
+      const correctOptionIds = luaChons
+        .filter(lc => lc.dungHaySai === 1 || lc.is_correct === true)
+        .map(lc => lc.id)
+      
+      const userOptionIds = Array.isArray(userAnswer) ? userAnswer : (userAnswer ? [userAnswer] : [])
+      
+      console.log(`Question ${index + 1} - Correct IDs:`, correctOptionIds)
+      console.log(`Question ${index + 1} - User IDs:`, userOptionIds)
+      
+      // Kiểm tra câu trả lời có đúng không
+      const isCorrect = 
+        correctOptionIds.length > 0 &&
+        correctOptionIds.length === userOptionIds.length &&
+        correctOptionIds.every(id => userOptionIds.includes(id)) &&
+        userOptionIds.every(id => correctOptionIds.includes(id))
+      
+      // Xây dựng danh sách options với trạng thái
+      const options = luaChons.map(lc => ({
+        id: lc.id,
+        text: lc.noiDung || lc.text,
+        is_correct: lc.dungHaySai === 1 || lc.is_correct === true,
+        is_user_answer: userOptionIds.includes(lc.id)
+      }))
+      
+      const detail = {
+        question_number: index + 1,
+        question_text: question.noiDung || question.text,
+        is_correct: isCorrect,
+        options: options,
+        explanation: question.giaiThich || question.explanation || null
+      }
+      
+      console.log(`Question ${index + 1} - Detail:`, detail)
+      
+      return detail
+    })
   }
 
   return {

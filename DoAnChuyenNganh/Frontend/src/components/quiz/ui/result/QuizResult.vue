@@ -125,8 +125,126 @@
           <!-- Details List Slot -->
           <div v-if="showDetails" class="space-y-4">
             <slot name="details">
+              <!-- Hiển thị chi tiết từng câu hỏi -->
+              <div v-if="result.question_details && result.question_details.length > 0" class="space-y-6">
+                <div 
+                  v-for="(detail, index) in result.question_details" 
+                  :key="index"
+                  class="bg-white border rounded-lg p-6 shadow-sm"
+                >
+                  <!-- Câu hỏi header -->
+                  <div class="flex items-start gap-4 mb-4">
+                    <div 
+                      class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white"
+                      :class="detail.is_correct ? 'bg-green-500' : 'bg-red-500'"
+                    >
+                      {{ index + 1 }}
+                    </div>
+                    <div class="flex-1">
+                      <h4 class="text-lg font-semibold text-gray-900 mb-2">
+                        {{ detail.question_text }}
+                      </h4>
+                      <div 
+                        v-if="detail.is_correct !== null"
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium"
+                        :class="detail.is_correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                      >
+                        <svg v-if="detail.is_correct" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                        {{ detail.is_correct ? 'Đúng' : 'Sai' }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Danh sách lựa chọn -->
+                  <div class="space-y-2 ml-14">
+                    <div 
+                      v-for="(option, optIdx) in detail.options" 
+                      :key="optIdx"
+                      class="border rounded-lg p-3 transition-all"
+                      :class="{
+                        'bg-red-50 border-red-300 font-medium': option.is_user_answer && !option.is_correct,
+                        'bg-green-50 border-green-300 font-medium': option.is_correct,
+                        'bg-gray-50 border-gray-200': option.is_user_answer && option.is_correct,
+                        'border-gray-200': !option.is_user_answer && !option.is_correct
+                      }"
+                    >
+                      <div class="flex items-center gap-3">
+                        <!-- Icon cho lựa chọn -->
+                        <div class="flex-shrink-0">
+                          <div 
+                            v-if="option.is_user_answer && !option.is_correct"
+                            class="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                          </div>
+                          <div 
+                            v-else-if="option.is_correct"
+                            class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                          </div>
+                          <div 
+                            v-else
+                            class="w-6 h-6 rounded-full border-2 border-gray-300"
+                          ></div>
+                        </div>
+
+                        <!-- Nội dung lựa chọn -->
+                        <div class="flex-1">
+                          <span :class="{
+                            'text-red-800': option.is_user_answer && !option.is_correct,
+                            'text-green-800': option.is_correct,
+                            'text-gray-700': !option.is_user_answer && !option.is_correct
+                          }">
+                            {{ option.text }}
+                          </span>
+                        </div>
+
+                        <!-- Nhãn -->
+                        <div class="flex-shrink-0">
+                          <span 
+                            v-if="option.is_user_answer && !option.is_correct"
+                            class="text-xs px-2 py-1 rounded bg-red-200 text-red-800"
+                          >
+                            Bạn chọn
+                          </span>
+                          <span 
+                            v-else-if="option.is_correct && option.is_user_answer"
+                            class="text-xs px-2 py-1 rounded bg-green-200 text-green-800"
+                          >
+                            Đúng ✓
+                          </span>
+                          <span 
+                            v-else-if="option.is_correct"
+                            class="text-xs px-2 py-1 rounded bg-green-200 text-green-800"
+                          >
+                            Đáp án đúng
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Giải thích (nếu có) -->
+                  <div v-if="detail.explanation" class="mt-4 ml-14 p-4 bg-blue-50 border-l-4 border-blue-400 rounded">
+                    <p class="text-sm text-blue-900">
+                      <strong>Giải thích:</strong> {{ detail.explanation }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <!-- Default: No details provided -->
-              <div class="text-center py-8 text-gray-400">
+              <div v-else class="text-center py-8 text-gray-400">
                 <p>Không có chi tiết kết quả</p>
               </div>
             </slot>

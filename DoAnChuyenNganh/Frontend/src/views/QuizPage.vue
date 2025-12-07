@@ -216,13 +216,6 @@
         :result="quizStore.quizResult"
         :passingScore="Number(quizStore.quizResult?.passing_score) || 5"
       >
-        <template #details>
-          <ResultDetailList
-            :details="quizStore.quizResult.details || []"
-            showFilters
-          />
-        </template>
-
         <template #actions>
           <BaseButton
             v-if="quiz?.attempts_left > 0"
