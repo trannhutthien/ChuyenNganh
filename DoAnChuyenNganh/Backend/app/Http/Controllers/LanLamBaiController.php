@@ -527,6 +527,7 @@ class LanLamBaiController extends Controller
             'id' => $lanLamBai->LanLamBaiId,
             'baiKiemTraId' => $lanLamBai->BaiKiemTraId,
             'tenBaiKiemTra' => $lanLamBai->baiKiemTra->TieuDe ?? null,
+            'khoaHocId' => $lanLamBai->baiKiemTra->KhoaHocId ?? null,
             'tenKhoaHoc' => $lanLamBai->baiKiemTra->khoaHoc->TieuDe ?? null,
             'thoiGianBatDau' => $lanLamBai->ThoiGianBatDau,
             'thoiGianKetThuc' => $lanLamBai->ThoiGianKetThuc,

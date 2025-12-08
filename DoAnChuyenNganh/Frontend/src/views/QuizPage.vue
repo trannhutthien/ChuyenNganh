@@ -519,7 +519,9 @@ const handleRetry = () => {
 }
 
 const handleBackToCourse = () => {
-  router.push(`/learn/${route.params.courseId || '1'}`)
+  // Lấy courseId từ quiz store hoặc route params
+  const courseId = quizStore.quiz?.KhoaHocId || route.params.courseId || '1'
+  router.push(`/learn/${courseId}`)
 }
 
 const handleDownloadCertificate = () => {

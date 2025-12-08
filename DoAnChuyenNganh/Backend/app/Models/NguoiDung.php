@@ -29,7 +29,8 @@ class NguoiDung extends Authenticatable
         'MatKhauHash',
         'HoTen',
         'TrangThai',
-        'AvatarUrl'
+        'AvatarUrl',
+        'GoogleId'
     ];
 
  

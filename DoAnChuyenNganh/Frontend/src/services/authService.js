@@ -29,6 +29,16 @@ export const authService = {
   },
 
   /**
+   * Đăng nhập/Đăng ký bằng Google
+   * @param {string} accessToken - Google access token từ OAuth
+   * @returns {Promise} Response chứa token và thông tin user
+   */
+  async loginWithGoogle(accessToken) {
+    const response = await api.post('/auth/google', { access_token: accessToken })
+    return response
+  },
+
+  /**
    * Đăng xuất
    * @returns {Promise}
    */

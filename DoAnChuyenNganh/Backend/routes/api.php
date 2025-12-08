@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\KhoaHocController;
 use App\Http\Controllers\BaiHocController;
 use App\Http\Controllers\NganHangCauHoiController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\BaiKiemTraCuoiKhoaController;
 // ========== AUTH ROUTES ==========
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/google', [GoogleAuthController::class, 'handleGoogleLogin']);
 Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -194,6 +194,11 @@ export const useQuizStore = defineStore('quiz', () => {
       // Lấy thông tin lần làm bài
       attemptId.value = response.data?.id || response.data?.LanLamBaiId
       
+      // Cập nhật KhoaHocId vào quiz object để dùng khi quay lại
+      if (response.data?.khoaHocId && quiz.value) {
+        quiz.value.KhoaHocId = response.data.khoaHocId
+      }
+      
       // Lấy câu hỏi từ response (đã được format từ backend)
       if (response.cauHois && response.cauHois.length > 0) {
         questions.value = response.cauHois
