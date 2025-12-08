@@ -46,11 +46,8 @@ class GoogleAuthController extends Controller
                     'AvatarUrl' => $googleUser['picture'] ?? null
                 ]);
                 
-                // Gán vai trò HOC_VIEN mặc định
-                $vaiTroHocVien = \App\Models\VaiTro::where('TenVaiTro', 'HOC_VIEN')->first();
-                if ($vaiTroHocVien) {
-                    $user->vaiTros()->attach($vaiTroHocVien->VaiTroId);
-                }
+                // Gán vai trò HOC_VIEN mặc định (VaiTroId = 2)
+                $user->vaiTros()->attach(2);
             } else {
                 // Cập nhật GoogleId và Avatar nếu chưa có
                 $updateData = [];
