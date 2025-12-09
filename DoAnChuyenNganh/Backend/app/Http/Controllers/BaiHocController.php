@@ -95,4 +95,107 @@ class BaiHocController extends Controller
             'order' => $noiDung->ThuTu
         ];
     }
+
+    /**
+     * Tạo bài học mới
+     */
+    public function store(Request $request)
+    {
+        try {
+            $baiHoc = BaiHoc::create([
+                'KhoaHocId' => $request->KhoaHocId,
+                'TieuDe' => $request->TieuDe,
+                'MoTa' => $request->MoTa,
+                'NoiDung' => $request->NoiDung,
+                'LoaiBaiHoc' => $request->LoaiBaiHoc ?? 'video',
+                'ThuTu' => $request->ThuTu ?? 1,
+                'ThoiLuong' => $request->ThoiLuong ?? 0,
+                'VideoUrl' => $request->VideoUrl,
+                'TrangThai' => $request->TrangThai ?? 1,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tạo bài học thành công',
+                'data' => $this->formatBaiHoc($baiHoc)
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi tạo bài học: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Cập nhật bài học
+     */
+    public function update(Request $request, $id)
+    {
+        $baiHoc = BaiHoc::find($id);
+
+        if (!$baiHoc) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy bài học'
+            ], 404);
+        }
+
+        try {
+            $baiHoc->update([
+                'TieuDe' => $request->TieuDe ?? $baiHoc->TieuDe,
+                'MoTa' => $request->MoTa ?? $baiHoc->MoTa,
+                'NoiDung' => $request->NoiDung ?? $baiHoc->NoiDung,
+                'LoaiBaiHoc' => $request->LoaiBaiHoc ?? $baiHoc->LoaiBaiHoc,
+                'ThuTu' => $request->ThuTu ?? $baiHoc->ThuTu,
+                'ThoiLuong' => $request->ThoiLuong ?? $baiHoc->ThoiLuong,
+                'VideoUrl' => $request->VideoUrl ?? $baiHoc->VideoUrl,
+                'TrangThai' => $request->TrangThai ?? $baiHoc->TrangThai,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật bài học thành công',
+                'data' => $this->formatBaiHoc($baiHoc->fresh())
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi cập nhật bài học: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Xóa bài học
+     */
+    public function destroy($id)
+    {
+        $baiHoc = BaiHoc::find($id);
+
+        if (!$baiHoc) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy bài học'
+            ], 404);
+        }
+
+        try {
+            // Xóa nội dung bài học liên quan
+            $baiHoc->noiDungs()->delete();
+            
+            // Xóa bài học
+            $baiHoc->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa bài học thành công'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi xóa bài học: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

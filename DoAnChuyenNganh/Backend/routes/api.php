@@ -55,6 +55,9 @@ Route::prefix('courses')->group(function () {
 Route::prefix('lessons')->group(function () {
     Route::get('/{id}', [BaiHocController::class, 'show']);             // Chi tiết bài học
     Route::get('/{id}/content', [BaiHocController::class, 'getContent']); // Nội dung chi tiết bài học
+    Route::post('/', [BaiHocController::class, 'store']);               // Tạo bài học mới
+    Route::put('/{id}', [BaiHocController::class, 'update']);           // Cập nhật bài học
+    Route::delete('/{id}', [BaiHocController::class, 'destroy']);       // Xóa bài học
 });
 
 // ========== NGÂN HÀNG CÂU HỎI ROUTES ==========

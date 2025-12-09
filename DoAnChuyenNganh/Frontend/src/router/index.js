@@ -4,6 +4,7 @@ import CourseLearningPage from '../views/CourseLearningPage.vue'
 import QuizPage from '../views/QuizPage.vue'
 import FinalExamPage from '../views/FinalExamPage.vue'
 import CourseManagementPage from '../views/admin/CourseManagementPage.vue'
+import CourseLessonsPage from '../views/admin/CourseLessonsPage.vue'
 
 const routes = [
   {
@@ -35,6 +36,12 @@ const routes = [
     path: '/quan-ly/khoa-hoc',
     name: 'CourseManagement',
     component: CourseManagementPage,
+    meta: { requiresAuth: true, roles: ['ADMIN', 'EDITOR'] }
+  },
+  {
+    path: '/quan-ly/khoa-hoc/:id/bai-hoc',
+    name: 'CourseLessons',
+    component: CourseLessonsPage,
     meta: { requiresAuth: true, roles: ['ADMIN', 'EDITOR'] }
   },
   // Catch-all route - redirect về trang chủ nếu không tìm thấy route

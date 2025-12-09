@@ -63,11 +63,14 @@
     </CourseTable>
 
     <!-- Form Modal: Thêm/Sửa khóa học -->
-    <AddCourseModal
+    <FormAddModal
       v-model="showFormModal"
-      :is-edit="isEditing"
+      :title="isEditing ? 'Sửa khóa học' : 'Thêm khóa học mới'"
+      :submit-text="isEditing ? 'Cập nhật' : 'Thêm khóa học'"
+      :fields="courseFormFields"
       :initial-data="editingCourse"
       :loading="isSubmitting"
+      size="lg"
       @submit="handleFormSubmit"
     />
   </div>
@@ -75,13 +78,91 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import SearchInput from '../../components/ui/SearchInput.vue'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import TablePagination from '../../components/ui/TablePagination.vue'
-import AddCourseModal from '../../components/modal/AddCourseModal.vue'
+import FormAddModal from '../../components/modal/FormAddModal.vue'
 import CourseStatsCards from '../../components/admin/statsCards/CourseStatsCards.vue'
 import CourseTable from '../../components/admin/CourseTable.vue'
 import { courseService } from '../../services/courseService'
+
+const router = useRouter()
+
+// Course Form Fields Config
+const courseFormFields = [
+  {
+    name: 'TieuDe',
+    label: 'Tiêu đề khóa học',
+    type: 'text',
+    placeholder: 'VD: Lập Trình PHP & MySQL',
+    required: true,
+    default: ''
+  },
+  {
+    name: 'HinhAnhUrl',
+    label: 'Hình ảnh (URL)',
+    type: 'text',
+    placeholder: '/images/phpmysql.jpg',
+    required: true,
+    default: ''
+  },
+  {
+    name: 'TomTat',
+    label: 'Tóm tắt khóa học',
+    inputType: 'textarea',
+    placeholder: 'Mô tả ngắn về nội dung khóa học...',
+    rows: 4,
+    required: true,
+    default: ''
+  },
+  {
+    name: 'CapDo',
+    label: 'Cấp độ',
+    inputType: 'select',
+    required: true,
+    default: 1,
+    options: [
+      { value: 1, label: '1 - Cơ bản' },
+      { value: 2, label: '2 - Trung bình' },
+      { value: 3, label: '3 - Nâng cao' }
+    ]
+  },
+  {
+    name: 'Tags',
+    label: 'Tags (ngăn cách bằng dấu phẩy)',
+    type: 'text',
+    placeholder: 'php,mysql,backend',
+    default: ''
+  },
+  {
+    name: 'DieuKienTienQuyet',
+    label: 'Điều kiện tiên quyết',
+    type: 'text',
+    placeholder: 'VD: PHP cơ bản',
+    default: ''
+  },
+  {
+    name: 'GiaTien',
+    label: 'Giá tiền (VNĐ)',
+    type: 'number',
+    placeholder: '399000',
+    required: true,
+    default: 0
+  },
+  {
+    name: 'TrangThai',
+    label: 'Trạng thái',
+    inputType: 'select',
+    required: true,
+    default: 1,
+    options: [
+      { value: 1, label: 'Hoạt động' },
+      { value: 0, label: 'Chờ duyệt' },
+      { value: -1, label: 'Nháp' }
+    ]
+  }
+]
 
 // Table columns config
 const tableColumns = [
@@ -234,8 +315,8 @@ const openAddModal = () => {
 }
 
 const viewCourse = (course) => {
-  console.log('Xem khóa học:', course)
-  // TODO: Navigate to course detail
+  // Navigate to course lessons page
+  router.push(`/quan-ly/khoa-hoc/${course.id}/bai-hoc`)
 }
 
 const editCourse = (course) => {
