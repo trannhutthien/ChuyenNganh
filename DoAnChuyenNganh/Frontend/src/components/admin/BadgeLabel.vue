@@ -42,10 +42,14 @@ const statusConfig = {
     text: 'Hoạt động'
   },
   '2': {
+    class: 'bg-blue-100 text-blue-700',
+    text: 'Đã xuất bản'
+  },
+  '0': {
     class: 'bg-yellow-100 text-yellow-700',
     text: 'Chờ duyệt'
   },
-  '0': {
+  '-1': {
     class: 'bg-gray-100 text-gray-700',
     text: 'Nháp'
   },
@@ -53,6 +57,10 @@ const statusConfig = {
   active: {
     class: 'bg-green-100 text-green-700',
     text: 'Hoạt động'
+  },
+  published: {
+    class: 'bg-blue-100 text-blue-700',
+    text: 'Đã xuất bản'
   },
   pending: {
     class: 'bg-yellow-100 text-yellow-700',
@@ -73,10 +81,6 @@ const statusConfig = {
   cancelled: {
     class: 'bg-red-100 text-red-700',
     text: 'Đã hủy'
-  },
-  published: {
-    class: 'bg-green-100 text-green-700',
-    text: 'Đã xuất bản'
   },
   archived: {
     class: 'bg-gray-100 text-gray-700',

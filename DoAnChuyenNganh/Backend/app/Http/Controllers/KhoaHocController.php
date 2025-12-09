@@ -270,4 +270,106 @@ class KhoaHocController extends Controller
             'completed' => false // TODO: Kiểm tra tiến độ học của user
         ];
     }
+
+    /**
+     * Xóa khóa học
+     */
+    public function destroy($id)
+    {
+        $khoaHoc = KhoaHoc::find($id);
+
+        if (!$khoaHoc) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy khóa học'
+            ], 404);
+        }
+
+        try {
+            // Xóa các bài học liên quan trước
+            $khoaHoc->baiHocs()->delete();
+            
+            // Xóa khóa học
+            $khoaHoc->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa khóa học thành công'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi xóa khóa học: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Tạo khóa học mới
+     */
+    public function store(Request $request)
+    {
+        try {
+            $khoaHoc = KhoaHoc::create([
+                'TieuDe' => $request->title,
+                'TomTat' => $request->description,
+                'HinhAnhUrl' => $request->thumbnail,
+                'CapDo' => $request->level ?? 1,
+                'Tags' => $request->tags,
+                'DieuKienTienQuyet' => $request->prerequisites,
+                'GiaTien' => $request->price ?? 0,
+                'TrangThai' => $request->status ?? 0, // Mặc định: Chờ duyệt
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tạo khóa học thành công',
+                'data' => $this->formatKhoaHoc($khoaHoc)
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi tạo khóa học: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Cập nhật khóa học
+     */
+    public function update(Request $request, $id)
+    {
+        $khoaHoc = KhoaHoc::find($id);
+
+        if (!$khoaHoc) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy khóa học'
+            ], 404);
+        }
+
+        try {
+            $khoaHoc->update([
+                'TieuDe' => $request->title ?? $khoaHoc->TieuDe,
+                'TomTat' => $request->description ?? $khoaHoc->TomTat,
+                'HinhAnhUrl' => $request->thumbnail ?? $khoaHoc->HinhAnhUrl,
+                'CapDo' => $request->level ?? $khoaHoc->CapDo,
+                'Tags' => $request->tags ?? $khoaHoc->Tags,
+                'DieuKienTienQuyet' => $request->prerequisites ?? $khoaHoc->DieuKienTienQuyet,
+                'GiaTien' => $request->price ?? $khoaHoc->GiaTien,
+                'TrangThai' => $request->status ?? $khoaHoc->TrangThai,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật khóa học thành công',
+                'data' => $this->formatKhoaHoc($khoaHoc->fresh())
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi cập nhật khóa học: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

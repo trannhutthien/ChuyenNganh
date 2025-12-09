@@ -110,8 +110,44 @@ const totalPages = ref(1)
 
 // Courses Data
 const courses = ref([])
+const allCoursesForStats = ref([]) // Lưu tất cả khóa học để tính thống kê
 
-// Fetch courses from API
+// Fetch stats từ tất cả khóa học (không phân trang)
+const fetchStats = async () => {
+  try {
+    // Lấy tất cả khóa học để tính thống kê
+    const response = await courseService.getAllAdmin({
+      per_page: 9999 // Lấy tất cả
+    })
+    
+    if (response.success) {
+      allCoursesForStats.value = response.data
+      
+      // Tính stats từ tất cả khóa học
+      // Status: 1 = Hoạt động, 2 = Đã xuất bản (cả 2 đều hiển thị trang chủ)
+      //         0 = Chờ duyệt, -1 = Nháp
+      const allCourses = response.data
+      stats.value = {
+        totalCourses: response.pagination?.total || allCourses.length,
+        // Status 1 hoặc 2 = Đang hoạt động (hiển thị trang chủ)
+        activeCourses: allCourses.filter(c => 
+          c.status === 1 || c.status === '1' || 
+          c.status === 2 || c.status === '2'
+        ).length,
+        // Status 0 = Chờ duyệt
+        pendingCourses: allCourses.filter(c => 
+          c.status === 0 || c.status === '0'
+        ).length,
+        // Tổng học viên
+        totalStudents: allCourses.reduce((sum, c) => sum + (c.students || 0), 0)
+      }
+    }
+  } catch (error) {
+    console.error('Lỗi khi tải thống kê:', error)
+  }
+}
+
+// Fetch courses from API (có phân trang)
 const fetchCourses = async () => {
   isLoading.value = true
   try {
@@ -146,9 +182,6 @@ const fetchCourses = async () => {
         totalPages.value = response.pagination.last_page
         currentPage.value = response.pagination.current_page
       }
-      
-      // Update stats
-      updateStats()
     }
   } catch (error) {
     console.error('Lỗi khi tải khóa học:', error)
@@ -162,16 +195,6 @@ const formatDate = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)
   return date.toLocaleDateString('vi-VN')
-}
-
-// Update stats based on courses
-const updateStats = () => {
-  stats.value = {
-    totalCourses: totalCourses.value,
-    activeCourses: courses.value.filter(c => c.status === 'active').length,
-    pendingCourses: courses.value.filter(c => c.status === 'pending' || c.status === 'draft').length,
-    totalStudents: courses.value.reduce((sum, c) => sum + c.students, 0)
-  }
 }
 
 // Filtered courses (local search)
@@ -206,7 +229,8 @@ const deleteCourse = async (course) => {
     try {
       await courseService.delete(course.id)
       console.log('Đã xóa khóa học:', course)
-      // Reload danh sách
+      // Reload thống kê và danh sách
+      fetchStats()
       fetchCourses()
     } catch (error) {
       console.error('Lỗi khi xóa khóa học:', error)
@@ -232,6 +256,7 @@ const nextPage = () => {
 
 // Fetch data on mount
 onMounted(() => {
-  fetchCourses()
+  fetchStats()   // Lấy thống kê từ tất cả khóa học
+  fetchCourses() // Lấy khóa học theo trang
 })
 </script>

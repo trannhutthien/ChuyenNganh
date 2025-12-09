@@ -46,6 +46,9 @@ Route::prefix('courses')->group(function () {
     Route::get('/search', [KhoaHocController::class, 'search']);        // Tìm kiếm
     Route::get('/{id}', [KhoaHocController::class, 'show']);            // Chi tiết khóa học
     Route::get('/{id}/lessons', [KhoaHocController::class, 'getLessons']); // Lấy bài học của khóa học
+    Route::delete('/{id}', [KhoaHocController::class, 'destroy']);      // Xóa khóa học
+    Route::put('/{id}', [KhoaHocController::class, 'update']);          // Cập nhật khóa học
+    Route::post('/', [KhoaHocController::class, 'store']);              // Tạo khóa học mới
 });
 
 // ========== BÀI HỌC ROUTES (PUBLIC) ==========
