@@ -15,6 +15,8 @@
         placeholder="Tìm kiếm khóa học..."
         size="lg"
         container-class="w-full sm:w-80"
+        realtime
+        :debounce="300"
       />
 
       <!-- Add Button -->

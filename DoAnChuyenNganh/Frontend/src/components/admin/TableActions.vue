@@ -54,7 +54,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import ConfirmModal from '../ui/ConfirmModal.vue'
+import ConfirmModal from '../modal/ConfirmModal.vue'
 
 const props = defineProps({
   row: {

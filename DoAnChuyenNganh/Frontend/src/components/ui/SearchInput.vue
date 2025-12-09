@@ -21,7 +21,7 @@
     <!-- Input tìm kiếm -->
     <input 
       :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
+      @input="handleInput"
       @keyup.enter="$emit('search', modelValue)"
       type="text" 
       :placeholder="placeholder"
@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -82,6 +82,16 @@ const props = defineProps({
   showClear: {
     type: Boolean,
     default: true
+  },
+  // Tìm kiếm realtime khi gõ
+  realtime: {
+    type: Boolean,
+    default: false
+  },
+  // Debounce delay (ms) cho realtime search
+  debounce: {
+    type: Number,
+    default: 300
   }
 })
 
@@ -97,9 +107,34 @@ const sizeClasses = computed(() => {
   return sizes[props.size]
 })
 
+// Debounce timer
+let debounceTimer = null
+
+// Handle input với debounce cho realtime search
+const handleInput = (event) => {
+  const value = event.target.value
+  emit('update:modelValue', value)
+  
+  // Nếu bật realtime search
+  if (props.realtime) {
+    // Clear timer cũ
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
+    }
+    // Set timer mới
+    debounceTimer = setTimeout(() => {
+      emit('search', value)
+    }, props.debounce)
+  }
+}
+
 // Clear input
 const handleClear = () => {
   emit('update:modelValue', '')
   emit('clear')
+  // Trigger search với empty string khi clear
+  if (props.realtime) {
+    emit('search', '')
+  }
 }
 </script>
