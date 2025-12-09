@@ -59,6 +59,15 @@
         />
       </template>
     </CourseTable>
+
+    <!-- Form Modal: Thêm/Sửa khóa học -->
+    <AddCourseModal
+      v-model="showFormModal"
+      :is-edit="isEditing"
+      :initial-data="editingCourse"
+      :loading="isSubmitting"
+      @submit="handleFormSubmit"
+    />
   </div>
 </template>
 
@@ -67,6 +76,7 @@ import { ref, computed, onMounted } from 'vue'
 import SearchInput from '../../components/ui/SearchInput.vue'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import TablePagination from '../../components/ui/TablePagination.vue'
+import AddCourseModal from '../../components/modal/AddCourseModal.vue'
 import CourseStatsCards from '../../components/admin/statsCards/CourseStatsCards.vue'
 import CourseTable from '../../components/admin/CourseTable.vue'
 import { courseService } from '../../services/courseService'
@@ -81,6 +91,12 @@ const tableColumns = [
   { key: 'status', label: 'Trạng thái', align: 'center' },
   { key: 'actions', label: 'Thao tác', align: 'center' }
 ]
+
+// Form Modal State
+const showFormModal = ref(false)
+const isEditing = ref(false)
+const isSubmitting = ref(false)
+const editingCourse = ref({})
 
 // Loading state
 const isLoading = ref(false)
@@ -210,8 +226,9 @@ const filteredCourses = computed(() => {
 
 // Actions
 const openAddModal = () => {
-  console.log('Mở modal thêm khóa học')
-  // TODO: Implement add modal
+  isEditing.value = false
+  editingCourse.value = {}
+  showFormModal.value = true
 }
 
 const viewCourse = (course) => {
@@ -220,8 +237,57 @@ const viewCourse = (course) => {
 }
 
 const editCourse = (course) => {
-  console.log('Sửa khóa học:', course)
-  // TODO: Open edit modal
+  isEditing.value = true
+  // Map course data to form fields
+  editingCourse.value = {
+    id: course.id,
+    TieuDe: course.title,
+    HinhAnhUrl: course.thumbnail,
+    TomTat: course.description || '',
+    CapDo: Number(course.level) || 1,
+    Tags: course.tags || '',
+    DieuKienTienQuyet: course.prerequisites || '',
+    GiaTien: course.price || 0,
+    TrangThai: Number(course.status) || 1
+  }
+  showFormModal.value = true
+}
+
+const handleFormSubmit = async (formData) => {
+  isSubmitting.value = true
+  try {
+    // Map form data to API format
+    const apiData = {
+      title: formData.TieuDe,
+      thumbnail: formData.HinhAnhUrl,
+      description: formData.TomTat,
+      level: formData.CapDo,
+      tags: formData.Tags,
+      prerequisites: formData.DieuKienTienQuyet,
+      price: formData.GiaTien,
+      status: formData.TrangThai
+    }
+
+    if (isEditing.value) {
+      // Update existing course
+      await courseService.update(editingCourse.value.id, apiData)
+      console.log('Đã cập nhật khóa học:', apiData)
+    } else {
+      // Create new course
+      await courseService.create(apiData)
+      console.log('Đã thêm khóa học:', apiData)
+    }
+
+    // Close modal and refresh data
+    showFormModal.value = false
+    fetchStats()
+    fetchCourses()
+  } catch (error) {
+    console.error('Lỗi khi lưu khóa học:', error)
+    alert('Không thể lưu khóa học. Vui lòng thử lại.')
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 const deleteCourse = async (course) => {

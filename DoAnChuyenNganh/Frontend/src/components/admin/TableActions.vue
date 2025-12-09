@@ -28,7 +28,7 @@
     <!-- Delete Button -->
     <button 
       v-if="showDelete"
-      @click="$emit('delete', row)"
+      @click="showDeleteConfirm = true"
       class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
       :title="deleteTitle"
     >
@@ -39,11 +39,24 @@
 
     <!-- Extra slot for custom actions -->
     <slot name="extra" :row="row"></slot>
+
+    <!-- Delete Confirm Modal -->
+    <ConfirmModal
+      v-model:show="showDeleteConfirm"
+      :title="deleteConfirmTitle"
+      :message="deleteConfirmMessage"
+      :confirm-text="deleteConfirmText"
+      confirm-variant="danger"
+      @confirm="handleDeleteConfirm"
+    />
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { ref, computed } from 'vue'
+import ConfirmModal from '../ui/ConfirmModal.vue'
+
+const props = defineProps({
   row: {
     type: Object,
     required: true
@@ -73,8 +86,35 @@ defineProps({
   deleteTitle: {
     type: String,
     default: 'Xóa'
+  },
+  // Delete confirm modal options
+  deleteConfirmTitle: {
+    type: String,
+    default: 'Xác nhận xóa'
+  },
+  deleteConfirmMessage: {
+    type: String,
+    default: 'Bạn có chắc chắn muốn xóa? Hành động này không thể hoàn tác.'
+  },
+  deleteConfirmText: {
+    type: String,
+    default: 'Xóa'
+  },
+  // Item name for dynamic message
+  itemName: {
+    type: String,
+    default: ''
   }
 })
 
-defineEmits(['view', 'edit', 'delete'])
+const emit = defineEmits(['view', 'edit', 'delete'])
+
+// Delete confirm state
+const showDeleteConfirm = ref(false)
+
+// Handle delete confirm
+const handleDeleteConfirm = () => {
+  emit('delete', props.row)
+  showDeleteConfirm.value = false
+}
 </script>
