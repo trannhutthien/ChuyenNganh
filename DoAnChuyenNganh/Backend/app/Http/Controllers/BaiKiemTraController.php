@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\BaiKiemTra;
-use App\Models\BaiKiemTra_CauHoi;
 use App\Models\LanLamBai;
 use App\Models\TraLoi;
 use App\Models\CauHoi;
@@ -117,17 +116,8 @@ class BaiKiemTraController extends Controller
                 'NgayTao' => now()
             ]);
 
-            // Thêm câu hỏi vào bài kiểm tra
-            if ($request->has('cauHoiIds') && is_array($request->cauHoiIds)) {
-                foreach ($request->cauHoiIds as $index => $cauHoiId) {
-                    BaiKiemTra_CauHoi::create([
-                        'BaiKiemTraId' => $baiKiemTra->BaiKiemTraId,
-                        'CauHoiId' => $cauHoiId,
-                        'ThuTu' => $index + 1,
-                        'Diem' => 1
-                    ]);
-                }
-            }
+            // Câu hỏi sẽ được random từ ngân hàng câu hỏi khi làm bài
+            // Không cần gán câu hỏi cố định vào bài kiểm tra
 
             return $baiKiemTra;
         });
@@ -182,21 +172,7 @@ class BaiKiemTraController extends Controller
                 'TrangThai' => $request->trangThai ?? $baiKiemTra->TrangThai
             ]);
 
-            // Cập nhật danh sách câu hỏi nếu có
-            if ($request->has('cauHoiIds')) {
-                // Xóa câu hỏi cũ
-                BaiKiemTra_CauHoi::where('BaiKiemTraId', $baiKiemTra->BaiKiemTraId)->delete();
-                
-                // Thêm câu hỏi mới
-                foreach ($request->cauHoiIds as $index => $cauHoiId) {
-                    BaiKiemTra_CauHoi::create([
-                        'BaiKiemTraId' => $baiKiemTra->BaiKiemTraId,
-                        'CauHoiId' => $cauHoiId,
-                        'ThuTu' => $index + 1,
-                        'Diem' => 1
-                    ]);
-                }
-            }
+            // Câu hỏi được random từ ngân hàng, không cần cập nhật danh sách cố định
         });
 
         return response()->json([
@@ -221,7 +197,6 @@ class BaiKiemTraController extends Controller
             $lanLamBaiIds = $baiKiemTra->lanLamBais()->pluck('LanLamBaiId');
             TraLoi::whereIn('LanLamBaiId', $lanLamBaiIds)->delete();
             $baiKiemTra->lanLamBais()->delete();
-            BaiKiemTra_CauHoi::where('BaiKiemTraId', $baiKiemTra->BaiKiemTraId)->delete();
             $baiKiemTra->delete();
         });
 
@@ -277,62 +252,25 @@ class BaiKiemTraController extends Controller
     }
 
     /**
-     * Thêm câu hỏi vào bài kiểm tra
+     * Thêm câu hỏi vào bài kiểm tra - KHÔNG SỬ DỤNG
+     * Vì hệ thống random câu hỏi từ ngân hàng câu hỏi
      */
     public function addCauHoi(Request $request, $id)
     {
-        $baiKiemTra = BaiKiemTra::find($id);
-
-        if (!$baiKiemTra) {
-            return response()->json(['message' => 'Không tìm thấy bài kiểm tra'], 404);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'cauHoiId' => 'required|exists:CauHoi,CauHoiId',
-            'thuTu' => 'nullable|integer',
-            'diem' => 'nullable|numeric|min:0'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        // Kiểm tra câu hỏi đã tồn tại chưa
-        $existing = BaiKiemTra_CauHoi::where('BaiKiemTraId', $id)
-            ->where('CauHoiId', $request->cauHoiId)
-            ->first();
-
-        if ($existing) {
-            return response()->json(['message' => 'Câu hỏi đã tồn tại trong bài kiểm tra'], 422);
-        }
-
-        // Lấy thứ tự lớn nhất hiện tại
-        $maxThuTu = BaiKiemTra_CauHoi::where('BaiKiemTraId', $id)->max('ThuTu') ?? 0;
-
-        BaiKiemTra_CauHoi::create([
-            'BaiKiemTraId' => $id,
-            'CauHoiId' => $request->cauHoiId,
-            'ThuTu' => $request->thuTu ?? ($maxThuTu + 1),
-            'Diem' => $request->diem ?? 1
-        ]);
-
-        return response()->json(['message' => 'Thêm câu hỏi thành công']);
+        return response()->json([
+            'message' => 'Tính năng không khả dụng. Câu hỏi được random từ ngân hàng câu hỏi.'
+        ], 400);
     }
 
     /**
-     * Xóa câu hỏi khỏi bài kiểm tra
+     * Xóa câu hỏi khỏi bài kiểm tra - KHÔNG SỬ DỤNG
+     * Vì hệ thống random câu hỏi từ ngân hàng câu hỏi
      */
     public function removeCauHoi($id, $cauHoiId)
     {
-        $deleted = BaiKiemTra_CauHoi::where('BaiKiemTraId', $id)
-            ->where('CauHoiId', $cauHoiId)
-            ->delete();
-
-        if (!$deleted) {
-            return response()->json(['message' => 'Không tìm thấy câu hỏi trong bài kiểm tra'], 404);
-        }
-
-        return response()->json(['message' => 'Xóa câu hỏi khỏi bài kiểm tra thành công']);
+        return response()->json([
+            'message' => 'Tính năng không khả dụng. Câu hỏi được random từ ngân hàng câu hỏi.'
+        ], 400);
     }
 
     /**
@@ -361,7 +299,9 @@ class BaiKiemTraController extends Controller
 
         if ($includeStats) {
             $data['soNguoiLam'] = $baiKiemTra->lanLamBais()->distinct('NguoiDungId')->count();
-            $data['soCauHoiThucTe'] = $baiKiemTra->cauHois()->count();
+            // Lấy số câu hỏi từ thiết lập thay vì bảng pivot (bảng BaiKiemTra_CauHoi không tồn tại)
+            $thietLap = $baiKiemTra->getThietLap();
+            $data['soCauHoiThucTe'] = $thietLap['soCauHoi'] ?? 10;
         }
 
         return $data;

@@ -192,12 +192,17 @@ export function useQuizState() {
 
   /**
    * Initialize answers structure based on question types
+   * - single: array (chứa 1 ID đáp án đúng)
+   * - multiple: array (chứa nhiều ID đáp án đúng)
+   * - true_false: single value
+   * - matching: object
    */
   const initializeAnswers = () => {
     const initialAnswers = {}
     
     questions.value.forEach(question => {
-      if (question.type === 'multiple_choice') {
+      if (question.type === 'single' || question.type === 'multiple') {
+        // Cả single và multiple đều dùng array để lưu đáp án
         initialAnswers[question.id] = []
       } else if (question.type === 'matching') {
         initialAnswers[question.id] = {}

@@ -27,12 +27,11 @@ class CauHoi extends Model
     ];
 
     /**
-     * Các loại câu hỏi
+     * Các loại câu hỏi (theo ENUM mới trong database)
      */
-    const LOAI_MOT_DAP_AN = 'MOT_DAP_AN';
-    const LOAI_NHIEU_DAP_AN = 'NHIEU_DAP_AN';
-    const LOAI_DUNG_SAI = 'DUNG_SAI';
-    const LOAI_DIEN_KHUYET = 'DIEN_KHUYET';
+    const LOAI_MOT_DAP_AN = 'single';       // Radio - chọn 1 đáp án
+    const LOAI_NHIEU_DAP_AN = 'multiple';   // Checkbox - chọn nhiều đáp án
+    const LOAI_DUNG_SAI = 'true_false';     // Đúng/Sai
 
     /**
      * Quan hệ với NganHangCauHoi (câu hỏi thuộc về ngân hàng)

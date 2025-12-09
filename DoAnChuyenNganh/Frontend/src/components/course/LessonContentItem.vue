@@ -119,7 +119,10 @@ const getImageUrl = (url) => {
 
 // Helper: Xử lý lỗi load ảnh
 const handleImageError = (event) => {
-  event.target.src = 'https://via.placeholder.com/800x400?text=Image+Not+Found'
+  // Ẩn hình ảnh thay vì hiển thị placeholder lỗi
+  event.target.style.display = 'none'
+  // Hoặc dùng hình ảnh local/data URI
+  // event.target.src = '/images/no-image.png'
 }
 
 // Helper: Lấy URL embed video (YouTube, Vimeo)

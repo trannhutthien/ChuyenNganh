@@ -49,19 +49,41 @@ const router = createRouter({
   routes
 })
 
-// Navigation guard - kiểm tra authentication
+// Navigation guard - kiểm tra authentication và roles
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('access_token') // Đúng key là 'access_token'
+  const savedUser = localStorage.getItem('user')
+  let userRoles = []
   
+  if (savedUser) {
+    try {
+      const userData = JSON.parse(savedUser)
+      userRoles = userData.roles || []
+    } catch (error) {
+      console.error('Lỗi đọc user data:', error)
+    }
+  }
+  
+  // Kiểm tra authentication
   if (to.meta.requiresAuth && !token) {
     // Nếu route yêu cầu auth nhưng chưa đăng nhập
-    // Lưu route muốn đến để redirect sau khi đăng nhập
     localStorage.setItem('redirectAfterLogin', to.fullPath)
-    // Redirect về trang chủ (sẽ hiện modal đăng nhập)
     next({ name: 'Home', query: { login: 'required' } })
-  } else {
-    next()
+    return
   }
+  
+  // Kiểm tra roles nếu route yêu cầu
+  if (to.meta.roles && to.meta.roles.length > 0) {
+    const hasPermission = to.meta.roles.some(role => userRoles.includes(role))
+    if (!hasPermission) {
+      // Không có quyền truy cập
+      console.warn('Không có quyền truy cập route:', to.path)
+      next({ name: 'Home' })
+      return
+    }
+  }
+  
+  next()
 })
 
 export default router

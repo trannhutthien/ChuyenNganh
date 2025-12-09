@@ -2,9 +2,14 @@ import api from './api'
 
 // Course Service - Kết nối với MySQL Backend
 export const courseService = {
-  // Lấy tất cả khóa học (có phân trang)
+  // Lấy tất cả khóa học active (có phân trang)
   getAll(params = {}) {
     return api.get('/courses', { params })
+  },
+
+  // Lấy tất cả khóa học cho Admin (bao gồm inactive)
+  getAllAdmin(params = {}) {
+    return api.get('/courses/all', { params })
   },
 
   // Lấy khóa học theo ID

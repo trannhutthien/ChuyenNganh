@@ -118,7 +118,7 @@ entity "CauHoi" {
   --
   NganHangId : INT
   BaiHocId : INT
-  Loai : enum
+  Loai : enum('single','multiple','true_false','fill_blank')
   DeBai : text
   GiaiThich : text
   DoKho : tinyint
@@ -193,6 +193,7 @@ entity "TraLoi" {
   LanLamBaiId : INT
   CauHoiId : INT
   LuaChonIds : json
+  TraLoiText : text
   DungHaySai : boolean
   ThoiGianGiay : int
 }

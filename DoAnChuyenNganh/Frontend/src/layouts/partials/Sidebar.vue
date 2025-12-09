@@ -6,8 +6,8 @@
         <!-- ========== MENU CHUNG (Tất cả roles) ========== -->
         <!-- Trang chủ -->
         <li>
-          <a 
-            href="/" 
+          <router-link 
+            to="/" 
             class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
             :class="{ 'text-primary bg-primary/10': isActive('/') }"
           >
@@ -26,13 +26,13 @@
               />
             </svg>
             <span class="text-xs font-medium text-center">Trang chủ</span>
-          </a>
+          </router-link>
         </li>
 
         <!-- Lộ trình -->
         <li>
-          <a 
-            href="/lo-trinh" 
+          <router-link 
+            to="/lo-trinh" 
             class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
             :class="{ 'text-primary bg-primary/10': isActive('/lo-trinh') }"
           >
@@ -51,13 +51,13 @@
               />
             </svg>
             <span class="text-xs font-medium text-center">Lộ trình</span>
-          </a>
+          </router-link>
         </li>
 
         <!-- Bài viết -->
         <li>
-          <a 
-            href="/bai-viet" 
+          <router-link 
+            to="/bai-viet" 
             class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
             :class="{ 'text-primary bg-primary/10': isActive('/bai-viet') }"
           >
@@ -76,7 +76,7 @@
               />
             </svg>
             <span class="text-xs font-medium text-center">Bài viết</span>
-          </a>
+          </router-link>
         </li>
 
         <!-- ========== MENU EDITOR (EDITOR + ADMIN) ========== -->
@@ -88,8 +88,8 @@
 
           <!-- Quản lý khóa học/bài học -->
           <li>
-            <a 
-              href="/quan-ly/khoa-hoc" 
+            <router-link 
+              to="/quan-ly/khoa-hoc" 
               class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
               :class="{ 'text-primary bg-primary/10': isActive('/quan-ly/khoa-hoc') }"
             >
@@ -108,7 +108,7 @@
                 />
               </svg>
               <span class="text-xs font-medium text-center leading-tight">Quản lý khóa học</span>
-            </a>
+            </router-link>
           </li>
         </template>
 
@@ -116,8 +116,8 @@
         <template v-if="isAdmin">
           <!-- Quản lý người dùng -->
           <li>
-            <a 
-              href="/quan-ly/nguoi-dung" 
+            <router-link 
+              to="/quan-ly/nguoi-dung" 
               class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
               :class="{ 'text-primary bg-primary/10': isActive('/quan-ly/nguoi-dung') }"
             >
@@ -136,13 +136,13 @@
                 />
               </svg>
               <span class="text-xs font-medium text-center leading-tight">Quản lý người dùng</span>
-            </a>
+            </router-link>
           </li>
 
           <!-- Quản lý bài viết -->
           <li>
-            <a 
-              href="/quan-ly/bai-viet" 
+            <router-link 
+              to="/quan-ly/bai-viet" 
               class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
               :class="{ 'text-primary bg-primary/10': isActive('/quan-ly/bai-viet') }"
             >
@@ -161,7 +161,7 @@
                 />
               </svg>
               <span class="text-xs font-medium text-center leading-tight">Quản lý bài viết</span>
-            </a>
+            </router-link>
           </li>
         </template>
 
@@ -172,9 +172,10 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 
-// Kiểm tra route hiện tại
-const currentPath = ref(window.location.pathname)
+// Sử dụng vue-router để theo dõi route
+const route = useRoute()
 
 // User roles từ localStorage
 const userRoles = ref([])
@@ -213,9 +214,9 @@ const isStudent = computed(() => userRoles.value.includes('STUDENT'))
 const isEditor = computed(() => userRoles.value.includes('EDITOR'))
 const isAdmin = computed(() => userRoles.value.includes('ADMIN'))
 
-// Hàm kiểm tra active
+// Hàm kiểm tra active - dùng route.path từ vue-router
 const isActive = (path) => {
-  return currentPath.value === path
+  return route.path === path
 }
 </script>
 

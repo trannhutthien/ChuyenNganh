@@ -117,9 +117,17 @@
             @toggle-mark="toggleMark(currentQuestion.id)"
           >
             <template #answer>
-              <!-- Multiple Choice -->
+              <!-- Single Choice (Radio - chọn 1 đáp án) -->
+              <SingleChoice
+                v-if="currentQuestion.loai === 'single'"
+                :question="currentQuestion"
+                v-model="userAnswers[currentQuestion.id]"
+                @update:modelValue="saveAnswer(currentQuestion.id)"
+              />
+
+              <!-- Multiple Choice (Checkbox - chọn nhiều đáp án) -->
               <MultipleChoice
-                v-if="currentQuestion.loai === 'multiple_choice'"
+                v-else-if="currentQuestion.loai === 'multiple'"
                 :question="currentQuestion"
                 v-model="userAnswers[currentQuestion.id]"
                 @update:modelValue="saveAnswer(currentQuestion.id)"
@@ -130,14 +138,6 @@
                 v-else-if="currentQuestion.loai === 'true_false'"
                 :question="currentQuestion"
                 v-model="userAnswers[currentQuestion.id]"
-                @update:modelValue="saveAnswer(currentQuestion.id)"
-              />
-
-              <!-- Fill in the Blank -->
-              <FillBlank
-                v-else-if="currentQuestion.loai === 'fill_blank'"
-                v-model="userAnswers[currentQuestion.id]"
-                :maxLength="500"
                 @update:modelValue="saveAnswer(currentQuestion.id)"
               />
             </template>
@@ -212,8 +212,9 @@
         </template>
 
         <template #actions>
+          <!-- Button Làm lại - Hiển thị nếu chưa đạt hoặc còn lượt làm bài -->
           <BaseButton
-            v-if="examInfo?.conLuotLamBai"
+            v-if="!examResult?.dat || examInfo?.conLuotLamBai"
             variant="primary"
             size="lg"
             @click="handleRetry"
@@ -292,9 +293,9 @@ import ResultDetailList from '@/components/quiz/ui/result/ResultDetailList.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 
 // Question Types
+import SingleChoice from '@/components/quiz/ui/questions/SingleChoice.vue'
 import MultipleChoice from '@/components/quiz/ui/questions/MultipleChoice.vue'
 import TrueFalse from '@/components/quiz/ui/questions/TrueFalse.vue'
-import FillBlank from '@/components/quiz/ui/questions/FillBlank.vue'
 
 // Service
 import quizService from '@/services/quizService'
@@ -486,6 +487,12 @@ const handleSubmitExam = async () => {
   stopTimer()
   
   try {
+    // LƯU CÂU TRẢ LỜI CUỐI CÙNG TRƯỚC KHI NỘP BÀI
+    const currentQ = questions.value[currentIndex.value]
+    if (currentQ && userAnswers.value[currentQ.id]) {
+      await saveAnswer(currentQ.id)
+    }
+    
     const response = await quizService.submitFinalExam(attemptId.value)
     examResult.value = response.ketQua
     hasSubmitted.value = true
@@ -522,8 +529,18 @@ const handleRetry = () => {
 
 // Quay lại khóa học
 const goBackToCourse = () => {
-  const courseId = route.params.courseId
-  router.push(`/learn/${courseId}`)
+  // Lấy courseId từ nhiều nguồn khác nhau
+  const courseId = route.params.courseId 
+    || examInfo.value?.khoaHocId
+    || examResult.value?.khoaHocId
+    || route.query.courseId
+    
+  if (courseId) {
+    router.push(`/learn/${courseId}`)
+  } else {
+    // Fallback: Quay về trang khóa học chung
+    router.push('/courses')
+  }
 }
 
 // Download certificate

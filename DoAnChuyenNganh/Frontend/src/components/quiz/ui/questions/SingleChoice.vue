@@ -7,15 +7,16 @@
       class="relative flex items-start gap-4 p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer group"
       :class="getOptionClass(option)"
     >
-      <!-- Checkbox (cho chọn nhiều đáp án) -->
+      <!-- Radio Button (chỉ cho chọn 1 đáp án) -->
       <div class="flex items-center h-6 mt-0.5">
         <input
-          type="checkbox"
+          type="radio"
+          :name="'question-' + question.id"
           :value="option.id"
           :checked="isSelected(option.id)"
           @change="handleChange(option.id)"
           :disabled="disabled"
-          class="w-5 h-5 text-primary border-2 border-gray-300 rounded focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+          class="w-5 h-5 text-primary border-2 border-gray-300 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
         />
       </div>
 
@@ -74,7 +75,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-500">
         <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
       </svg>
-      <span>Có thể chọn nhiều đáp án</span>
+      <span>Chọn một đáp án đúng nhất</span>
     </div>
   </div>
 </template>
@@ -89,7 +90,7 @@ const props = defineProps({
     required: true
   },
 
-  // Giá trị đã chọn (array of option IDs)
+  // Giá trị đã chọn (array of option IDs - chỉ có 1 phần tử)
   modelValue: {
     type: Array,
     default: () => []
@@ -167,19 +168,12 @@ const getOptionClass = (option) => {
   return classes.join(' ')
 }
 
-// Handle change - Checkbox behavior (chọn nhiều đáp án)
+// Handle change - Radio behavior (chỉ chọn 1 đáp án)
 const handleChange = (optionId) => {
   if (props.disabled) return
 
-  let newValue = [...selectedValues.value]
-  
-  if (newValue.includes(optionId)) {
-    // Bỏ chọn
-    newValue = newValue.filter(id => id !== optionId)
-  } else {
-    // Thêm chọn
-    newValue.push(optionId)
-  }
+  // Radio: chỉ giữ 1 đáp án duy nhất
+  const newValue = [optionId]
 
   emit('update:modelValue', newValue)
   emit('change', newValue)

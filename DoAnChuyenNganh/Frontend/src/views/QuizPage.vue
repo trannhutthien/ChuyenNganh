@@ -113,11 +113,20 @@
             @toggle-mark="answer.toggleMark(currentQuestion.id)"
           >
             <template #answer>
-              <!-- Multiple Choice -->
-              <MultipleChoice
-                v-if="currentQuestion.type === 'multiple_choice'"
+              <!-- Single Choice (Radio - chọn 1 đáp án) -->
+              <SingleChoice
+                v-if="currentQuestion.type === 'single'"
                 :question="currentQuestion"
                 v-model="answer.userAnswers.value[currentQuestion.id]"
+                @update:modelValue="saveCurrentAnswerToServer"
+              />
+
+              <!-- Multiple Choice (Checkbox - chọn nhiều đáp án) -->
+              <MultipleChoice
+                v-else-if="currentQuestion.type === 'multiple'"
+                :question="currentQuestion"
+                v-model="answer.userAnswers.value[currentQuestion.id]"
+                @update:modelValue="saveCurrentAnswerToServer"
               />
 
               <!-- True/False -->
@@ -125,13 +134,7 @@
                 v-else-if="currentQuestion.type === 'true_false'"
                 :question="currentQuestion"
                 v-model="answer.userAnswers.value[currentQuestion.id]"
-              />
-
-              <!-- Fill in the Blank -->
-              <FillBlank
-                v-else-if="currentQuestion.type === 'fill_blank'"
-                v-model="answer.userAnswers.value[currentQuestion.id]"
-                :maxLength="500"
+                @update:modelValue="saveCurrentAnswerToServer"
               />
 
               <!-- Matching -->
@@ -139,6 +142,7 @@
                 v-else-if="currentQuestion.type === 'matching'"
                 :question="currentQuestion"
                 v-model="answer.userAnswers.value[currentQuestion.id]"
+                @update:modelValue="saveCurrentAnswerToServer"
               />
 
               <!-- Essay -->
@@ -217,8 +221,9 @@
         :passingScore="Number(quizStore.quizResult?.passing_score) || 5"
       >
         <template #actions>
+          <!-- Button Làm lại - Luôn hiển thị nếu chưa đạt hoặc còn lượt -->
           <BaseButton
-            v-if="quiz?.attempts_left > 0"
+            v-if="!quizStore.quizResult?.passed || canRetry"
             variant="primary"
             size="lg"
             @click="handleRetry"
@@ -226,7 +231,7 @@
             <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            Làm lại (Còn {{ quiz.attempts_left }} lần)
+            Làm lại
           </BaseButton>
 
           <BaseButton
@@ -314,9 +319,9 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import LoginModal from '@/components/modal/LoginModal.vue'
 
 // Question Types
+import SingleChoice from '@/components/quiz/ui/questions/SingleChoice.vue'
 import MultipleChoice from '@/components/quiz/ui/questions/MultipleChoice.vue'
 import TrueFalse from '@/components/quiz/ui/questions/TrueFalse.vue'
-import FillBlank from '@/components/quiz/ui/questions/FillBlank.vue'
 import Matching from '@/components/quiz/ui/questions/Matching.vue'
 import EssayAnswer from '@/components/quiz/ui/questions/EssayAnswer.vue'
 
@@ -344,6 +349,16 @@ const currentQuestion = computed(() => {
   const questions = quizStore.questions
   const index = navigation.currentIndex.value
   return questions[index] || null
+})
+
+// Kiểm tra có thể làm lại không
+const canRetry = computed(() => {
+  // Luôn cho phép làm lại nếu không giới hạn số lần
+  const maxAttempts = quiz.value?.max_attempts || quiz.value?.soLanLamToiDa || 0
+  if (maxAttempts === 0) return true // 0 = không giới hạn
+  
+  const attemptsUsed = quiz.value?.attempts_used || quiz.value?.soLanDaLam || 0
+  return attemptsUsed < maxAttempts
 })
 
 // ========== COMPOSABLES ==========
@@ -500,6 +515,9 @@ const handleSubmitQuiz = async () => {
     timer.stop()
     autoSave.stop()
     
+    // LƯU CÂU TRẢ LỜI CUỐI CÙNG TRƯỚC KHI NỘP BÀI
+    await saveCurrentAnswerToServer()
+    
     // Gọi store submitQuiz (có mock grading built-in)
     const result = await quizStore.submitQuiz()
     
@@ -519,9 +537,19 @@ const handleRetry = () => {
 }
 
 const handleBackToCourse = () => {
-  // Lấy courseId từ quiz store hoặc route params
-  const courseId = quizStore.quiz?.KhoaHocId || route.params.courseId || '1'
-  router.push(`/learn/${courseId}`)
+  // Lấy courseId từ nhiều nguồn khác nhau
+  const courseId = quizStore.quiz?.KhoaHocId 
+    || quizStore.quiz?.khoaHocId 
+    || quizStore.quizResult?.khoaHocId
+    || route.params.courseId 
+    || route.query.courseId
+    
+  if (courseId) {
+    router.push(`/learn/${courseId}`)
+  } else {
+    // Fallback: Quay về trang khóa học chung
+    router.push('/courses')
+  }
 }
 
 const handleDownloadCertificate = () => {

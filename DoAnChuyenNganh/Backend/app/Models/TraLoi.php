@@ -18,6 +18,7 @@ class TraLoi extends Model
         'LanLamBaiId',
         'CauHoiId',
         'LuaChonIds',
+        'TraLoiText',  // Thêm cột mới cho dạng điền khuyết
         'DungHaySai',
         'ThoiGianGiay'
     ];
@@ -66,46 +67,54 @@ class TraLoi extends Model
         $cauHoi = $this->cauHoi()->with('luaChons')->first();
         
         if (!$cauHoi) {
+            \Log::warning("chamDiem: Không tìm thấy câu hỏi cho TraLoiId={$this->TraLoiId}");
             return false;
         }
 
+        // Lấy danh sách ID lựa chọn đúng (DungHaySai = true)
         $luaChonDung = $cauHoi->luaChons
-            ->where('DungHaySai', true)
+            ->filter(fn($lc) => $lc->DungHaySai == true || $lc->DungHaySai == 1)
             ->pluck('LuaChonId')
+            ->map(fn($id) => (int) $id)  // Đảm bảo là integer
             ->toArray();
 
-        $luaChonDaChon = $this->luaChonIdsArray;
+        // Lấy danh sách ID lựa chọn đã chọn và chuyển thành integer
+        $luaChonDaChon = collect($this->luaChonIdsArray)
+            ->map(fn($id) => (int) $id)
+            ->toArray();
+
+        \Log::info("chamDiem: CauHoiId={$cauHoi->CauHoiId}, Loai={$cauHoi->Loai}");
+        \Log::info("chamDiem: LuaChonDung=" . json_encode($luaChonDung));
+        \Log::info("chamDiem: LuaChonDaChon=" . json_encode($luaChonDaChon));
 
         // Kiểm tra đáp án
         $laDung = false;
         
         switch ($cauHoi->Loai) {
-            case CauHoi::LOAI_MOT_DAP_AN:
-            case CauHoi::LOAI_DUNG_SAI:
+            case CauHoi::LOAI_MOT_DAP_AN:  // 'single'
+            case CauHoi::LOAI_DUNG_SAI:    // 'true_false'
                 // Chỉ cần chọn đúng 1 đáp án
                 $laDung = count($luaChonDaChon) === 1 
                     && in_array($luaChonDaChon[0], $luaChonDung);
+                \Log::info("chamDiem: single/true_false - count=" . count($luaChonDaChon) . ", in_array=" . (in_array($luaChonDaChon[0] ?? -1, $luaChonDung) ? 'true' : 'false'));
                 break;
                 
-            case CauHoi::LOAI_NHIEU_DAP_AN:
-                // Phải chọn đủ và đúng tất cả đáp án
+            case CauHoi::LOAI_NHIEU_DAP_AN:  // 'multiple'
+                // Phải chọn đủ và đúng tất cả đáp án (không thiếu, không dư)
                 sort($luaChonDung);
                 sort($luaChonDaChon);
                 $laDung = $luaChonDung === $luaChonDaChon;
+                \Log::info("chamDiem: multiple - sorted dung=" . json_encode($luaChonDung) . ", sorted chon=" . json_encode($luaChonDaChon));
                 break;
                 
-            case CauHoi::LOAI_DIEN_KHUYET:
-                // So sánh nội dung trả lời với đáp án trong LuaChon
-                $dapAnDung = $cauHoi->luaChons->first()?->NoiDung;
-                // LuaChonIds chứa text trả lời cho dạng điền khuyết
-                $noiDungTraLoi = is_array($this->LuaChonIds) ? ($this->LuaChonIds[0] ?? '') : '';
-                $laDung = strtolower(trim($noiDungTraLoi)) 
-                    === strtolower(trim($dapAnDung ?? ''));
-                break;
+            default:
+                \Log::warning("chamDiem: Loại câu hỏi không xác định: {$cauHoi->Loai}");
         }
 
+        \Log::info("chamDiem: Kết quả = " . ($laDung ? 'ĐÚNG' : 'SAI'));
+
         $this->update([
-            'DungHaySai' => $laDung
+            'DungHaySai' => $laDung ? 1 : 0
         ]);
 
         return $laDung;

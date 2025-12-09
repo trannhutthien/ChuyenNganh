@@ -133,14 +133,6 @@ export const useQuizStore = defineStore('quiz', () => {
             explanation: 'Vue 3 sử dụng Virtual DOM kết hợp với compiler-informed optimizations để tối ưu hiệu suất.'
           },
           {
-            id: 3,
-            type: 'fill_blank',
-            text: 'Để tạo một biến reactive trong Composition API, ta sử dụng hàm ____',
-            points: 2,
-            correct_answer: 'ref',
-            explanation: 'Có thể dùng ref() hoặc reactive(), nhưng ref() phổ biến hơn cho primitive values.'
-          },
-          {
             id: 4,
             type: 'matching',
             text: 'Ghép các lifecycle hooks với mô tả phù hợp',
@@ -300,7 +292,8 @@ export const useQuizStore = defineStore('quiz', () => {
         total_questions: Number(data.tongSoCau) || questions.value.length, // Tổng số câu
         time_taken: String(data.thoiGianLam || '0 phút'),                 // Thời gian làm bài
         passing_score: Number(data.diemDat) || 5,                         // Điểm đạt yêu cầu (thang 10)
-        question_details: questionDetails                                  // Chi tiết từ backend (đã chấm điểm)
+        question_details: questionDetails,                                 // Chi tiết từ backend (đã chấm điểm)
+        khoaHocId: data.khoaHocId || quiz.value?.KhoaHocId || null        // ID khóa học để quay lại
       }
       
       console.log('Formatted result:', result)
@@ -341,13 +334,6 @@ export const useQuizStore = defineStore('quiz', () => {
           isCorrect = userAnswer === correctId
           yourAnswer = q.options?.find(o => o.id === userAnswer)?.text || 'Không có'
           correctAnswer = q.options?.find(o => o.id === correctId)?.text || 'Không có'
-        } else if (q.type === 'fill_blank') {
-          // Use actual correct_answer from question data
-          const correctText = q.correct_answer || ''
-          const userText = userAnswer || ''
-          isCorrect = userText.trim().toLowerCase() === correctText.trim().toLowerCase()
-          yourAnswer = userText || 'Không có'
-          correctAnswer = correctText
         } else if (q.type === 'matching') {
           // Check if all pairs match correctly
           const correctPairs = q.correct_pairs || {}

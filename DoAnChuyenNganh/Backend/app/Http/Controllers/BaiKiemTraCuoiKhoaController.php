@@ -265,17 +265,25 @@ class BaiKiemTraCuoiKhoaController extends Controller
 
     /**
      * Map loại câu hỏi từ database sang frontend
+     * Theo ENUM: single, multiple, true_false
      */
     private function mapLoaiCauHoi($loai)
     {
+        // ENUM đã đúng format, trả về trực tiếp
+        $validTypes = ['single', 'multiple', 'true_false'];
+        
+        if (in_array($loai, $validTypes)) {
+            return $loai;
+        }
+
+        // Fallback cho dữ liệu cũ (nếu có)
         $map = [
-            'MOT_DAP_AN' => 'multiple_choice',
-            'NHIEU_DAP_AN' => 'multiple_choice', // Frontend xử lý dựa vào số đáp án đúng
-            'DUNG_SAI' => 'true_false',
-            'DIEN_KHUYET' => 'fill_blank'
+            'MOT_DAP_AN' => 'single',
+            'NHIEU_DAP_AN' => 'multiple',
+            'DUNG_SAI' => 'true_false'
         ];
 
-        return $map[$loai] ?? 'multiple_choice';
+        return $map[$loai] ?? 'single';
     }
 
     /**
@@ -329,6 +337,7 @@ class BaiKiemTraCuoiKhoaController extends Controller
         $request->validate([
             'cauHoiId' => 'required|exists:CauHoi,CauHoiId',
             'luaChonIds' => 'nullable|array',
+            'traLoiText' => 'nullable|string|max:1000',  // Cho dạng điền khuyết
             'thoiGianGiay' => 'nullable|integer'
         ]);
 
@@ -340,6 +349,7 @@ class BaiKiemTraCuoiKhoaController extends Controller
             ],
             [
                 'LuaChonIds' => $request->luaChonIds,
+                'TraLoiText' => $request->traLoiText,  // Cho dạng điền khuyết
                 'ThoiGianGiay' => $request->thoiGianGiay
             ]
         );

@@ -2,7 +2,7 @@
   <div class="space-y-3">
     <!-- Options List -->
     <label
-      v-for="option in question.options"
+      v-for="option in options"
       :key="option.id"
       class="relative flex items-start gap-4 p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer group"
       :class="getOptionClass(option)"
@@ -72,14 +72,13 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   // Dữ liệu câu hỏi
   question: {
     type: Object,
-    required: true,
-    validator: (value) => {
-      return value.options && Array.isArray(value.options)
-    }
+    required: true
   },
 
   // Giá trị đã chọn (option ID)
@@ -108,6 +107,11 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
+
+// Lấy danh sách options an toàn
+const options = computed(() => {
+  return props.question?.options || []
+})
 
 // Get option class
 const getOptionClass = (option) => {

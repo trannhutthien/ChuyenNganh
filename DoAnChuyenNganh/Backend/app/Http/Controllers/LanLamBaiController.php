@@ -186,17 +186,25 @@ class LanLamBaiController extends Controller
 
     /**
      * Map loại câu hỏi từ database sang frontend
+     * Theo ENUM: single, multiple, true_false
      */
     private function mapLoaiCauHoi($loai)
     {
+        // ENUM đã đúng format, trả về trực tiếp
+        $validTypes = ['single', 'multiple', 'true_false'];
+        
+        if (in_array($loai, $validTypes)) {
+            return $loai;
+        }
+
+        // Fallback cho dữ liệu cũ (nếu có)
         $map = [
-            'MOT_DAP_AN' => 'multiple_choice',
-            'NHIEU_DAP_AN' => 'multiple_choice',
-            'DUNG_SAI' => 'true_false',
-            'DIEN_KHUYET' => 'fill_blank'
+            'MOT_DAP_AN' => 'single',
+            'NHIEU_DAP_AN' => 'multiple',
+            'DUNG_SAI' => 'true_false'
         ];
 
-        return $map[$loai] ?? 'multiple_choice';
+        return $map[$loai] ?? 'single';
     }
 
     /**
@@ -248,14 +256,23 @@ class LanLamBaiController extends Controller
             return response()->json(['message' => 'Đã hết thời gian làm bài'], 400);
         }
 
+        // Debug log request data
+        \Log::info('=== LƯU CÂU TRẢ LỜI ===', [
+            'lanLamBaiId' => $lanLamBaiId,
+            'request_all' => $request->all()
+        ]);
+        
         $validator = Validator::make($request->all(), [
             'cauHoiId' => 'required|exists:CauHoi,CauHoiId',
             'luaChonIds' => 'nullable|array',
-            'luaChonIds.*' => 'exists:LuaChon,LuaChonId',
-            'noiDungTraLoi' => 'nullable|string'
+            'luaChonIds.*' => 'integer',  // Chỉ validate là số nguyên, không check exists
+            'traLoiText' => 'nullable|string|max:1000'  // Cho dạng điền khuyết
         ]);
 
         if ($validator->fails()) {
+            \Log::error('=== VALIDATION FAILED ===', [
+                'errors' => $validator->errors()->toArray()
+            ]);
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
@@ -267,6 +284,7 @@ class LanLamBaiController extends Controller
             ],
             [
                 'LuaChonIds' => $request->luaChonIds ?? [],  // Lưu dạng JSON array
+                'TraLoiText' => $request->traLoiText ?? null,  // Cho dạng điền khuyết
                 'ThoiGianGiay' => $request->thoiGianGiay ?? 0
             ]
         );
@@ -277,6 +295,7 @@ class LanLamBaiController extends Controller
                 'id' => $traLoi->TraLoiId,
                 'cauHoiId' => $traLoi->CauHoiId,
                 'luaChonIds' => $traLoi->LuaChonIds ?? [],
+                'traLoiText' => $traLoi->TraLoiText,
                 'thoiGianGiay' => $traLoi->ThoiGianGiay
             ]
         ]);
@@ -389,7 +408,8 @@ class LanLamBaiController extends Controller
                 'trangThai' => LanLamBai::TRANG_THAI_HOAN_THANH,
                 'thoiGianLam' => $thoiGianLam . ' phút',
                 'batDauLuc' => $lanLamBai->BatDauLuc,
-                'nopBaiLuc' => $lanLamBai->NopBaiLuc
+                'nopBaiLuc' => $lanLamBai->NopBaiLuc,
+                'khoaHocId' => $baiKiemTra->KhoaHocId ?? $baiKiemTra->baiHoc?->KhoaHocId ?? null
             ];
         });
     }

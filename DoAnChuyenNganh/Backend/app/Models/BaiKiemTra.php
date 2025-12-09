@@ -62,15 +62,8 @@ class BaiKiemTra extends Model
         return $this->hasMany(LanLamBai::class, 'BaiKiemTraId', 'BaiKiemTraId');
     }
 
-    /**
-     * Quan hệ với CauHoi thông qua bảng BaiKiemTra_CauHoi
-     */
-    public function cauHois()
-    {
-        return $this->belongsToMany(CauHoi::class, 'BaiKiemTra_CauHoi', 'BaiKiemTraId', 'CauHoiId')
-            ->withPivot('ThuTu', 'Diem')
-            ->orderBy('ThuTu', 'asc');
-    }
+    // Không dùng quan hệ cauHois() vì câu hỏi được random từ ngân hàng
+    // thay vì gán cố định vào bài kiểm tra
 
     /**
      * Scope: Bài kiểm tra công khai

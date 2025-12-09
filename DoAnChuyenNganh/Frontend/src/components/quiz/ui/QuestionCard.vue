@@ -175,9 +175,9 @@ const emit = defineEmits(['toggle-mark'])
 
 // Question type labels
 const questionTypeLabels = {
-  multiple_choice: 'Trắc nghiệm',
+  single: 'Một đáp án',
+  multiple: 'Nhiều đáp án',
   true_false: 'Đúng/Sai',
-  fill_blank: 'Điền khuyết',
   matching: 'Ghép cặp',
   essay: 'Tự luận',
   code: 'Code'
@@ -185,9 +185,9 @@ const questionTypeLabels = {
 
 // Question type badge classes
 const questionTypeBadgeClasses = {
-  multiple_choice: 'bg-blue-500/20 text-blue-100 border border-blue-400/30',
+  single: 'bg-blue-500/20 text-blue-100 border border-blue-400/30',
+  multiple: 'bg-indigo-500/20 text-indigo-100 border border-indigo-400/30',
   true_false: 'bg-purple-500/20 text-purple-100 border border-purple-400/30',
-  fill_blank: 'bg-green-500/20 text-green-100 border border-green-400/30',
   matching: 'bg-orange-500/20 text-orange-100 border border-orange-400/30',
   essay: 'bg-pink-500/20 text-pink-100 border border-pink-400/30',
   code: 'bg-gray-500/20 text-gray-100 border border-gray-400/30'

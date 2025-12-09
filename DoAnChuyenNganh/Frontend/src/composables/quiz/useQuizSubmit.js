@@ -140,19 +140,6 @@ export function useQuizSubmit() {
         break
       }
 
-      case 'fill_blank': {
-        // Text comparison
-        const correctText = correct_answer || ''
-        const userText = userAnswer || ''
-        
-        // Case-insensitive comparison, trim whitespace
-        isCorrect = userText.trim().toLowerCase() === correctText.trim().toLowerCase()
-        
-        yourAnswer = userText || 'Không có'
-        correctAnswer = correctText
-        break
-      }
-
       case 'matching': {
         // Object comparison {leftIndex: rightIndex}
         const correctMatches = correct_answers || {}
