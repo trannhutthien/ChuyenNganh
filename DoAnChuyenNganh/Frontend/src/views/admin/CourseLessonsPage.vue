@@ -261,7 +261,18 @@ const viewLesson = (lesson) => {
 
 const editLesson = (lesson) => {
   isEditing.value = true
-  editingLesson.value = { ...lesson }
+  // Map dữ liệu từ API sang form fields (tiếng Việt)
+  editingLesson.value = {
+    id: lesson.id,
+    TieuDe: lesson.title,
+    MoTa: lesson.description || '',
+    NoiDung: lesson.content || '',
+    LoaiBaiHoc: lesson.type || 'video',
+    ThuTu: lesson.order || 1,
+    ThoiLuong: lesson.duration || 0,
+    VideoUrl: lesson.videoUrl || '',
+    TrangThai: lesson.status || 1
+  }
   showLessonModal.value = true
 }
 

@@ -24,7 +24,7 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="lessons.length === 0" class="flex-1 flex items-center justify-center">
+    <div v-else-if="activeLessons.length === 0" class="flex-1 flex items-center justify-center">
       <div class="text-center">
         <p class="text-gray-500">Khóa học này chưa có bài học nào.</p>
       </div>
@@ -43,7 +43,7 @@
             </div>
             <div class="flex items-center gap-4">
               <div class="text-sm text-gray-500">
-                Bài {{ currentLessonIndex + 1 }}/{{ lessons.length }}
+                Bài {{ currentLessonIndex + 1 }}/{{ activeLessons.length }}
               </div>
               <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div 
@@ -113,7 +113,7 @@
 
             <button 
               @click="nextLesson"
-              :disabled="currentLessonIndex === lessons.length - 1"
+              :disabled="currentLessonIndex === activeLessons.length - 1"
               class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               Bài tiếp theo
@@ -129,7 +129,7 @@
       <!-- File: CourseLearningPage.vue - Dòng 129-136 -->
       <!-- Truyền prop hasBaiKiemTra để kiểm soát hiển thị nút làm bài kiểm tra -->
       <LessonSidebar
-        :lessons="lessons"
+        :lessons="activeLessons"
         :current-index="currentLessonIndex"
         :has-bai-kiem-tra="hasBaiKiemTra"
         @select-lesson="selectLesson"
@@ -166,29 +166,36 @@ const finalExam = ref(null)     // Thông tin bài kiểm tra cuối khóa
 const hasBaiKiemTra = ref(false)
 
 // ========== COMPUTED ==========
+// Chỉ lấy bài học có trạng thái hoạt động (status = 1)
+const activeLessons = computed(() => {
+  return lessons.value.filter(lesson => 
+    lesson.status === 1 || lesson.status === '1'
+  )
+})
+
 const currentLesson = computed(() => {
-  if (lessons.value.length === 0) return null
-  return lessons.value[currentLessonIndex.value]
+  if (activeLessons.value.length === 0) return null
+  return activeLessons.value[currentLessonIndex.value]
 })
 
 const completedCount = computed(() => {
-  return lessons.value.filter(lesson => lesson.completed).length
+  return activeLessons.value.filter(lesson => lesson.completed).length
 })
 
 const progress = computed(() => {
-  if (lessons.value.length === 0) return 0
-  return Math.round((completedCount.value / lessons.value.length) * 100)
+  if (activeLessons.value.length === 0) return 0
+  return Math.round((completedCount.value / activeLessons.value.length) * 100)
 })
 
 // ========== METHODS - Navigation & Actions ==========
 const selectLesson = async (index) => {
   currentLessonIndex.value = index
   // Load nội dung bài học mới
-  await loadLessonContent(lessons.value[index].id)
+  await loadLessonContent(activeLessons.value[index].id)
 }
 
 const nextLesson = async () => {
-  if (currentLessonIndex.value < lessons.value.length - 1) {
+  if (currentLessonIndex.value < activeLessons.value.length - 1) {
     currentLessonIndex.value++
     await loadLessonContent(currentLesson.value.id)
   }
@@ -202,8 +209,8 @@ const previousLesson = async () => {
 }
 
 const markAsCompleted = () => {
-  if (lessons.value[currentLessonIndex.value]) {
-    lessons.value[currentLessonIndex.value].completed = !lessons.value[currentLessonIndex.value].completed
+  if (activeLessons.value[currentLessonIndex.value]) {
+    activeLessons.value[currentLessonIndex.value].completed = !activeLessons.value[currentLessonIndex.value].completed
   }
 }
 
@@ -235,9 +242,10 @@ const loadLessons = async (courseId) => {
     lessons.value = response.data || []
     console.log('Loaded lessons:', lessons.value)
 
-    // Load nội dung bài học đầu tiên
-    if (lessons.value.length > 0) {
-      await loadLessonContent(lessons.value[0].id)
+    // Load nội dung bài học đầu tiên có trạng thái hoạt động
+    const firstActiveLesson = lessons.value.find(l => l.status === 1 || l.status === '1')
+    if (firstActiveLesson) {
+      await loadLessonContent(firstActiveLesson.id)
     }
 
     // Load thông tin bài kiểm tra cuối khóa
