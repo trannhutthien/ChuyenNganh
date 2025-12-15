@@ -19,6 +19,7 @@ class NoiDungBaiHoc extends Model
     protected $fillable = [
         'BaiHocId',
         'LoaiNoiDung',
+        'TieuDe',
         'NoiDung',
         'ThuTu'
     ];

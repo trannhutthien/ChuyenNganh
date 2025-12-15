@@ -91,6 +91,7 @@ class BaiHocController extends Controller
         return [
             'id' => $noiDung->NoiDungId,
             'type' => $noiDung->LoaiNoiDung,
+            'title' => $noiDung->TieuDe,
             'content' => $noiDung->NoiDung,
             'order' => $noiDung->ThuTu
         ];

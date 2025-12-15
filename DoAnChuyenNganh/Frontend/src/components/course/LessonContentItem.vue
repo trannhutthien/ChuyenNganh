@@ -1,38 +1,44 @@
 <template>
   <!-- Render nội dung bài học dựa trên loại -->
   <div class="lesson-content-item">
-    <!-- HEADING - Tiêu đề lớn -->
-    <h2 
-      v-if="item.type === 'heading'" 
-      class="text-2xl font-bold text-gray-800 mb-4 mt-6 first:mt-0"
-    >
-      {{ item.content }}
-    </h2>
+    <!-- HEADING - Tiêu đề chính -->
+    <div v-if="item.type === 'heading'" class="mb-6 mt-6 first:mt-0">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+        {{ item.title }}
+      </h1>
+      <p v-if="item.content" class="text-gray-600 leading-relaxed">
+        {{ item.content }}
+      </p>
+    </div>
 
     <!-- SUBHEADING - Tiêu đề phụ -->
-    <h3 
-      v-else-if="item.type === 'subheading'" 
-      class="text-xl font-semibold text-gray-700 mb-3 mt-5"
-    >
-      {{ item.content }}
-    </h3>
+    <div v-else-if="item.type === 'subheading'" class="mb-5 mt-5">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">
+        {{ item.title }}
+      </h2>
+      <p v-if="item.content" class="text-gray-600 leading-relaxed">
+        {{ item.content }}
+      </p>
+    </div>
 
     <!-- PARAGRAPH - Đoạn văn -->
-    <p 
-      v-else-if="item.type === 'paragraph'" 
-      class="text-gray-600 leading-relaxed mb-4 whitespace-pre-line"
-    >
-      {{ item.content }}
-    </p>
+    <div v-else-if="item.type === 'paragraph'" class="mb-4">
+      <h3 v-if="item.title" class="text-lg font-medium text-gray-800 mb-2">
+        {{ item.title }}
+      </h3>
+      <p class="text-gray-600 leading-relaxed whitespace-pre-line">
+        {{ item.content }}
+      </p>
+    </div>
 
     <!-- IMAGE - Hình ảnh -->
-    <div 
-      v-else-if="item.type === 'image'" 
-      class="my-6"
-    >
+    <div v-else-if="item.type === 'image'" class="my-6">
+      <h3 v-if="item.title" class="text-lg font-medium text-gray-800 mb-3">
+        {{ item.title }}
+      </h3>
       <img 
         :src="getImageUrl(item.content)" 
-        :alt="'Hình ảnh bài học'"
+        :alt="item.title || 'Hình ảnh bài học'"
         class="w-full rounded-lg border border-gray-200 shadow-sm"
         loading="lazy"
         @error="handleImageError"
@@ -40,10 +46,10 @@
     </div>
 
     <!-- VIDEO - Video embed -->
-    <div 
-      v-else-if="item.type === 'video'" 
-      class="my-6"
-    >
+    <div v-else-if="item.type === 'video'" class="my-6">
+      <h3 v-if="item.title" class="text-lg font-medium text-gray-800 mb-3">
+        {{ item.title }}
+      </h3>
       <div class="aspect-video rounded-lg overflow-hidden border border-gray-200 shadow-sm">
         <iframe
           :src="getVideoEmbedUrl(item.content)"
@@ -56,40 +62,47 @@
     </div>
 
     <!-- QUOTE - Trích dẫn -->
-    <blockquote 
-      v-else-if="item.type === 'quote'" 
-      class="border-l-4 border-primary bg-primary/5 pl-4 py-3 my-4 italic text-gray-700"
-    >
-      <p class="mb-0">{{ item.content }}</p>
-    </blockquote>
+    <div v-else-if="item.type === 'quote'" class="my-4">
+      <h3 v-if="item.title" class="text-lg font-medium text-gray-800 mb-2">
+        {{ item.title }}
+      </h3>
+      <blockquote class="border-l-4 border-primary bg-primary/5 pl-4 py-3 italic text-gray-700">
+        <p class="mb-0">{{ item.content }}</p>
+      </blockquote>
+    </div>
 
     <!-- LIST - Danh sách -->
-    <ul 
-      v-else-if="item.type === 'list'" 
-      class="list-disc list-inside space-y-2 text-gray-600 mb-4 ml-4"
-    >
-      <li 
-        v-for="(listItem, index) in parseListContent(item.content)" 
-        :key="index"
-        class="leading-relaxed"
-      >
-        {{ listItem }}
-      </li>
-    </ul>
+    <div v-else-if="item.type === 'list'" class="mb-4">
+      <h3 v-if="item.title" class="text-lg font-medium text-gray-800 mb-2">
+        {{ item.title }}
+      </h3>
+      <ul class="list-disc list-inside space-y-2 text-gray-600 ml-4">
+        <li 
+          v-for="(listItem, index) in parseListContent(item.content)" 
+          :key="index"
+          class="leading-relaxed"
+        >
+          {{ listItem }}
+        </li>
+      </ul>
+    </div>
 
     <!-- CODE - Code block (nếu cần thêm sau) -->
-    <div 
-      v-else-if="item.type === 'code'" 
-      class="my-4"
-    >
+    <div v-else-if="item.type === 'code'" class="my-4">
+      <h3 v-if="item.title" class="text-lg font-medium text-gray-800 mb-2">
+        {{ item.title }}
+      </h3>
       <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
         <pre class="text-sm text-gray-100"><code>{{ item.content }}</code></pre>
       </div>
     </div>
 
     <!-- DEFAULT - Fallback cho loại không xác định -->
-    <div v-else class="text-gray-600 mb-4">
-      {{ item.content }}
+    <div v-else class="mb-4">
+      <h3 v-if="item.title" class="text-lg font-medium text-gray-800 mb-2">
+        {{ item.title }}
+      </h3>
+      <p class="text-gray-600">{{ item.content }}</p>
     </div>
   </div>
 </template>
@@ -101,7 +114,7 @@ const props = defineProps({
     type: Object,
     required: true,
     validator: (value) => {
-      return value.hasOwnProperty('type') && value.hasOwnProperty('content')
+      return value.hasOwnProperty('type')
     }
   }
 })

@@ -1,25 +1,39 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div 
-        v-if="modelValue" 
-        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+      <div
+        v-if="modelValue"
+        class="flex fixed inset-0 z-50 justify-center items-center p-4"
         @click.self="closeModal"
       >
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-        
+        <div class="absolute inset-0 backdrop-blur-sm bg-black/50"></div>
+
         <!-- Modal Content -->
-        <div class="bg-white p-6 rounded-xl shadow-xl w-full relative z-10 max-h-[90vh] overflow-y-auto" :class="sizeClass">
+        <div
+          class="bg-white p-6 rounded-xl shadow-xl w-full relative z-10 max-h-[90vh] overflow-y-auto"
+          :class="sizeClass"
+        >
           <!-- Header -->
-          <div class="flex items-center justify-between mb-6">
+          <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-bold text-gray-800">{{ title }}</h2>
-            <button 
+            <button
               @click="closeModal"
-              class="p-1 hover:bg-gray-100 rounded-full transition"
+              class="p-1 rounded-full transition hover:bg-gray-100"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6 text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -68,96 +82,96 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
-import BaseInput from '../ui/BaseInput.vue'
-import BaseButton from '../ui/BaseButton.vue'
+import { ref, watch, computed } from "vue";
+import BaseInput from "../ui/BaseInput.vue";
+import BaseButton from "../ui/BaseButton.vue";
 
 const props = defineProps({
   modelValue: {
     type: Boolean,
-    default: false
+    default: false,
   },
   title: {
     type: String,
-    default: 'Form'
+    default: "Form",
   },
   submitText: {
     type: String,
-    default: 'Lưu'
+    default: "Lưu",
   },
   cancelText: {
     type: String,
-    default: 'Hủy'
+    default: "Hủy",
   },
   size: {
     type: String,
-    default: 'md', // 'sm', 'md', 'lg', 'xl'
-    validator: (v) => ['sm', 'md', 'lg', 'xl'].includes(v)
+    default: "md", // 'sm', 'md', 'lg', 'xl'
+    validator: (v) => ["sm", "md", "lg", "xl"].includes(v),
   },
   fields: {
     type: Array,
-    required: true
+    required: true,
     // Example: [{ name: 'TieuDe', label: 'Tiêu đề', type: 'text', inputType: 'input', placeholder: '', required: true, options: [], showIf: (form) => true }]
   },
   initialData: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   loading: {
     type: Boolean,
-    default: false
-  }
-})
+    default: false,
+  },
+});
 
-const emit = defineEmits(['update:modelValue', 'submit'])
+const emit = defineEmits(["update:modelValue", "submit"]);
 
 // Size class
 const sizeClass = computed(() => {
   const sizes = {
-    sm: 'max-w-md',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-4xl'
-  }
-  return sizes[props.size] || sizes.md
-})
+    sm: "max-w-md",
+    md: "max-w-lg",
+    lg: "max-w-2xl",
+    xl: "max-w-4xl",
+  };
+  return sizes[props.size] || sizes.md;
+});
 
 // Form data
-const form = ref({})
+const form = ref({});
 
 // Visible fields (dựa vào điều kiện showIf)
 const visibleFields = computed(() => {
-  return props.fields.filter(field => {
-    if (typeof field.showIf === 'function') {
-      return field.showIf(form.value)
+  return props.fields.filter((field) => {
+    if (typeof field.showIf === "function") {
+      return field.showIf(form.value);
     }
-    return true
-  })
-})
+    return true;
+  });
+});
 
 // Initialize form khi modal mở hoặc fields/initialData thay đổi
 watch(
   () => [props.modelValue, props.initialData, props.fields],
   ([isOpen]) => {
     if (isOpen) {
-      const data = {}
-      props.fields.forEach(field => {
+      const data = {};
+      props.fields.forEach((field) => {
         // Ưu tiên initialData, sau đó default value
-        data[field.name] = props.initialData[field.name] ?? field.default ?? ''
-      })
-      form.value = data
+        data[field.name] = props.initialData[field.name] ?? field.default ?? "";
+      });
+      form.value = data;
     }
   },
   { immediate: true, deep: true }
-)
+);
 
 const closeModal = () => {
-  emit('update:modelValue', false)
-}
+  emit("update:modelValue", false);
+};
 
 const handleSubmit = () => {
-  emit('submit', { ...form.value })
-}
+  emit("submit", { ...form.value });
+};
 </script>
 
 <style scoped>

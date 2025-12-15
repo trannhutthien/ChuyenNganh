@@ -10,6 +10,7 @@ use App\Http\Controllers\NganHangCauHoiController;
 use App\Http\Controllers\BaiKiemTraController;
 use App\Http\Controllers\LanLamBaiController;
 use App\Http\Controllers\BaiKiemTraCuoiKhoaController;
+use App\Http\Controllers\NoiDungBaiHocController;
 
 // ========== AUTH ROUTES ==========
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -58,6 +59,18 @@ Route::prefix('lessons')->group(function () {
     Route::post('/', [BaiHocController::class, 'store']);               // Tạo bài học mới
     Route::put('/{id}', [BaiHocController::class, 'update']);           // Cập nhật bài học
     Route::delete('/{id}', [BaiHocController::class, 'destroy']);       // Xóa bài học
+    
+    // Nội dung bài học (lesson contents)
+    Route::get('/{baiHocId}/contents', [NoiDungBaiHocController::class, 'index']);       // Lấy danh sách nội dung
+    Route::post('/{baiHocId}/contents', [NoiDungBaiHocController::class, 'store']);      // Thêm nội dung mới
+    Route::put('/{baiHocId}/contents/order', [NoiDungBaiHocController::class, 'updateOrder']); // Cập nhật thứ tự
+});
+
+// ========== NỘI DUNG BÀI HỌC ROUTES ==========
+Route::prefix('lesson-contents')->group(function () {
+    Route::get('/{id}', [NoiDungBaiHocController::class, 'show']);       // Chi tiết nội dung
+    Route::put('/{id}', [NoiDungBaiHocController::class, 'update']);     // Cập nhật nội dung
+    Route::delete('/{id}', [NoiDungBaiHocController::class, 'destroy']); // Xóa nội dung
 });
 
 // ========== NGÂN HÀNG CÂU HỎI ROUTES ==========
