@@ -216,13 +216,13 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import draggable from 'vuedraggable'
-import BackButton from '../../components/ui/BackButton.vue'
-import BaseButton from '../../components/ui/BaseButton.vue'
-import BadgeLabel from '../../components/admin/BadgeLabel.vue'
-import FormAddModal from '../../components/modal/FormAddModal.vue'
-import ConfirmModal from '../../components/modal/ConfirmModal.vue'
-import ContentItem from '../../components/admin/CourseLesson/ContentItem.vue'
-import api from '../../services/api'
+import BackButton from '../../../../components/ui/BackButton.vue'
+import BaseButton from '../../../../components/ui/BaseButton.vue'
+import BadgeLabel from '../../../../components/admin/BadgeLabel.vue'
+import FormAddModal from '../../../../components/modal/FormAddModal.vue'
+import ConfirmModal from '../../../../components/modal/ConfirmModal.vue'
+import ContentItem from '../../../../components/admin/CourseLesson/ContentItem.vue'
+import api from '../../../../services/api'
 
 const route = useRoute()
 const router = useRouter()

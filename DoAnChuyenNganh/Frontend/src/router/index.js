@@ -4,8 +4,9 @@ import CourseLearningPage from '../views/CourseLearningPage.vue'
 import QuizPage from '../views/QuizPage.vue'
 import FinalExamPage from '../views/FinalExamPage.vue'
 import CourseManagementPage from '../views/admin/CourseManagementPage.vue'
-import CourseLessonsPage from '../views/admin/CourseLessonsPage.vue'
-import LessonContentPage from '../views/admin/LessonContentPage.vue'
+import CourseLessonsPage from '../views/admin/CourseLesson/CourseLessonsPage.vue'
+import LessonContentPage from '../views/admin/CourseLesson/LessonContent/LessonContentPage.vue'
+import CourseLessonQuiz from '../views/admin/CourseLesson/CourseLessonQuiz.vue'
 
 const routes = [
   {
@@ -49,6 +50,12 @@ const routes = [
     path: '/quan-ly/khoa-hoc/:courseId/bai-hoc/:lessonId/noi-dung',
     name: 'LessonContent',
     component: LessonContentPage,
+    meta: { requiresAuth: true, roles: ['ADMIN', 'EDITOR'] }
+  },
+  {
+    path: '/quan-ly/khoa-hoc/:id/ngan-hang-cau-hoi',
+    name: 'QuestionBank',
+    component: CourseLessonQuiz,
     meta: { requiresAuth: true, roles: ['ADMIN', 'EDITOR'] }
   },
   // Catch-all route - redirect về trang chủ nếu không tìm thấy route
