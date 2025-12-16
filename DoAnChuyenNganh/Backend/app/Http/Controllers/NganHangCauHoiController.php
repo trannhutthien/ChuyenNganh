@@ -224,7 +224,7 @@ class NganHangCauHoiController extends Controller
 
         $validator = Validator::make($request->all(), [
             'baiHocId' => 'nullable|exists:BaiHoc,BaiHocId',
-            'loai' => 'required|in:MOT_DAP_AN,NHIEU_DAP_AN,DUNG_SAI,DIEN_KHUYET',
+            'loai' => 'required|in:single,multiple,true_false,fill_blank',
             'deBai' => 'required|string',
             'giaiThich' => 'nullable|string',
             'doKho' => 'nullable|integer|min:1|max:5',
@@ -287,7 +287,7 @@ class NganHangCauHoiController extends Controller
 
         $validator = Validator::make($request->all(), [
             'baiHocId' => 'nullable|exists:BaiHoc,BaiHocId',
-            'loai' => 'required|in:MOT_DAP_AN,NHIEU_DAP_AN,DUNG_SAI,DIEN_KHUYET',
+            'loai' => 'required|in:single,multiple,true_false,fill_blank',
             'deBai' => 'required|string',
             'giaiThich' => 'nullable|string',
             'doKho' => 'nullable|integer|min:1|max:5',
