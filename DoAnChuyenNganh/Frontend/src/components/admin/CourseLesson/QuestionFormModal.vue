@@ -33,11 +33,21 @@
                 v-model="formData.loai"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
               >
-                <option value="single">Một đáp án đúng</option>
+                <option value="single" :disabled="correctChoicesCount > 1">
+                  Một đáp án đúng {{ correctChoicesCount > 1 ? '(Có ' + correctChoicesCount + ' đáp án đúng)' : '' }}
+                </option>
                 <option value="multiple">Nhiều đáp án đúng</option>
-                <option value="true_false">Đúng/Sai</option>
+                <option value="true_false" :disabled="localChoices.length > 2">
+                  Đúng/Sai {{ localChoices.length > 2 ? '(Chỉ cho phép 2 lựa chọn)' : '' }}
+                </option>
                 <option value="fill_blank">Điền khuyết</option>
               </select>
+              <p v-if="formData.loai === 'single' && correctChoicesCount > 1" class="mt-1 text-sm text-red-600">
+                ⚠️ Loại "Một đáp án đúng" chỉ được có 1 đáp án đúng. Hiện có {{ correctChoicesCount }} đáp án đúng.
+              </p>
+              <p v-if="formData.loai === 'true_false' && localChoices.length > 2" class="mt-1 text-sm text-red-600">
+                ⚠️ Câu hỏi Đúng/Sai chỉ được có 2 lựa chọn. Vui lòng xóa bớt lựa chọn.
+              </p>
             </div>
 
             <!-- Đề bài -->
@@ -79,7 +89,13 @@
                 <button
                   @click="addChoice"
                   type="button"
-                  class="text-sm text-primary hover:text-primary-dark font-medium"
+                  :disabled="formData.loai === 'true_false' && localChoices.length >= 2"
+                  :class="[
+                    'text-sm font-medium',
+                    formData.loai === 'true_false' && localChoices.length >= 2
+                      ? 'text-gray-400 cursor-not-allowed'
+                      : 'text-primary hover:text-primary-dark'
+                  ]"
                 >
                   + Thêm lựa chọn
                 </button>
@@ -174,7 +190,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
   modelValue: Boolean,
@@ -199,6 +215,24 @@ const localChoices = ref([
   { noiDung: '', dungHaySai: false, thuTu: 1 },
   { noiDung: '', dungHaySai: false, thuTu: 2 }
 ])
+
+// Computed: Đếm số đáp án đúng
+const correctChoicesCount = computed(() => {
+  return localChoices.value.filter(c => c.dungHaySai).length
+})
+
+// Watch loại câu hỏi để điều chỉnh số lựa chọn
+watch(() => formData.value.loai, (newType) => {
+  if (newType === 'true_false' && localChoices.value.length > 2) {
+    // Nếu chọn Đúng/Sai và có > 2 lựa chọn, cắt về 2
+    localChoices.value = localChoices.value.slice(0, 2)
+  }
+  
+  if (newType === 'single' && correctChoicesCount.value > 1) {
+    // Nếu chọn Một đáp án đúng nhưng có > 1 đáp án đúng, bỏ tick tất cả
+    localChoices.value.forEach(c => c.dungHaySai = false)
+  }
+})
 
 // Watch for initial data changes
 watch(() => props.initialData, (newData) => {
@@ -246,6 +280,17 @@ const removeChoice = (index) => {
 }
 
 const handleSubmit = () => {
+  // Validation
+  if (formData.value.loai === 'single' && correctChoicesCount.value > 1) {
+    alert('Loại "Một đáp án đúng" chỉ được có 1 đáp án đúng!')
+    return
+  }
+  
+  if (formData.value.loai === 'true_false' && localChoices.value.length !== 2) {
+    alert('Câu hỏi Đúng/Sai phải có đúng 2 lựa chọn!')
+    return
+  }
+  
   emit('submit', {
     ...formData.value,
     luaChons: localChoices.value
