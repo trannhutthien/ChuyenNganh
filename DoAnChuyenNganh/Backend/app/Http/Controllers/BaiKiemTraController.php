@@ -75,24 +75,24 @@ class BaiKiemTraController extends Controller
 
     /**
      * Tạo bài kiểm tra mới
+     * Schema: KhoaHocId, BaiHocId, TieuDe, ThietLapJson, DiemDat, TrangThai
      */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'khoaHocId' => 'required|exists:KhoaHoc,KhoaHocId',
             'baiHocId' => 'nullable|exists:BaiHoc,BaiHocId',
-            'tieuDe' => 'required|string|max:300',
-            'moTa' => 'nullable|string',
-            'thoiGianLamBai' => 'nullable|integer|min:1',
-            'soCauHoi' => 'nullable|integer|min:1',
-            'diemDat' => 'nullable|numeric|min:0',
-            'soLanLamToiDa' => 'nullable|integer|min:0',
-            'xaoTronCauHoi' => 'nullable|boolean',
-            'xaoTronDapAn' => 'nullable|boolean',
-            'hienThiDapAn' => 'nullable|boolean',
-            'trangThai' => 'nullable|in:NHAP,CONG_KHAI,DONG',
-            'cauHoiIds' => 'nullable|array',
-            'cauHoiIds.*' => 'exists:CauHoi,CauHoiId'
+            'tieuDe' => 'required|string|max:200',
+            'diemDat' => 'nullable|numeric|min:0|max:10',
+            'trangThai' => 'nullable|integer|in:1,2,3',
+            'thietLapJson' => 'nullable|array',
+            'thietLapJson.soCauHoi' => 'nullable|integer|min:1',
+            'thietLapJson.thoiGianLamBai' => 'nullable|integer|min:0',
+            'thietLapJson.soLanLamToiDa' => 'nullable|integer|min:0',
+            'thietLapJson.xaoTronCauHoi' => 'nullable|boolean',
+            'thietLapJson.xaoTronDapAn' => 'nullable|boolean',
+            'thietLapJson.hienThiDapAn' => 'nullable|boolean',
+            'thietLapJson.nganHangIds' => 'nullable|array'
         ]);
 
         if ($validator->fails()) {
@@ -100,24 +100,27 @@ class BaiKiemTraController extends Controller
         }
 
         $baiKiemTra = DB::transaction(function () use ($request) {
+            // Build ThietLapJson
+            $thietLapJson = $request->thietLapJson ?? [
+                'soCauHoi' => 10,
+                'thoiGianLamBai' => 30,
+                'soLanLamToiDa' => 0,
+                'xaoTronCauHoi' => true,
+                'xaoTronDapAn' => true,
+                'hienThiDapAn' => true,
+                'nganHangIds' => []
+            ];
+
             $baiKiemTra = BaiKiemTra::create([
                 'KhoaHocId' => $request->khoaHocId,
                 'BaiHocId' => $request->baiHocId,
                 'TieuDe' => $request->tieuDe,
-                'MoTa' => $request->moTa,
-                'ThoiGianLamBai' => $request->thoiGianLamBai,
-                'SoCauHoi' => $request->soCauHoi,
-                'DiemDat' => $request->diemDat ?? 5,
-                'SoLanLamToiDa' => $request->soLanLamToiDa,
-                'XaoTronCauHoi' => $request->xaoTronCauHoi ?? false,
-                'XaoTronDapAn' => $request->xaoTronDapAn ?? false,
-                'HienThiDapAn' => $request->hienThiDapAn ?? true,
-                'TrangThai' => $request->trangThai ?? 'NHAP',
-                'NgayTao' => now()
+                'ThietLapJson' => $thietLapJson,
+                'DiemDat' => $request->diemDat ?? 5.00,
+                'TrangThai' => $request->trangThai ?? 2,
+                'TaoLuc' => now(),
+                'CapNhatLuc' => now()
             ]);
-
-            // Câu hỏi sẽ được random từ ngân hàng câu hỏi khi làm bài
-            // Không cần gán câu hỏi cố định vào bài kiểm tra
 
             return $baiKiemTra;
         });
@@ -130,6 +133,7 @@ class BaiKiemTraController extends Controller
 
     /**
      * Cập nhật bài kiểm tra
+     * Schema: KhoaHocId, BaiHocId, TieuDe, ThietLapJson, DiemDat, TrangThai
      */
     public function update(Request $request, $id)
     {
@@ -140,18 +144,17 @@ class BaiKiemTraController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'tieuDe' => 'required|string|max:300',
-            'moTa' => 'nullable|string',
-            'thoiGianLamBai' => 'nullable|integer|min:1',
-            'soCauHoi' => 'nullable|integer|min:1',
-            'diemDat' => 'nullable|numeric|min:0',
-            'soLanLamToiDa' => 'nullable|integer|min:0',
-            'xaoTronCauHoi' => 'nullable|boolean',
-            'xaoTronDapAn' => 'nullable|boolean',
-            'hienThiDapAn' => 'nullable|boolean',
-            'trangThai' => 'nullable|in:NHAP,CONG_KHAI,DONG',
-            'cauHoiIds' => 'nullable|array',
-            'cauHoiIds.*' => 'exists:CauHoi,CauHoiId'
+            'tieuDe' => 'required|string|max:200',
+            'diemDat' => 'nullable|numeric|min:0|max:10',
+            'trangThai' => 'nullable|integer|in:1,2,3',
+            'thietLapJson' => 'nullable|array',
+            'thietLapJson.soCauHoi' => 'nullable|integer|min:1',
+            'thietLapJson.thoiGianLamBai' => 'nullable|integer|min:0',
+            'thietLapJson.soLanLamToiDa' => 'nullable|integer|min:0',
+            'thietLapJson.xaoTronCauHoi' => 'nullable|boolean',
+            'thietLapJson.xaoTronDapAn' => 'nullable|boolean',
+            'thietLapJson.hienThiDapAn' => 'nullable|boolean',
+            'thietLapJson.nganHangIds' => 'nullable|array'
         ]);
 
         if ($validator->fails()) {
@@ -159,20 +162,19 @@ class BaiKiemTraController extends Controller
         }
 
         DB::transaction(function () use ($request, $baiKiemTra) {
-            $baiKiemTra->update([
+            $updateData = [
                 'TieuDe' => $request->tieuDe,
-                'MoTa' => $request->moTa,
-                'ThoiGianLamBai' => $request->thoiGianLamBai,
-                'SoCauHoi' => $request->soCauHoi,
                 'DiemDat' => $request->diemDat ?? $baiKiemTra->DiemDat,
-                'SoLanLamToiDa' => $request->soLanLamToiDa,
-                'XaoTronCauHoi' => $request->xaoTronCauHoi ?? $baiKiemTra->XaoTronCauHoi,
-                'XaoTronDapAn' => $request->xaoTronDapAn ?? $baiKiemTra->XaoTronDapAn,
-                'HienThiDapAn' => $request->hienThiDapAn ?? $baiKiemTra->HienThiDapAn,
-                'TrangThai' => $request->trangThai ?? $baiKiemTra->TrangThai
-            ]);
+                'TrangThai' => $request->trangThai ?? $baiKiemTra->TrangThai,
+                'CapNhatLuc' => now()
+            ];
 
-            // Câu hỏi được random từ ngân hàng, không cần cập nhật danh sách cố định
+            // Cập nhật ThietLapJson nếu có
+            if ($request->has('thietLapJson')) {
+                $updateData['ThietLapJson'] = $request->thietLapJson;
+            }
+
+            $baiKiemTra->update($updateData);
         });
 
         return response()->json([
@@ -275,9 +277,12 @@ class BaiKiemTraController extends Controller
 
     /**
      * Format bài kiểm tra
+     * Schema: KhoaHocId, BaiHocId, TieuDe, ThietLapJson, DiemDat, TrangThai, TaoLuc, CapNhatLuc
      */
     private function formatBaiKiemTra($baiKiemTra, $includeStats = false)
     {
+        $thietLap = $baiKiemTra->getThietLap();
+        
         $data = [
             'id' => $baiKiemTra->BaiKiemTraId,
             'khoaHocId' => $baiKiemTra->KhoaHocId,
@@ -285,23 +290,23 @@ class BaiKiemTraController extends Controller
             'baiHocId' => $baiKiemTra->BaiHocId,
             'tenBaiHoc' => $baiKiemTra->baiHoc->TieuDe ?? null,
             'tieuDe' => $baiKiemTra->TieuDe,
-            'moTa' => $baiKiemTra->MoTa,
-            'thoiGianLamBai' => $baiKiemTra->ThoiGianLamBai,
-            'soCauHoi' => $baiKiemTra->SoCauHoi,
             'diemDat' => $baiKiemTra->DiemDat,
-            'soLanLamToiDa' => $baiKiemTra->SoLanLamToiDa,
-            'xaoTronCauHoi' => $baiKiemTra->XaoTronCauHoi,
-            'xaoTronDapAn' => $baiKiemTra->XaoTronDapAn,
-            'hienThiDapAn' => $baiKiemTra->HienThiDapAn,
             'trangThai' => $baiKiemTra->TrangThai,
-            'ngayTao' => $baiKiemTra->NgayTao
+            'taoLuc' => $baiKiemTra->TaoLuc,
+            'capNhatLuc' => $baiKiemTra->CapNhatLuc,
+            // Thiết lập từ ThietLapJson
+            'thietLap' => $thietLap,
+            'soCauHoi' => $thietLap['soCauHoi'] ?? 10,
+            'thoiGianLamBai' => $thietLap['thoiGianLamBai'] ?? 30,
+            'soLanLamToiDa' => $thietLap['soLanLamToiDa'] ?? 0,
+            'xaoTronCauHoi' => $thietLap['xaoTronCauHoi'] ?? true,
+            'xaoTronDapAn' => $thietLap['xaoTronDapAn'] ?? true,
+            'hienThiDapAn' => $thietLap['hienThiDapAn'] ?? true,
+            'nganHangIds' => $thietLap['nganHangIds'] ?? []
         ];
 
         if ($includeStats) {
             $data['soNguoiLam'] = $baiKiemTra->lanLamBais()->distinct('NguoiDungId')->count();
-            // Lấy số câu hỏi từ thiết lập thay vì bảng pivot (bảng BaiKiemTra_CauHoi không tồn tại)
-            $thietLap = $baiKiemTra->getThietLap();
-            $data['soCauHoiThucTe'] = $thietLap['soCauHoi'] ?? 10;
         }
 
         return $data;

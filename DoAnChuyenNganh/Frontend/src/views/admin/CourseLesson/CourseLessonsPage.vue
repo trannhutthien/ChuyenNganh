@@ -124,6 +124,17 @@
       size="lg"
       @submit="handleLessonSubmit"
     />
+
+    <!-- Add/Edit Quiz Modal -->
+    <FormAddQuizModal
+      v-model="showQuizModal"
+      :khoa-hoc-id="courseId"
+      :bai-hocs="lessons"
+      :ngan-hangs="nganHangs"
+      :initial-data="editingQuiz"
+      :loading="isSubmittingQuiz"
+      @submit="handleQuizSubmit"
+    />
   </div>
 </template>
 
@@ -136,6 +147,7 @@ import BackButton from "../../../components/ui/BackButton.vue";
 import LessonHeader from "../../../components/admin/CourseLesson/LessonHeader.vue";
 import LessonList from "../../../components/admin/CourseLesson/LessonList.vue";
 import FormAddModal from "../../../components/modal/FormAddModal.vue";
+import FormAddQuizModal from "../../../components/modal/FormAddQuizModal.vue";
 import { courseService } from "../../../services/courseService";
 import api from "../../../services/api";
 
@@ -239,6 +251,12 @@ const showLessonModal = ref(false);
 const isEditing = ref(false);
 const isSubmitting = ref(false);
 const editingLesson = ref({});
+
+// Quiz Modal states
+const showQuizModal = ref(false);
+const isSubmittingQuiz = ref(false);
+const editingQuiz = ref(null);
+const nganHangs = ref([]);
 
 // Computed
 const totalDuration = computed(() => {
@@ -376,9 +394,62 @@ const goToQuestionBank = () => {
   router.push(`/quan-ly/khoa-hoc/${courseId.value}/ngan-hang-cau-hoi`);
 };
 
-// Navigate to create quiz
-const goToCreateQuiz = () => {
-  router.push(`/quan-ly/khoa-hoc/${courseId.value}/tao-bai-kiem-tra`);
+// Open Quiz Modal
+const goToCreateQuiz = async () => {
+  // Fetch ngân hàng câu hỏi trước khi mở modal
+  await fetchNganHangs();
+  editingQuiz.value = null;
+  showQuizModal.value = true;
+};
+
+// Fetch ngân hàng câu hỏi
+const fetchNganHangs = async () => {
+  try {
+    const response = await api.get(
+      `/ngan-hang-cau-hoi/khoa-hoc/${courseId.value}`
+    );
+    // API trả về array trực tiếp, không có wrapper success/data
+    console.log("Ngân hàng câu hỏi response:", response);
+    nganHangs.value = Array.isArray(response) ? response : response.data || [];
+  } catch (error) {
+    console.error("Lỗi khi tải ngân hàng câu hỏi:", error);
+    nganHangs.value = [];
+  }
+};
+
+// Handle Quiz Submit
+const handleQuizSubmit = async (formData) => {
+  isSubmittingQuiz.value = true;
+  try {
+    // Chuyển đổi từ PascalCase sang camelCase theo yêu cầu API
+    const apiData = {
+      khoaHocId: formData.KhoaHocId,
+      baiHocId: formData.BaiHocId || null,
+      tieuDe: formData.TieuDe,
+      diemDat: formData.DiemDat,
+      trangThai: formData.TrangThai,
+      thietLapJson: formData.ThietLapJson,
+    };
+
+    console.log("Sending quiz data:", apiData);
+
+    if (formData.BaiKiemTraId) {
+      // Update
+      await api.put(`/bai-kiem-tra/${formData.BaiKiemTraId}`, apiData);
+      console.log("Đã cập nhật bài kiểm tra:", apiData);
+    } else {
+      // Create
+      await api.post("/bai-kiem-tra", apiData);
+      console.log("Đã tạo bài kiểm tra:", apiData);
+    }
+    showQuizModal.value = false;
+    // Có thể refresh danh sách bài kiểm tra nếu cần
+  } catch (error) {
+    console.error("Lỗi khi lưu bài kiểm tra:", error);
+    alert("Không thể lưu bài kiểm tra. Vui lòng thử lại.");
+  } finally {
+    isSubmittingQuiz.value = false;
+  }
 };
 
 // Init
