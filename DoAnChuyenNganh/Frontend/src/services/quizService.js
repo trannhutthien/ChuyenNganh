@@ -107,11 +107,12 @@ export const quizService = {
 
   /**
    * Lấy danh sách quiz theo lessonId
+   * API: GET /api/bai-kiem-tra/bai-hoc/{baiHocId}
    * @param {number|string} lessonId - ID của lesson
    * @returns {Promise} Array of quizzes
    */
   getQuizzesByLesson(lessonId) {
-    return api.get(`/lessons/${lessonId}/quizzes`)
+    return api.get(`/bai-kiem-tra/bai-hoc/${lessonId}`)
   },
 
   /**

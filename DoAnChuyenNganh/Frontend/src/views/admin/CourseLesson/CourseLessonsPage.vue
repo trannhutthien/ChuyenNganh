@@ -244,7 +244,7 @@ const course = ref({
 
 // Lessons data
 const lessons = ref([]);
-const quizzes = ref([]); // Danh sách bài kiểm tra của khóa học
+const quizzes = ref([]); // Danh sách bài kiểm tra cuối khóa (BaiHocId = null)
 const isLoading = ref(false);
 const searchQuery = ref("");
 
@@ -338,13 +338,18 @@ const fetchLessons = async () => {
   }
 };
 
-// Fetch quizzes của khóa học
+// Fetch quizzes cuối khóa (BaiHocId = null)
 const fetchQuizzes = async () => {
   try {
     const response = await api.get(`/bai-kiem-tra/khoa-hoc/${courseId.value}`);
     console.log("Quizzes response:", response);
     // API trả về array trực tiếp
-    quizzes.value = Array.isArray(response) ? response : response.data || [];
+    const allQuizzes = Array.isArray(response) ? response : response.data || [];
+    // Chỉ lấy bài kiểm tra cuối khóa (BaiHocId = null)
+    quizzes.value = allQuizzes.filter(
+      (quiz) => quiz.baiHocId === null || quiz.baiHocId === undefined
+    );
+    console.log("Filtered quizzes (BaiHocId = null):", quizzes.value);
   } catch (error) {
     console.error("Lỗi khi tải bài kiểm tra:", error);
     quizzes.value = [];

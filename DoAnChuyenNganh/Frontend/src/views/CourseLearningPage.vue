@@ -40,6 +40,11 @@
       <div class="flex overflow-hidden flex-col flex-1 bg-white">
         <!-- Header của bài học -->
         <div class="px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
+          <!-- Back Button -->
+          <BackButton to="/" container-class="mb-3">
+            Quay lại trang chủ
+          </BackButton>
+
           <div class="flex justify-between items-center">
             <div>
               <h1 class="text-lg font-bold text-gray-800">{{ courseTitle }}</h1>
@@ -106,6 +111,13 @@
             >
               <p>Bài học này chưa có nội dung chi tiết.</p>
             </div>
+
+            <!-- Bài kiểm tra cuối bài học -->
+            <LessonEndContentQuiz
+              v-if="!loadingContent"
+              :quiz="lessonQuiz"
+              @start-quiz="goToExam"
+            />
           </div>
         </div>
 
@@ -197,11 +209,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import LessonSidebar from "../components/course/LessonSidebar.vue";
 import LessonContentItem from "../components/course/LessonContentItem.vue";
+import LessonEndContentQuiz from "../components/course/LessonEndContentQuiz.vue";
 import BaseButton from "../components/ui/BaseButton.vue";
+import BackButton from "../components/ui/BackButton.vue";
 import { courseService } from "../services/courseService.js";
 import quizService from "../services/quizService.js";
 
@@ -220,6 +234,8 @@ const lessons = ref([]);
 const lessonContents = ref([]); // Nội dung chi tiết của bài học hiện tại
 // Danh sách bài kiểm tra cuối khóa (BaiHocId = null)
 const courseExams = ref([]);
+// Bài kiểm tra cuối bài học hiện tại
+const lessonQuiz = ref(null);
 
 // ========== COMPUTED ==========
 // Chỉ lấy bài học có trạng thái hoạt động (status = 1)
@@ -331,6 +347,7 @@ const loadCourseExams = async (courseId) => {
 // Load nội dung chi tiết của bài học
 const loadLessonContent = async (lessonId) => {
   loadingContent.value = true;
+  lessonQuiz.value = null; // Reset quiz khi chuyển bài
   try {
     const response = await courseService.getLessonContent(lessonId);
     console.log("Lesson content response:", response);
@@ -338,11 +355,29 @@ const loadLessonContent = async (lessonId) => {
     // Set nội dung bài học
     lessonContents.value = response.contents || [];
     console.log("Loaded lesson contents:", lessonContents.value);
+
+    // Load bài kiểm tra cuối bài học
+    await loadLessonQuiz(lessonId);
   } catch (err) {
     console.error("Error loading lesson content:", err);
     lessonContents.value = [];
   } finally {
     loadingContent.value = false;
+  }
+};
+
+// Load bài kiểm tra cuối bài học (nếu có)
+const loadLessonQuiz = async (lessonId) => {
+  try {
+    const response = await quizService.getQuizzesByLesson(lessonId);
+    console.log("Lesson quiz response:", response);
+    const quizzes = response.data || [];
+    // Lấy bài kiểm tra đầu tiên có trạng thái công khai (trangThai = 2)
+    lessonQuiz.value = quizzes.find((q) => q.TrangThai === 2) || null;
+    console.log("Lesson quiz:", lessonQuiz.value);
+  } catch (err) {
+    console.log("Error loading lesson quiz:", err);
+    lessonQuiz.value = null;
   }
 };
 

@@ -52,10 +52,24 @@ class BaiKiemTraController extends Controller
             ->congKhai()
             ->get()
             ->map(function ($item) {
-                return $this->formatBaiKiemTra($item);
+                $thietLap = $item->getThietLap();
+                return [
+                    'id' => $item->BaiKiemTraId,
+                    'KhoaHocId' => $item->KhoaHocId,
+                    'BaiHocId' => $item->BaiHocId,
+                    'TenBaiKiemTra' => $item->TieuDe,
+                    'MoTa' => $item->MoTa ?? '',
+                    'DiemDat' => $item->DiemDat,
+                    'TrangThai' => $item->TrangThai,
+                    'ThuTu' => $item->ThuTu ?? 999,
+                    'ThietLapJson' => $thietLap
+                ];
             });
 
-        return response()->json($baiKiemTras);
+        return response()->json([
+            'success' => true,
+            'data' => $baiKiemTras
+        ]);
     }
 
     /**
