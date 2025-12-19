@@ -11,6 +11,7 @@
         :title="course.title"
         :thumbnail="course.thumbnail"
         :lesson-count="lessons.length"
+        :quiz-count="quizzes.length"
         :total-duration="totalDuration"
       />
     </div>
@@ -243,6 +244,7 @@ const course = ref({
 
 // Lessons data
 const lessons = ref([]);
+const quizzes = ref([]); // Danh sách bài kiểm tra của khóa học
 const isLoading = ref(false);
 const searchQuery = ref("");
 
@@ -263,11 +265,35 @@ const totalDuration = computed(() => {
   return lessons.value.reduce((sum, lesson) => sum + (lesson.duration || 0), 0);
 });
 
+// Gộp bài học và bài kiểm tra thành một danh sách
+const allItems = computed(() => {
+  // Map bài học
+  const lessonItems = lessons.value.map((lesson) => ({
+    ...lesson,
+    itemType: "lesson", // Đánh dấu là bài học
+  }));
+
+  // Map bài kiểm tra
+  const quizItems = quizzes.value.map((quiz) => ({
+    id: quiz.id,
+    title: quiz.tieuDe,
+    type: "quiz",
+    itemType: "quiz", // Đánh dấu là bài kiểm tra
+    order: 999, // Đặt cuối danh sách
+    duration: quiz.thietLap?.thoiGianLamBai || quiz.thoiGianLamBai || 0,
+    status: quiz.trangThai,
+    quizData: quiz, // Lưu data gốc để edit
+  }));
+
+  // Gộp và sắp xếp theo order
+  return [...lessonItems, ...quizItems].sort((a, b) => a.order - b.order);
+});
+
 const filteredLessons = computed(() => {
-  if (!searchQuery.value) return lessons.value;
+  if (!searchQuery.value) return allItems.value;
   const query = searchQuery.value.toLowerCase();
-  return lessons.value.filter((lesson) =>
-    lesson.title.toLowerCase().includes(query)
+  return allItems.value.filter((item) =>
+    item.title.toLowerCase().includes(query)
   );
 });
 
@@ -312,6 +338,19 @@ const fetchLessons = async () => {
   }
 };
 
+// Fetch quizzes của khóa học
+const fetchQuizzes = async () => {
+  try {
+    const response = await api.get(`/bai-kiem-tra/khoa-hoc/${courseId.value}`);
+    console.log("Quizzes response:", response);
+    // API trả về array trực tiếp
+    quizzes.value = Array.isArray(response) ? response : response.data || [];
+  } catch (error) {
+    console.error("Lỗi khi tải bài kiểm tra:", error);
+    quizzes.value = [];
+  }
+};
+
 // Actions
 const openAddModal = () => {
   isEditing.value = false;
@@ -321,38 +360,63 @@ const openAddModal = () => {
   showLessonModal.value = true;
 };
 
-const viewLesson = (lesson) => {
-  // Điều hướng đến trang nội dung bài học
-  router.push(
-    `/quan-ly/khoa-hoc/${courseId.value}/bai-hoc/${lesson.id}/noi-dung`
-  );
+const viewLesson = (item) => {
+  if (item.itemType === "quiz") {
+    // Xem bài kiểm tra - có thể điều hướng đến trang preview quiz
+    router.push(`/quiz/${item.id}`);
+  } else {
+    // Điều hướng đến trang nội dung bài học
+    router.push(
+      `/quan-ly/khoa-hoc/${courseId.value}/bai-hoc/${item.id}/noi-dung`
+    );
+  }
 };
 
-const editLesson = (lesson) => {
-  isEditing.value = true;
-  // Map dữ liệu từ API sang form fields (tiếng Việt)
-  editingLesson.value = {
-    id: lesson.id,
-    TieuDe: lesson.title,
-    MoTa: lesson.description || "",
-    NoiDung: lesson.content || "",
-    LoaiBaiHoc: lesson.type || "video",
-    ThuTu: lesson.order || 1,
-    ThoiLuong: lesson.duration || 0,
-    VideoUrl: lesson.videoUrl || "",
-    TrangThai: lesson.status || 1,
-  };
-  showLessonModal.value = true;
+const editLesson = async (item) => {
+  if (item.itemType === "quiz") {
+    // Edit bài kiểm tra - mở modal quiz
+    await fetchNganHangs();
+    editingQuiz.value = item.quizData;
+    showQuizModal.value = true;
+  } else {
+    // Edit bài học
+    isEditing.value = true;
+    editingLesson.value = {
+      id: item.id,
+      TieuDe: item.title,
+      MoTa: item.description || "",
+      NoiDung: item.content || "",
+      LoaiBaiHoc: item.type || "video",
+      ThuTu: item.order || 1,
+      ThoiLuong: item.duration || 0,
+      VideoUrl: item.videoUrl || "",
+      TrangThai: item.status || 1,
+    };
+    showLessonModal.value = true;
+  }
 };
 
-const deleteLesson = async (lesson) => {
+const deleteLesson = async (item) => {
+  const confirmMsg =
+    item.itemType === "quiz"
+      ? "Bạn có chắc muốn xóa bài kiểm tra này?"
+      : "Bạn có chắc muốn xóa bài học này?";
+
+  if (!confirm(confirmMsg)) return;
+
   try {
-    await api.delete(`/lessons/${lesson.id}`);
-    console.log("Đã xóa bài học:", lesson);
-    fetchLessons();
+    if (item.itemType === "quiz") {
+      await api.delete(`/bai-kiem-tra/${item.id}`);
+      console.log("Đã xóa bài kiểm tra:", item);
+      fetchQuizzes();
+    } else {
+      await api.delete(`/lessons/${item.id}`);
+      console.log("Đã xóa bài học:", item);
+      fetchLessons();
+    }
   } catch (error) {
-    console.error("Lỗi khi xóa bài học:", error);
-    alert("Không thể xóa bài học. Vui lòng thử lại.");
+    console.error("Lỗi khi xóa:", error);
+    alert("Không thể xóa. Vui lòng thử lại.");
   }
 };
 
@@ -443,7 +507,8 @@ const handleQuizSubmit = async (formData) => {
       console.log("Đã tạo bài kiểm tra:", apiData);
     }
     showQuizModal.value = false;
-    // Có thể refresh danh sách bài kiểm tra nếu cần
+    // Refresh danh sách bài kiểm tra
+    fetchQuizzes();
   } catch (error) {
     console.error("Lỗi khi lưu bài kiểm tra:", error);
     alert("Không thể lưu bài kiểm tra. Vui lòng thử lại.");
@@ -456,5 +521,6 @@ const handleQuizSubmit = async (formData) => {
 onMounted(() => {
   fetchCourse();
   fetchLessons();
+  fetchQuizzes(); // Load danh sách bài kiểm tra
 });
 </script>
