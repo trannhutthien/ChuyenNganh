@@ -96,6 +96,16 @@ export const quizService = {
   },
 
   /**
+   * Lấy danh sách bài kiểm tra của khóa học (bao gồm cả cuối khóa và theo bài học)
+   * API: GET /api/bai-kiem-tra/khoa-hoc/{khoaHocId}
+   * @param {number|string} courseId - ID của khóa học
+   * @returns {Promise} Array of quizzes
+   */
+  getQuizzesByCourseOnly(courseId) {
+    return api.get(`/bai-kiem-tra/khoa-hoc/${courseId}`)
+  },
+
+  /**
    * Lấy danh sách quiz theo lessonId
    * @param {number|string} lessonId - ID của lesson
    * @returns {Promise} Array of quizzes

@@ -184,14 +184,13 @@
       </div>
 
       <!-- Cột BÊN PHẢI - Danh sách bài học -->
-      <!-- File: CourseLearningPage.vue - Dòng 129-136 -->
-      <!-- Truyền prop hasBaiKiemTra để kiểm soát hiển thị nút làm bài kiểm tra -->
+      <!-- Truyền danh sách bài kiểm tra cuối khóa (BaiHocId = null) -->
       <LessonSidebar
         :lessons="activeLessons"
         :current-index="currentLessonIndex"
-        :has-bai-kiem-tra="hasBaiKiemTra"
+        :course-exams="courseExams"
         @select-lesson="selectLesson"
-        @start-final-exam="goToFinalExam"
+        @start-exam="goToExam"
       />
     </template>
   </div>
@@ -219,10 +218,8 @@ const error = ref(null);
 // ========== DATA - Load từ API ==========
 const lessons = ref([]);
 const lessonContents = ref([]); // Nội dung chi tiết của bài học hiện tại
-const finalExam = ref(null); // Thông tin bài kiểm tra cuối khóa
-// File: CourseLearningPage.vue - Dòng 164
-// Biến kiểm tra khóa học này có bài kiểm tra cuối khóa hay không
-const hasBaiKiemTra = ref(false);
+// Danh sách bài kiểm tra cuối khóa (BaiHocId = null)
+const courseExams = ref([]);
 
 // ========== COMPUTED ==========
 // Chỉ lấy bài học có trạng thái hoạt động (status = 1)
@@ -274,14 +271,8 @@ const markAsCompleted = () => {
   }
 };
 
-const goToQuiz = () => {
-  const quizId = 1; // TODO: Lấy từ course data
-  router.push(`/quiz/${quizId}`);
-};
-
-// Đi đến trang bài kiểm tra cuối khóa
-const goToFinalExam = () => {
-  const quizId = 1; // TODO: Lấy quiz ID thực tế
+// Đi đến trang bài kiểm tra với quizId cụ thể
+const goToExam = (quizId) => {
   router.push(`/quiz/${quizId}`);
 };
 
@@ -310,8 +301,8 @@ const loadLessons = async (courseId) => {
       await loadLessonContent(firstActiveLesson.id);
     }
 
-    // Load thông tin bài kiểm tra cuối khóa
-    await loadFinalExam(courseId);
+    // Load danh sách bài kiểm tra cuối khóa
+    await loadCourseExams(courseId);
   } catch (err) {
     console.error("Error loading lessons:", err);
     error.value = "Không thể tải bài học. Vui lòng thử lại.";
@@ -320,22 +311,20 @@ const loadLessons = async (courseId) => {
   }
 };
 
-// File: CourseLearningPage.vue - Dòng 254-270
-// Load thông tin bài kiểm tra cuối khóa từ API
-// Nếu có bài kiểm tra -> hasBaiKiemTra = true -> hiển thị nút làm bài
-// Nếu không có -> hasBaiKiemTra = false -> ẩn nút làm bài
-const loadFinalExam = async (courseId) => {
+// Load danh sách bài kiểm tra cuối khóa (BaiHocId = null)
+const loadCourseExams = async (courseId) => {
   try {
-    const response = await quizService.getFinalExam(courseId);
-    console.log("Final exam response:", response);
-    finalExam.value = response.baiKiemTra || null;
-    // Cập nhật hasBaiKiemTra dựa trên kết quả API
-    hasBaiKiemTra.value = !!response.baiKiemTra;
+    const response = await quizService.getQuizzesByCourseOnly(courseId);
+    console.log("Course exams response:", response);
+    // Lọc chỉ lấy bài kiểm tra có BaiHocId = null (bài kiểm tra cuối khóa)
+    const exams = Array.isArray(response) ? response : response.data || [];
+    courseExams.value = exams.filter(
+      (exam) => !exam.baiHocId && exam.trangThai === 2
+    );
+    console.log("Filtered course exams (BaiHocId = null):", courseExams.value);
   } catch (err) {
-    console.log("No final exam found or error:", err);
-    finalExam.value = null;
-    // Không có bài kiểm tra -> ẩn nút
-    hasBaiKiemTra.value = false;
+    console.log("Error loading course exams:", err);
+    courseExams.value = [];
   }
 };
 
