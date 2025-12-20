@@ -8,6 +8,7 @@ import CourseLessonsPage from '../views/admin/CourseLesson/CourseLessonsPage.vue
 import LessonContentPage from '../views/admin/CourseLesson/LessonContent/LessonContentPage.vue'
 import CourseQuestionBank from '../views/admin/CourseLesson/CourseQuestionBank.vue'
 import QuestionPage from '../views/admin/CourseLesson/QuestionBank/QuestionPage.vue'
+import UserManagementPage from '../views/admin/UserManagement/UserManagementPage.vue'
 
 const routes = [
   {
@@ -64,6 +65,12 @@ const routes = [
     name: 'Questions',
     component: QuestionPage,
     meta: { requiresAuth: true, roles: ['ADMIN', 'EDITOR'] }
+  },
+  {
+    path: '/quan-ly/nguoi-dung',
+    name: 'UserManagement',
+    component: UserManagementPage,
+    meta: { requiresAuth: true, roles: ['ADMIN'] }
   },
   // Catch-all route - redirect về trang chủ nếu không tìm thấy route
   {

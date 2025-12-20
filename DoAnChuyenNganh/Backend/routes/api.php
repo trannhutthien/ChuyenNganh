@@ -11,6 +11,7 @@ use App\Http\Controllers\BaiKiemTraController;
 use App\Http\Controllers\LanLamBaiController;
 use App\Http\Controllers\BaiKiemTraCuoiKhoaController;
 use App\Http\Controllers\NoiDungBaiHocController;
+use App\Http\Controllers\NguoiDungController;
 
 // ========== AUTH ROUTES ==========
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -136,4 +137,13 @@ Route::middleware('auth:sanctum')->prefix('kiem-tra-cuoi-khoa')->group(function 
     Route::post('/{lanLamBaiId}/tra-loi', [BaiKiemTraCuoiKhoaController::class, 'luuTraLoi']);       // Lưu câu trả lời
     Route::post('/{lanLamBaiId}/nop-bai', [BaiKiemTraCuoiKhoaController::class, 'nopBai']);          // Nộp bài
     Route::get('/{lanLamBaiId}/ket-qua', [BaiKiemTraCuoiKhoaController::class, 'xemKetQua']);        // Xem kết quả
+});
+
+// ========== QUẢN LÝ NGƯỜI DÙNG ROUTES (ADMIN ONLY) ==========
+Route::middleware('auth:sanctum')->prefix('users')->group(function () {
+    Route::get('/', [NguoiDungController::class, 'index']);         // Danh sách người dùng
+    Route::get('/{id}', [NguoiDungController::class, 'show']);      // Chi tiết người dùng
+    Route::post('/', [NguoiDungController::class, 'store']);        // Tạo người dùng
+    Route::put('/{id}', [NguoiDungController::class, 'update']);    // Cập nhật người dùng
+    Route::delete('/{id}', [NguoiDungController::class, 'destroy']); // Xóa người dùng
 });

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3307
--- Thời gian đã tạo: Th12 07, 2025 lúc 07:06 AM
+-- Thời gian đã tạo: Th12 20, 2025 lúc 02:08 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.1.25
 
@@ -31,7 +31,12 @@ CREATE TABLE `baihoc` (
   `BaiHocId` int(11) NOT NULL,
   `KhoaHocId` int(11) NOT NULL,
   `TieuDe` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `MoTa` text DEFAULT NULL,
+  `NoiDung` text DEFAULT NULL,
+  `LoaiBaiHoc` varchar(50) NOT NULL DEFAULT 'video',
   `ThuTu` int(11) DEFAULT 1,
+  `ThoiLuong` int(11) NOT NULL DEFAULT 0,
+  `VideoUrl` varchar(500) DEFAULT NULL,
   `TrangThai` tinyint(4) DEFAULT 2,
   `TaoLuc` datetime DEFAULT current_timestamp(),
   `CapNhatLuc` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -41,12 +46,13 @@ CREATE TABLE `baihoc` (
 -- Đang đổ dữ liệu cho bảng `baihoc`
 --
 
-INSERT INTO `baihoc` (`BaiHocId`, `KhoaHocId`, `TieuDe`, `ThuTu`, `TrangThai`, `TaoLuc`, `CapNhatLuc`) VALUES
-(1, 11, 'Giới thiệu khóa học và các kiến thức nền tảng', 1, 2, '2025-12-05 17:29:38', '2025-12-05 17:29:38'),
-(2, 11, 'Cài đặt môi trường và công cụ cần thiết', 2, 2, '2025-12-05 17:29:38', '2025-12-05 17:29:38'),
-(3, 11, 'Các khái niệm cơ bản và ví dụ thực hành đầu tiên', 3, 2, '2025-12-05 17:29:38', '2025-12-05 17:29:38'),
-(4, 11, 'Thực hành bài tập ứng dụng nhỏ', 4, 2, '2025-12-05 17:29:38', '2025-12-05 17:29:38'),
-(5, 11, 'Tổng kết chương và bài tập ôn luyện', 5, 2, '2025-12-05 17:29:38', '2025-12-05 17:29:38');
+INSERT INTO `baihoc` (`BaiHocId`, `KhoaHocId`, `TieuDe`, `MoTa`, `NoiDung`, `LoaiBaiHoc`, `ThuTu`, `ThoiLuong`, `VideoUrl`, `TrangThai`, `TaoLuc`, `CapNhatLuc`) VALUES
+(1, 11, 'Giới thiệu khóa học và các kiến thức nền tảng', 'Dưới đây là đoạn mô tả – giới thiệu khóa học HTML & CSS cơ bản, viết bằng lời, ngắn gọn, dễ hiểu, phù hợp dùng cho website, brochure hoặc báo cáo học tập:\nGiới thiệu khóa học HTML & CSS cơ bản\n\nKhóa học HTML & CSS cơ bản được thiết kế dành cho người mới bắt đầu làm quen với lĩnh vực lập trình web. Khóa học giúp học viên hiểu rõ cách cấu trúc một trang web bằng HTML và cách thiết kế, trình bày giao diện bằng CSS.\n\nTrong khóa học, học viên sẽ được học cách tạo các thành phần cơ bản của website như tiêu đề, đoạn văn, hình ảnh, liên kết, bảng biểu và biểu mẫu. Bên cạnh đó, khóa học còn hướng dẫn cách sử dụng CSS để định dạng màu sắc, font chữ, bố cục trang, căn chỉnh nội dung và tạo giao diện đẹp mắt, dễ sử dụng.\n\nThông qua các bài thực hành trực tiếp, học viên sẽ từng bước xây dựng được các trang web tĩnh đơn giản, hiểu được mối quan hệ giữa HTML và CSS, đồng thời tạo nền tảng vững chắc để tiếp tục học các công nghệ web nâng cao như JavaScript, Bootstrap, React hoặc VueJS.\n\nKhóa học phù hợp với sinh viên công nghệ thông tin, người mới học lập trình hoặc bất kỳ ai muốn tự xây dựng website cá nhân và hiểu rõ cách hoạt động của giao diện web.', 'Giới thiệu khóa học HTML & CSS cơ bản\n\nKhóa học HTML & CSS cơ bản được thiết kế dành cho người mới bắt đầu làm quen với lĩnh vực lập trình web. Khóa học giúp học viên hiểu rõ cách cấu trúc một trang web bằng HTML và cách thiết kế, trình bày giao diện bằng CSS.\n\nTrong khóa học, học viên sẽ được học cách tạo các thành phần cơ bản của website như tiêu đề, đoạn văn, hình ảnh, liên kết, bảng biểu và biểu mẫu. Bên cạnh đó, khóa học còn hướng dẫn cách sử dụng CSS để định dạng màu sắc, font chữ, bố cục trang, căn chỉnh nội dung và tạo giao diện đẹp mắt, dễ sử dụng.\n\nThông qua các bài thực hành trực tiếp, học viên sẽ từng bước xây dựng được các trang web tĩnh đơn giản, hiểu được mối quan hệ giữa HTML và CSS, đồng thời tạo nền tảng vững chắc để tiếp tục học các công nghệ web nâng cao như JavaScript, Bootstrap, React hoặc VueJS.\n\nKhóa học phù hợp với sinh viên công nghệ thông tin, người mới học lập trình hoặc bất kỳ ai muốn tự xây dựng website cá nhân và hiểu rõ cách hoạt động của giao diện web.', 'text', 1, 0, NULL, 1, '2025-12-05 17:29:38', '2025-12-15 07:21:08'),
+(2, 11, 'Cài đặt môi trường và công cụ cần thiết', NULL, NULL, 'video', 2, 0, NULL, 1, '2025-12-05 17:29:38', '2025-12-09 17:46:51'),
+(3, 11, 'Các khái niệm cơ bản và ví dụ thực hành đầu tiên', NULL, NULL, 'video', 3, 0, NULL, 1, '2025-12-05 17:29:38', '2025-12-09 17:51:16'),
+(4, 11, 'Thực hành bài tập ứng dụng nhỏ', NULL, NULL, 'video', 4, 0, NULL, 1, '2025-12-05 17:29:38', '2025-12-15 07:16:22'),
+(12, 11, 'Ôn tập cuối khóa', 'ôn tập cuối khóa', 'dfvfvfdev', 'text', 5, 0, NULL, 1, '2025-12-09 17:36:54', '2025-12-15 07:16:57'),
+(13, 11, 'tổng kết chương học', 'làm bài kiểm tra', NULL, 'quiz', 6, 15, NULL, 1, '2025-12-15 07:12:13', '2025-12-15 07:12:13');
 
 -- --------------------------------------------------------
 
@@ -71,7 +77,7 @@ CREATE TABLE `baikiemtra` (
 --
 
 INSERT INTO `baikiemtra` (`BaiKiemTraId`, `KhoaHocId`, `BaiHocId`, `TieuDe`, `ThietLapJson`, `DiemDat`, `TrangThai`, `TaoLuc`, `CapNhatLuc`) VALUES
-(1, 11, NULL, 'Bài kiểm tra cuối khóa – Khóa học ID 11', '{\"tongSoCau\": 10, \"thoiGian\": 15, \"randomCauHoi\": true, \"randomLuaChon\": true, \"moTa\": \"Bài kiểm tra gồm 10 câu trắc nghiệm tổng hợp kiến thức toàn khóa\"}', 7.00, 2, '2025-12-05 17:37:32', '2025-12-05 17:37:32');
+(8, 11, 1, 'bài kiểm tra đầu vào', '{\"soCauHoi\":5,\"thoiGianLamBai\":5,\"soLanLamToiDa\":2,\"xaoTronCauHoi\":true,\"xaoTronDapAn\":true,\"hienThiDapAn\":true,\"nganHangIds\":[1,4]}', 5.00, 2, '2025-12-19 18:07:28', '2025-12-19 18:07:28');
 
 -- --------------------------------------------------------
 
@@ -83,7 +89,7 @@ CREATE TABLE `cauhoi` (
   `CauHoiId` int(11) NOT NULL,
   `NganHangId` int(11) NOT NULL,
   `BaiHocId` int(11) DEFAULT NULL,
-  `Loai` enum('MOT_DAP_AN','NHIEU_DAP_AN','DUNG_SAI','DIEN_KHUYET') NOT NULL,
+  `Loai` enum('single','multiple','true_false') NOT NULL DEFAULT 'single',
   `DeBai` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `GiaiThich` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `DoKho` tinyint(4) DEFAULT 1,
@@ -96,41 +102,30 @@ CREATE TABLE `cauhoi` (
 --
 
 INSERT INTO `cauhoi` (`CauHoiId`, `NganHangId`, `BaiHocId`, `Loai`, `DeBai`, `GiaiThich`, `DoKho`, `ChuDeTags`, `ThuTu`) VALUES
-(1, 1, NULL, 'MOT_DAP_AN', 'Thẻ HTML nào dùng để tạo tiêu đề lớn nhất?', 'Vì <h1> là thẻ tiêu đề lớn nhất.', 1, 'html,heading', 1),
-(2, 1, NULL, 'MOT_DAP_AN', 'Thuộc tính nào trong HTML dùng để đặt đường dẫn ảnh?', 'Vì src là thuộc tính chứa đường dẫn ảnh.', 1, 'html,image', 2),
-(3, 1, NULL, 'MOT_DAP_AN', 'CSS viết tắt của từ gì?', 'Vì CSS viết tắt của Cascading Style Sheets.', 1, 'css,basic', 3),
-(4, 1, NULL, 'MOT_DAP_AN', 'Thẻ nào dùng để xuống dòng trong HTML?', 'Vì <br> dùng để xuống dòng.', 1, 'html,br', 4),
-(5, 1, NULL, 'MOT_DAP_AN', 'Thẻ HTML nào chứa toàn bộ phần nội dung hiển thị?', 'Vì nội dung trang nằm trong thẻ <body>.', 1, 'html,body', 5),
-(6, 1, NULL, 'MOT_DAP_AN', 'Thuộc tính nào để đổi màu chữ trong CSS?', 'Vì thuộc tính color dùng để đổi màu chữ.', 1, 'css,color', 6),
-(7, 1, NULL, 'MOT_DAP_AN', 'Đơn vị px trong CSS dùng để làm gì?', 'Vì px là đơn vị kích thước cố định.', 1, 'css,unit', 7),
-(8, 1, NULL, 'MOT_DAP_AN', 'Thẻ HTML nào dùng để tạo danh sách không thứ tự?', 'Vì <ul> tạo danh sách không thứ tự.', 1, 'html,list', 8),
-(9, 1, NULL, 'MOT_DAP_AN', 'File CSS thường có phần mở rộng là gì?', 'Vì file CSS có phần mở rộng .css.', 1, 'css,file', 9),
-(10, 1, NULL, 'MOT_DAP_AN', 'Thuộc tính font-size dùng để làm gì?', 'Vì font-size dùng để thay đổi kích thước chữ.', 1, 'css,font', 10),
-(11, 2, NULL, 'MOT_DAP_AN', 'Thuộc tính nào dùng để căn giữa văn bản trong CSS?', 'Vì text-align:center căn giữa văn bản.', 2, 'css,text', 1),
-(12, 2, NULL, 'MOT_DAP_AN', 'Thẻ <a> trong HTML dùng để làm gì?', 'Vì <a> được dùng để tạo liên kết.', 2, 'html,link', 2),
-(13, 2, NULL, 'MOT_DAP_AN', 'Box model trong CSS bao gồm những thành phần nào?', 'Vì box model gồm margin, border, padding và content.', 2, 'css,boxmodel', 3),
-(14, 2, NULL, 'MOT_DAP_AN', 'Thuộc tính nào thay đổi kích thước chiều rộng của phần tử?', 'Vì width dùng để đặt chiều rộng phần tử.', 2, 'css,width', 4),
-(15, 2, NULL, 'MOT_DAP_AN', 'display: flex dùng để làm gì?', 'Vì flex giúp sắp xếp phần tử theo trục.', 2, 'css,flex', 5),
-(16, 2, NULL, 'MOT_DAP_AN', 'Thuộc tính href trong thẻ <a> để làm gì?', 'Vì href chứa địa chỉ URL cần liên kết.', 2, 'html,href', 6),
-(17, 2, NULL, 'MOT_DAP_AN', 'CSS selector .menu li chọn đối tượng nào?', 'Vì selector .menu li chọn tất cả thẻ li trong .menu.', 2, 'css,selector', 7),
-(18, 2, NULL, 'MOT_DAP_AN', 'Thuộc tính border-radius dùng để làm gì?', 'Vì border-radius dùng để bo góc phần tử.', 2, 'css,border', 8),
-(19, 2, NULL, 'MOT_DAP_AN', 'Thẻ <strong> trong HTML mang ý nghĩa gì?', 'Vì <strong> thể hiện nội dung được nhấn mạnh.', 2, 'html,strong', 9),
-(20, 2, NULL, 'MOT_DAP_AN', 'Thuộc tính nào trong CSS dùng để thay đổi nền?', 'Vì background-color thay đổi màu nền.', 2, 'css,background', 10),
-(21, 3, NULL, 'MOT_DAP_AN', 'Flexbox: thuộc tính justify-content dùng cho trục nào?', 'Vì justify-content tác động lên trục chính của flex.', 3, 'css,flex', 1),
-(22, 3, NULL, 'MOT_DAP_AN', 'HTML5 giới thiệu thẻ nào để định nghĩa khu vực nội dung?', 'Vì <section> là thẻ semantic cho khu vực nội dung.', 3, 'html,section', 2),
-(23, 3, NULL, 'MOT_DAP_AN', 'Grid layout sử dụng thuộc tính nào để chia cột?', 'Vì grid-template-columns dùng để chia cột trong Grid.', 3, 'css,grid', 3),
-(24, 3, NULL, 'MOT_DAP_AN', 'Sự khác nhau giữa margin và padding?', 'Vì margin ở ngoài border còn padding ở trong.', 3, 'css,spacing', 4),
-(25, 3, NULL, 'MOT_DAP_AN', 'Thuộc tính position: absolute phụ thuộc vào gì?', 'Vì absolute phụ thuộc phần tử cha có position không phải static.', 3, 'css,position', 5),
-(26, 3, NULL, 'MOT_DAP_AN', 'SEO-friendly HTML nên dùng thẻ nào để mô tả nội dung chính?', 'Vì <main> mô tả phần nội dung chính của trang.', 3, 'html,seo', 6),
-(27, 3, NULL, 'MOT_DAP_AN', 'Pseudo-class :hover dùng khi nào?', 'Vì :hover kích hoạt khi người dùng rê chuột vào phần tử.', 3, 'css,pseudo', 7),
-(28, 3, NULL, 'MOT_DAP_AN', 'Cơ chế cascade trong CSS có ý nghĩa gì?', 'Vì cascade quyết định thứ tự quy tắc CSS được áp dụng.', 3, 'css,cascade', 8),
-(29, 3, NULL, 'MOT_DAP_AN', 'HTML semantic giúp cải thiện điều gì?', 'Vì semantic HTML giúp cải thiện khả năng hiểu nội dung của trình duyệt và SEO.', 3, 'html,semantic', 9),
-(30, 3, NULL, 'MOT_DAP_AN', 'Thuộc tính z-index hoạt động khi nào?', 'Vì z-index chỉ hoạt động khi phần tử có position khác static.', 3, 'css,zindex', 10),
-(31, 3, NULL, 'MOT_DAP_AN', 'Thuộc tính nào dùng để thay đổi kiểu đường viền của phần tử?', 'Thuộc tính border-style cho phép đặt kiểu đường viền như solid, dashed, dotted.', 1, 'css,border', 11),
-(32, 3, NULL, 'MOT_DAP_AN', 'Thuộc tính nào dùng để căn giữa văn bản theo chiều ngang?', 'text-align dùng để căn lề văn bản: left, right, center, justify.', 1, 'css,text', 12),
-(33, 3, NULL, 'MOT_DAP_AN', 'Giá trị nào của display giúp tạo bố cục linh hoạt theo trục chính?', 'display: flex giúp tạo bố cục linh hoạt và dễ căn chỉnh.', 2, 'css,flexbox', 13),
-(34, 3, NULL, 'MOT_DAP_AN', 'Thuộc tính nào dùng để chia một phần tử thành nhiều cột văn bản?', 'Thuộc tính column-count cho phép chia văn bản thành nhiều cột.', 2, 'css,layout', 14),
-(35, 3, NULL, 'MOT_DAP_AN', 'Trong CSS Grid, thuộc tính nào dùng để thiết lập số cột?', 'grid-template-columns định nghĩa số cột và kích thước từng cột.', 3, 'css,grid', 15);
+(1, 1, NULL, 'multiple', 'Thẻ HTML nào dùng để tạo tiêu đề?', 'Vì <h1> là thẻ tiêu đề lớn nhất.', 1, 'html,heading', 1),
+(2, 1, NULL, 'single', 'Thuộc tính nào trong HTML dùng để đặt đường dẫn ảnh?', 'Vì src là thuộc tính chứa đường dẫn ảnh.', 1, 'html,image', 2),
+(3, 1, NULL, 'single', 'CSS viết tắt của từ gì?', 'Vì CSS viết tắt của Cascading Style Sheets.', 1, 'css,basic', 3),
+(5, 1, NULL, 'single', 'Thẻ HTML nào chứa toàn bộ phần nội dung hiển thị?', 'Vì nội dung trang nằm trong thẻ <body>.', 1, 'html,body', 5),
+(6, 1, NULL, 'multiple', 'Thuộc tính nào để đổi màu chữ trong CSS?', 'Vì thuộc tính color dùng để đổi màu chữ.', 1, 'css,color', 6),
+(7, 1, NULL, 'single', 'Đơn vị px trong CSS dùng để làm gì?', 'Vì px là đơn vị kích thước cố định.', 1, 'css,unit', 7),
+(8, 1, NULL, 'single', 'Thẻ HTML nào dùng để tạo danh sách không thứ tự?', 'Vì <ul> tạo danh sách không thứ tự.', 1, 'html,list', 8),
+(9, 1, NULL, 'true_false', 'File CSS thường có phần mở rộng là gì?', 'Vì file CSS có phần mở rộng .css.', 1, 'css,file', 9);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `failed_jobs`
+--
+
+CREATE TABLE `failed_jobs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `uuid` varchar(255) NOT NULL,
+  `connection` text NOT NULL,
+  `queue` text NOT NULL,
+  `payload` longtext NOT NULL,
+  `exception` longtext NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -171,25 +166,17 @@ CREATE TABLE `khoahoc` (
 --
 
 INSERT INTO `khoahoc` (`KhoaHocId`, `TieuDe`, `HinhAnhUrl`, `TomTat`, `CapDo`, `Tags`, `DieuKienTienQuyet`, `GiaTien`, `TrangThai`, `TaoLuc`, `CapNhatLuc`) VALUES
-(2, 'JavaScript Nền Tảng', '/images/js.jpg', 'Nắm vững các khái niệm JS căn bản và thực hành nhiều bài tập.', 2, 'javascript,frontend', 'HTML & CSS Cơ Bản', 299000.00, 2, '2025-12-05 16:09:58', '2025-12-05 16:09:58'),
-(3, 'Lập Trình PHP & MySQL', '/images/phpmysql.jpg', 'Xây dựng website động bằng PHP và MySQL.', 2, 'php,mysql,backend', NULL, 399000.00, 2, '2025-12-05 16:09:58', '2025-12-05 16:09:58'),
-(4, 'Laravel Framework Cơ Bản', '/images/laravel.jpg', 'Lập trình web hiện đại theo mô hình MVC.', 3, 'laravel,backend', 'PHP cơ bản', 499000.00, 2, '2025-12-05 16:09:58', '2025-12-05 16:09:58'),
-(5, 'VueJS 3 Từ A-Z', '/images/vue3.jpg', 'Xây dựng SPA bằng Vue 3 và Composition API.', 3, 'vuejs,frontend', 'JavaScript cơ bản', 499000.00, 2, '2025-12-05 16:09:58', '2025-12-05 16:09:58'),
-(6, 'Tin Học Văn Phòng Cơ Bản', '/images/office.jpg', 'Hướng dẫn Word, Excel, PowerPoint cho người mới.', 1, 'excel,word,powerpoint', NULL, 0.00, 2, '2025-12-05 16:09:58', '2025-12-05 16:09:58'),
-(7, 'Giới Thiệu Về Lập Trình', '/images/programming.jpg', 'Khóa nhập môn dành cho người chưa biết gì về CNTT.', 1, 'coding,beginner', NULL, 0.00, 2, '2025-12-05 16:09:58', '2025-12-05 16:09:58'),
-(8, 'Kỹ Năng Tìm Kiếm Google', '/images/google.jpg', 'Học cách sử dụng Google hiệu quả.', 1, 'google,research', NULL, 0.00, 2, '2025-12-05 16:09:58', '2025-12-05 16:09:58'),
-(9, 'Tư Duy Lập Trình Logic', '/images/logic.jpg', 'Xây dựng tư duy giải thuật cho người mới học.', 1, 'logic,thinking', NULL, 0.00, 2, '2025-12-05 16:09:58', '2025-12-05 16:09:58'),
-(10, 'HTML Căn Bản Cho Người Mới', '/images/html.jpg', 'Khóa học HTML miễn phí dành cho người bắt đầu.', 1, 'html,web', NULL, 0.00, 2, '2025-12-05 16:09:58', '2025-12-05 16:09:58'),
-(11, 'HTML & CSS Cơ Bản', '/images/htmlcss.jpg', 'Học từ con số 0 để xây giao diện web', 1, 'html,css,frontend', NULL, 0.00, 1, '2025-12-05 16:38:02', '2025-12-05 16:38:02'),
-(12, 'JavaScript Nâng Cao', '/images/js_advanced.jpg', 'Làm chủ ngôn ngữ JavaScript với các khái niệm nâng cao', 3, 'javascript,frontend', 'HTML & CSS Cơ Bản', 299000.00, 1, '2025-12-05 16:38:02', '2025-12-05 16:38:02'),
-(13, 'Lập trình PHP & MySQL', '/images/phpmysql.jpg', 'Xây dựng website động bằng PHP kết hợp MySQL', 2, 'php,mysql,backend', NULL, 399000.00, 1, '2025-12-05 16:38:02', '2025-12-05 16:38:02'),
-(14, 'Laravel Framework Cơ Bản', '/images/laravel.jpg', 'Lập trình web theo mô hình MVC với Laravel', 3, 'laravel,backend', 'PHP Cơ Bản', 499000.00, 1, '2025-12-05 16:38:02', '2025-12-05 16:38:02'),
-(15, 'VueJS 3 Từ A-Z', '/images/vue3.jpg', 'Xây dựng SPA bằng VueJS 3 và Composition API', 3, 'vue3,frontend', 'JavaScript Cơ Bản', 499000.00, 1, '2025-12-05 16:38:02', '2025-12-05 16:38:02'),
+(3, 'Lập Trình PHP & MySQL', '/images/phpmysql.jpg', 'Xây dựng website động bằng PHP và MySQL.', 2, 'php,mysql,backend', NULL, 399000.00, 1, '2025-12-05 16:09:58', '2025-12-09 15:16:53'),
+(4, 'Laravel Framework Cơ Bản', '/images/laravel.jpg', 'Lập trình web hiện đại theo mô hình MVC.', 3, 'laravel,backend', 'PHP cơ bản', 499000.00, 1, '2025-12-05 16:09:58', '2025-12-09 15:16:53'),
+(6, 'Tin Học Văn Phòng Cơ Bản', '/images/office.jpg', 'Hướng dẫn Word, Excel, PowerPoint cho người mới.', 1, 'excel,word,powerpoint', NULL, 0.00, 1, '2025-12-05 16:09:58', '2025-12-09 15:16:53'),
+(7, 'Giới Thiệu Về Lập Trình', '/images/programming.jpg', 'Khóa nhập môn dành cho người chưa biết gì về CNTT.', 1, 'coding,beginner', NULL, 0.00, 1, '2025-12-05 16:09:58', '2025-12-09 15:16:53'),
+(9, 'Tư Duy Lập Trình Logic', '/images/logic.jpg', 'Xây dựng tư duy giải thuật cho người mới học.', 1, 'logic,thinking', NULL, 0.00, 1, '2025-12-05 16:09:58', '2025-12-09 15:16:53'),
+(11, 'HTML & CSS Cơ Bản', '/images/htmlcss.jpg', 'Frontend cơ bản', 2, 'html,css,frontend', NULL, 0.00, 1, '2025-12-05 16:38:02', '2025-12-09 14:22:08'),
 (16, 'Tin Học Văn Phòng', '/images/office.jpg', 'Học Word, Excel, PowerPoint cho người mới', 1, 'excel,word,powerpoint', NULL, 0.00, 1, '2025-12-05 16:38:02', '2025-12-05 16:38:02'),
 (17, 'Giới Thiệu Về Lập Trình', '/images/programming_intro.jpg', 'Khóa học căn bản dành cho người mới học lập trình', 1, 'coding,beginner', NULL, 0.00, 1, '2025-12-05 16:38:02', '2025-12-05 16:38:02'),
 (18, 'Kỹ Năng Tìm Kiếm Google', '/images/google_skill.jpg', 'Học cách sử dụng Google hiệu quả', 1, 'google,research', NULL, 0.00, 1, '2025-12-05 16:38:02', '2025-12-05 16:38:02'),
 (19, 'Tư Duy Lập Trình Logic', '/images/logic.jpg', 'Xây dựng tư duy giải thuật cơ bản', 1, 'logic,thinking', NULL, 0.00, 1, '2025-12-05 16:38:02', '2025-12-05 16:38:02'),
-(20, 'HTML Căn Bản Cho Người Mới', '/images/html_basic.jpg', 'Khóa học HTML miễn phí cho người mới học lập trình', 1, 'html,web', NULL, 0.00, 1, '2025-12-05 16:38:02', '2025-12-05 16:38:02');
+(21, 'Lập trình C', '/image/phpmyaddmin', 'Kỹ năng lập trình', 1, 'Kỹ năng lập trình', NULL, 0.00, 1, '2025-12-09 09:18:53', '2025-12-09 09:18:53');
 
 -- --------------------------------------------------------
 
@@ -232,15 +219,6 @@ CREATE TABLE `lanlambai` (
   `TrangThai` enum('INPROGRESS','SUBMITTED','CANCELLED') DEFAULT 'INPROGRESS'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `lanlambai`
---
-
-INSERT INTO `lanlambai` (`LanLamBaiId`, `BaiKiemTraId`, `NguoiDungId`, `BatDauLuc`, `NopBaiLuc`, `DiemSo`, `ChiTietJson`, `TrangThai`) VALUES
-(8, 1, 1, '2025-12-05 18:22:36', NULL, NULL, '{\"cauHoiIds\":[5,8,26,33,23,30,2,35,17,19],\"soCauHoi\":10,\"thietLap\":{\"tongSoCau\":10,\"thoiGian\":15,\"randomCauHoi\":true,\"randomLuaChon\":true,\"moTa\":\"B\\u00e0i ki\\u1ec3m tra g\\u1ed3m 10 c\\u00e2u tr\\u1eafc nghi\\u1ec7m t\\u1ed5ng h\\u1ee3p ki\\u1ebfn th\\u1ee9c to\\u00e0n kh\\u00f3a\"}}', 'CANCELLED'),
-(9, 1, 1, '2025-12-05 18:25:00', NULL, NULL, '{\"cauHoiIds\":[25,6,28,20,8,4,33,29,13,3],\"soCauHoi\":10,\"thietLap\":{\"tongSoCau\":10,\"thoiGian\":15,\"randomCauHoi\":true,\"randomLuaChon\":true,\"moTa\":\"B\\u00e0i ki\\u1ec3m tra g\\u1ed3m 10 c\\u00e2u tr\\u1eafc nghi\\u1ec7m t\\u1ed5ng h\\u1ee3p ki\\u1ebfn th\\u1ee9c to\\u00e0n kh\\u00f3a\"}}', 'CANCELLED'),
-(10, 1, 1, '2025-12-05 18:31:44', NULL, NULL, '{\"cauHoiIds\":[23,1,27,33,32,3,21,4,15,11],\"soCauHoi\":10,\"thietLap\":{\"tongSoCau\":10,\"thoiGian\":15,\"randomCauHoi\":true,\"randomLuaChon\":true,\"moTa\":\"B\\u00e0i ki\\u1ec3m tra g\\u1ed3m 10 c\\u00e2u tr\\u1eafc nghi\\u1ec7m t\\u1ed5ng h\\u1ee3p ki\\u1ebfn th\\u1ee9c to\\u00e0n kh\\u00f3a\"}}', 'INPROGRESS');
-
 -- --------------------------------------------------------
 
 --
@@ -260,108 +238,51 @@ CREATE TABLE `luachon` (
 --
 
 INSERT INTO `luachon` (`LuaChonId`, `CauHoiId`, `NoiDung`, `DungHaySai`, `ThuTu`) VALUES
-(1, 1, '<h1>', 1, 1),
-(2, 1, '<h3>', 0, 2),
-(3, 1, '<h6>', 0, 3),
-(4, 2, 'src', 1, 1),
-(5, 2, 'href', 0, 2),
-(6, 2, 'alt', 0, 3),
-(7, 3, 'Cascading Style Sheets', 1, 1),
-(8, 3, 'Creative Style System', 0, 2),
-(9, 3, 'Color Styling Source', 0, 3),
-(10, 4, '<br>', 1, 1),
-(11, 4, '<p>', 0, 2),
-(12, 4, '<hr>', 0, 3),
-(13, 5, '<body>', 1, 1),
-(14, 5, '<main>', 0, 2),
-(15, 5, '<section>', 0, 3),
-(16, 6, 'color', 1, 1),
-(17, 6, 'font-weight', 0, 2),
-(18, 6, 'background-size', 0, 3),
-(19, 7, 'px', 1, 1),
-(20, 7, '%', 0, 2),
-(21, 7, 'em', 0, 3),
-(22, 8, '<ul>', 1, 1),
-(23, 8, '<li>', 0, 2),
-(24, 8, '<ol>', 0, 3),
-(25, 9, '.css', 1, 1),
-(26, 9, '.html', 0, 2),
-(27, 9, '.js', 0, 3),
-(28, 10, 'font-size', 1, 1),
-(29, 10, 'font-style', 0, 2),
-(30, 10, 'font-family', 0, 3),
-(31, 11, 'text-align: center;', 1, 1),
-(32, 11, 'justify-content: center;', 0, 2),
-(33, 11, 'align-items: center;', 0, 3),
-(370, 16, 'href chứa URL cần liên kết', 1, 1),
-(371, 16, 'src chứa nội dung văn bản', 0, 2),
-(372, 16, 'alt mô tả hình ảnh', 0, 3),
-(373, 17, 'Chọn đối tượng trong menu', 1, 1),
-(374, 17, 'Định dạng màu nền', 0, 2),
-(375, 17, 'Tạo hiệu ứng chuyển động', 0, 3),
-(376, 18, 'Bo góc phần tử', 1, 1),
-(377, 18, 'Tăng kích thước chữ', 0, 2),
-(378, 18, 'Tạo khoảng cách dòng', 0, 3),
-(379, 19, 'Nhấn mạnh nội dung', 1, 1),
-(380, 19, 'Ẩn phần tử HTML', 0, 2),
-(381, 19, 'Căn giữa khối', 0, 3),
-(382, 20, 'Thay đổi màu nền', 1, 1),
-(383, 20, 'Tạo viền khối', 0, 2),
-(384, 20, 'Xác định font chữ', 0, 3),
-(385, 21, 'Căn chỉnh theo trục chính', 1, 1),
-(386, 21, 'Tạo bảng dữ liệu', 0, 2),
-(387, 21, 'Thiết lập kích thước ảnh', 0, 3),
-(388, 22, 'Xác định khu vực nội dung', 1, 1),
-(389, 22, 'Căn giữa văn bản', 0, 2),
-(390, 22, 'Ẩn phần tử khỏi trang', 0, 3),
-(391, 23, 'Chia bố cục grid', 1, 1),
-(392, 23, 'Thay đổi màu chữ', 0, 2),
-(393, 23, 'Tạo menu xổ xuống', 0, 3),
-(394, 24, 'margin và padding', 1, 1),
-(395, 24, 'border và outline', 0, 2),
-(396, 24, 'height và width', 0, 3),
-(397, 25, 'absolute phụ thuộc phần tử cha', 1, 1),
-(398, 25, 'relative cố định toàn trang', 0, 2),
-(399, 25, 'fixed di chuyển theo cha', 0, 3),
-(400, 26, 'Thân thiện SEO', 1, 1),
-(401, 26, 'Dùng thay thế script', 0, 2),
-(402, 26, 'Tạo hiệu ứng hover', 0, 3),
-(403, 27, 'Kích hoạt khi hover', 1, 1),
-(404, 27, 'Dùng để tạo Bộ chọn ID', 0, 2),
-(405, 27, 'Cho phép đổi font chữ', 0, 3),
-(406, 28, 'Tạo quy tắc kế thừa', 1, 1),
-(407, 28, 'Tăng tốc độ xử lý', 0, 2),
-(408, 28, 'Tạo hiệu ứng animation', 0, 3),
-(409, 29, 'Cải thiện cấu trúc HTML', 1, 1),
-(410, 29, 'Tăng tốc độ GPU', 0, 2),
-(411, 29, 'Thay đổi giao diện phím', 0, 3),
-(412, 30, 'Xác định tầng hiển thị', 1, 1),
-(413, 30, 'Thay đổi màu chữ', 0, 2),
-(414, 30, 'Căn chỉnh chữ in nghiêng', 0, 3),
-(415, 31, 'Định dạng kiểu đường viền', 1, 1),
-(416, 31, 'Tạo bóng cho chữ', 0, 2),
-(417, 31, 'Đặt kích thước đoạn văn', 0, 3),
-(418, 32, 'Căn trái hoặc phải phần tử', 1, 1),
-(419, 32, 'Tăng độ đậm chữ', 0, 2),
-(420, 32, 'Đổi màu chữ', 0, 3),
-(421, 33, 'Tạo bố cục linh hoạt', 1, 1),
-(422, 33, 'Tạo hiệu ứng xoay', 0, 2),
-(423, 33, 'Tạo hiệu ứng mờ', 0, 3),
-(424, 34, 'Đếm số phần tử con', 1, 1),
-(425, 34, 'Căn giữa văn bản', 0, 2),
-(426, 34, 'Xóa viền phần tử', 0, 3),
-(484, 12, 'Tạo liên kết', 1, 1),
-(485, 12, 'Chèn hình ảnh', 0, 2),
-(486, 12, 'Tạo bảng', 0, 3),
-(487, 13, 'margin, border, padding, content', 1, 1),
-(488, 13, 'font, color, background', 0, 2),
-(489, 13, 'grid, flex, block', 0, 3),
-(490, 14, 'width', 1, 1),
-(491, 14, 'height', 0, 2),
-(492, 14, 'padding', 0, 3),
-(493, 15, 'Sắp xếp phần tử theo trục', 1, 1),
-(494, 15, 'Tạo bảng dữ liệu', 0, 2),
-(495, 15, 'Tạo hiệu ứng animation', 0, 3);
+(499, 2, 'src', 1, 1),
+(500, 2, 'href', 0, 2),
+(501, 2, 'alt', 0, 3),
+(502, 3, 'Cascading Style Sheets', 1, 1),
+(503, 3, 'Creative Style System', 0, 2),
+(504, 3, 'Color Styling Source', 0, 3),
+(508, 5, '<body>', 1, 1),
+(509, 5, '<main>', 0, 2),
+(510, 5, '<section>', 0, 3),
+(511, 6, 'color', 1, 1),
+(512, 6, 'font-weight', 0, 2),
+(513, 6, 'background-size', 0, 3),
+(514, 7, 'px', 1, 1),
+(515, 7, '%', 0, 2),
+(516, 7, 'em', 0, 3),
+(517, 8, '<ul>', 1, 1),
+(518, 8, '<li>', 0, 2),
+(519, 8, '<ol>', 0, 3),
+(520, 9, 'Đúng', 1, 1),
+(521, 9, 'Sai', 0, 2),
+(545, 1, '<h1>', 1, 1),
+(546, 1, '<h3>', 1, 2),
+(547, 1, '<h4>', 1, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `migrations`
+--
+
+CREATE TABLE `migrations` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `migration` varchar(255) NOT NULL,
+  `batch` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `migrations`
+--
+
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1, '2014_10_12_000000_create_users_table', 1),
+(2, '2014_10_12_100000_create_password_reset_tokens_table', 1),
+(3, '2019_08_19_000000_create_failed_jobs_table', 1),
+(4, '2025_12_09_173316_add_lesson_fields_to_baihoc_table', 2);
 
 -- --------------------------------------------------------
 
@@ -383,8 +304,7 @@ CREATE TABLE `nganhangcauhoi` (
 
 INSERT INTO `nganhangcauhoi` (`NganHangId`, `KhoaHocId`, `TenNganHang`, `MoTa`, `CapDoMacDinh`) VALUES
 (1, 11, 'Ngân hàng câu hỏi cơ bản', 'Các câu hỏi mức độ dễ, kiểm tra kiến thức nền tảng.', 1),
-(2, 11, 'Ngân hàng câu hỏi trung bình', 'Các câu hỏi mức độ trung bình, yêu cầu hiểu và vận dụng.', 2),
-(3, 11, 'Ngân hàng câu hỏi nâng cao', 'Các câu hỏi mức độ khó, dành cho học viên muốn thử sức.', 3);
+(4, 11, 'ngan hang b', 'ngan hang tb', 2);
 
 -- --------------------------------------------------------
 
@@ -395,6 +315,7 @@ INSERT INTO `nganhangcauhoi` (`NganHangId`, `KhoaHocId`, `TenNganHang`, `MoTa`, 
 CREATE TABLE `nguoidung` (
   `NguoiDungId` int(11) NOT NULL,
   `Email` varchar(255) NOT NULL,
+  `GoogleId` varchar(255) DEFAULT NULL,
   `MatKhauHash` varchar(255) NOT NULL,
   `HoTen` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `AvatarUrl` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -407,10 +328,11 @@ CREATE TABLE `nguoidung` (
 -- Đang đổ dữ liệu cho bảng `nguoidung`
 --
 
-INSERT INTO `nguoidung` (`NguoiDungId`, `Email`, `MatKhauHash`, `HoTen`, `AvatarUrl`, `TrangThai`, `TaoLuc`, `CapNhatLuc`) VALUES
-(1, 'admin@example.com', 'password123', 'Admin Hệ Thống', NULL, 1, '2025-12-05 17:42:44', '2025-12-06 00:54:36'),
-(2, 'nhutthien@example.com', '123456', 'Nhựt Thiên', NULL, 1, '2025-12-05 17:42:44', '2025-12-05 17:45:51'),
-(3, 'danthanh@example.com', '123456', 'Đan Thanh', NULL, 1, '2025-12-05 17:42:44', '2025-12-05 17:45:51');
+INSERT INTO `nguoidung` (`NguoiDungId`, `Email`, `GoogleId`, `MatKhauHash`, `HoTen`, `AvatarUrl`, `TrangThai`, `TaoLuc`, `CapNhatLuc`) VALUES
+(1, 'admin@example.com', NULL, 'password123', 'Admin Hệ Thống', NULL, 1, '2025-12-05 17:42:44', '2025-12-06 00:54:36'),
+(2, 'nhutthien@example.com', NULL, '123456', 'Nhựt Thiên', NULL, 1, '2025-12-05 17:42:44', '2025-12-05 17:45:51'),
+(3, 'danthanh@example.com', NULL, '123456', 'Đan Thanh', NULL, 1, '2025-12-05 17:42:44', '2025-12-05 17:45:51'),
+(5, 'trannhutthien012345@gmail.com', '108453134530556851460', '$2y$12$xMLgPPgreSMF2hCPYMiyWOehdSgWEFYzKSIZfwyMVxykWdkN2TT9W', 'thiên nhựt', 'https://lh3.googleusercontent.com/a/ACg8ocJxVSoZLkHbaHj8WQQ6GsObHn6yvmm8vQXbM4x44P-Cay05Lm3N=s96-c', 1, '2025-12-08 06:30:14', '2025-12-08 06:30:14');
 
 -- --------------------------------------------------------
 
@@ -430,7 +352,8 @@ CREATE TABLE `nguoidung_vaitro` (
 INSERT INTO `nguoidung_vaitro` (`NguoiDungId`, `VaiTroId`) VALUES
 (1, 1),
 (2, 2),
-(3, 3);
+(3, 3),
+(5, 2);
 
 -- --------------------------------------------------------
 
@@ -442,6 +365,7 @@ CREATE TABLE `noidungbaihoc` (
   `NoiDungId` int(11) NOT NULL,
   `BaiHocId` int(11) NOT NULL,
   `LoaiNoiDung` enum('heading','subheading','paragraph','image','video','quote','list') NOT NULL,
+  `TieuDe` varchar(500) DEFAULT NULL,
   `NoiDung` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `ThuTu` int(11) DEFAULT 1,
   `TaoLuc` datetime DEFAULT current_timestamp(),
@@ -452,32 +376,37 @@ CREATE TABLE `noidungbaihoc` (
 -- Đang đổ dữ liệu cho bảng `noidungbaihoc`
 --
 
-INSERT INTO `noidungbaihoc` (`NoiDungId`, `BaiHocId`, `LoaiNoiDung`, `NoiDung`, `ThuTu`, `TaoLuc`, `CapNhatLuc`) VALUES
-(1, 1, 'heading', 'Giới thiệu về khóa học', 1, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(2, 1, 'paragraph', 'Khóa học giúp bạn nắm vững các kiến thức nền tảng và chuẩn bị cho các chương tiếp theo.', 2, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(3, 1, 'image', '/uploads/baihoc11_intro.png', 3, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(4, 1, 'subheading', 'Mục tiêu bài học', 4, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(5, 1, 'list', '- Hiểu tổng quan khóa học\n- Nắm mục tiêu học tập\n- Chuẩn bị môi trường học', 5, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(6, 2, 'heading', 'Cài đặt các công cụ cần thiết', 1, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(7, 2, 'paragraph', 'Trong bài này bạn sẽ được hướng dẫn cài đặt phần mềm và công cụ hỗ trợ.', 2, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(8, 2, 'image', '/uploads/baihoc11_setup.png', 3, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(9, 2, 'subheading', 'Các bước cài đặt', 4, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(10, 2, 'list', '- Tải phần mềm\n- Cài đặt môi trường\n- Kiểm tra phiên bản', 5, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(11, 3, 'heading', 'Các khái niệm cơ bản', 1, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(12, 3, 'paragraph', 'Bạn sẽ học các khái niệm trọng tâm và áp dụng vào ví dụ đầu tiên.', 2, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(13, 3, 'image', '/uploads/baihoc11_basic.png', 3, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(14, 3, 'subheading', 'Ví dụ đầu tiên', 4, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(15, 3, 'list', '- Khởi tạo dự án\n- Viết đoạn mã đầu tiên\n- Chạy thử chương trình', 5, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(16, 4, 'heading', 'Thực hành: Xây dựng ứng dụng nhỏ', 1, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(17, 4, 'paragraph', 'Bạn sẽ áp dụng kiến thức đã học để xây dựng một ứng dụng thực tế.', 2, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(18, 4, 'image', '/uploads/baihoc11_app.png', 3, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(19, 4, 'subheading', 'Các bước thực hiện', 4, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(20, 4, 'list', '- Phân tích yêu cầu\n- Thiết kế giao diện\n- Hoàn thiện chức năng', 5, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(21, 5, 'heading', 'Tổng kết bài học', 1, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(22, 5, 'paragraph', 'Bài học tổng kết toàn bộ kiến thức và định hướng cho chương tiếp theo.', 2, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(23, 5, 'image', '/uploads/baihoc11_summary.png', 3, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(24, 5, 'subheading', 'Bạn đã học được gì?', 4, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
-(25, 5, 'list', '- Nắm kiến thức nền tảng\n- Biết cách cài đặt môi trường\n- Thực hành xây dựng ứng dụng nhỏ', 5, '2025-12-05 17:34:22', '2025-12-05 17:34:22');
+INSERT INTO `noidungbaihoc` (`NoiDungId`, `BaiHocId`, `LoaiNoiDung`, `TieuDe`, `NoiDung`, `ThuTu`, `TaoLuc`, `CapNhatLuc`) VALUES
+(6, 2, 'heading', NULL, 'Cài đặt các công cụ cần thiết', 1, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(7, 2, 'paragraph', NULL, 'Trong bài này bạn sẽ được hướng dẫn cài đặt phần mềm và công cụ hỗ trợ.', 2, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(8, 2, 'image', NULL, '/uploads/baihoc11_setup.png', 3, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(9, 2, 'subheading', NULL, 'Các bước cài đặt', 4, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(10, 2, 'list', NULL, '- Tải phần mềm\n- Cài đặt môi trường\n- Kiểm tra phiên bản', 5, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(11, 3, 'heading', NULL, 'Các khái niệm cơ bản', 1, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(12, 3, 'paragraph', NULL, 'Bạn sẽ học các khái niệm trọng tâm và áp dụng vào ví dụ đầu tiên.', 2, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(13, 3, 'image', NULL, '/uploads/baihoc11_basic.png', 3, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(14, 3, 'subheading', NULL, 'Ví dụ đầu tiên', 4, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(15, 3, 'list', NULL, '- Khởi tạo dự án\n- Viết đoạn mã đầu tiên\n- Chạy thử chương trình', 5, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(16, 4, 'heading', NULL, 'Thực hành: Xây dựng ứng dụng nhỏ', 1, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(17, 4, 'paragraph', NULL, 'Bạn sẽ áp dụng kiến thức đã học để xây dựng một ứng dụng thực tế.', 2, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(18, 4, 'image', NULL, '/uploads/baihoc11_app.png', 3, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(19, 4, 'subheading', NULL, 'Các bước thực hiện', 4, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(20, 4, 'list', NULL, '- Phân tích yêu cầu\n- Thiết kế giao diện\n- Hoàn thiện chức năng', 5, '2025-12-05 17:34:22', '2025-12-05 17:34:22'),
+(33, 1, 'heading', 'Các phần tử HTML', 'Một phần tử HTML được định nghĩa bởi thẻ mở, nội dung và thẻ đóng', 1, '2025-12-15 09:16:37', '2025-12-15 09:16:37'),
+(34, 1, 'subheading', 'Các phần tử HTML', 'Phần tử HTML bao gồm tất cả mọi thứ từ thẻ mở đến thẻ đóng:\n\n<tagname> Nội dung ở đây ... </tagname>', 2, '2025-12-15 09:17:21', '2025-12-15 09:17:21'),
+(35, 1, 'paragraph', 'Các phần tử HTML lồng nhau', 'Các phần tử HTML có thể lồng nhau (điều này có nghĩa là các phần tử có thể chứa các phần tử khác).\n\nTất cả các tài liệu HTML đều bao gồm các phần tử HTML lồng nhau.\n\nVí dụ sau đây chứa bốn phần tử HTML ( <html>, <body>, <h1> và <p>):', 3, '2025-12-15 09:17:44', '2025-12-15 09:17:44');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `password_reset_tokens`
+--
+
+CREATE TABLE `password_reset_tokens` (
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -504,8 +433,10 @@ CREATE TABLE `personal_access_tokens` (
 
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
 (1, 'App\\Models\\NguoiDung', 1, 'api_token', '1b2ec20f3fb8db50851b1c695b8a555a6b5f56b40595bea0623d480f23cb70e7', '[\"*\"]', '2025-12-05 04:43:35', NULL, '2025-12-05 03:52:51', '2025-12-05 04:43:35'),
-(2, 'App\\Models\\NguoiDung', 1, 'api_token', '65133252c066b2ed4debf8bbb4b0b57ef44d27c8a7e5a36cb1c4b8e157056cef', '[\"*\"]', '2025-12-05 11:32:10', NULL, '2025-12-05 09:35:22', '2025-12-05 11:32:10'),
-(3, 'App\\Models\\NguoiDung', 1, 'api_token', '4c78a087b2f5b7f9c51a47bab6913a5f5942e37f440cd794491806a21c7ae396', '[\"*\"]', '2025-12-05 11:30:09', NULL, '2025-12-05 10:55:00', '2025-12-05 11:30:09');
+(3, 'App\\Models\\NguoiDung', 1, 'api_token', '4c78a087b2f5b7f9c51a47bab6913a5f5942e37f440cd794491806a21c7ae396', '[\"*\"]', '2025-12-07 07:47:31', NULL, '2025-12-05 10:55:00', '2025-12-07 07:47:31'),
+(7, 'App\\Models\\NguoiDung', 4, 'google-auth-token', 'f4ca9b515c016f2f70be9e547c95d3f60bfaf82815bb0f1e40f9634009827c85', '[\"*\"]', NULL, NULL, '2025-12-07 23:20:06', '2025-12-07 23:20:06'),
+(8, 'App\\Models\\NguoiDung', 5, 'google-auth-token', 'f6c06f8fcc834858ca701d979dd2b777e952d547a477d0f077b3db169cc531ba', '[\"*\"]', NULL, NULL, '2025-12-07 23:30:15', '2025-12-07 23:30:15'),
+(12, 'App\\Models\\NguoiDung', 1, 'api_token', 'b8311e8d3616b6b871e021b50ec9dad26b2290dcca21ca24903470be304c3186', '[\"*\"]', '2025-12-19 11:07:28', NULL, '2025-12-15 00:09:11', '2025-12-19 11:07:28');
 
 -- --------------------------------------------------------
 
@@ -518,18 +449,27 @@ CREATE TABLE `traloi` (
   `LanLamBaiId` int(11) NOT NULL,
   `CauHoiId` int(11) NOT NULL,
   `LuaChonIds` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`LuaChonIds`)),
+  `TraLoiText` text DEFAULT NULL,
   `DungHaySai` tinyint(1) DEFAULT NULL,
   `ThoiGianGiay` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
 --
--- Đang đổ dữ liệu cho bảng `traloi`
+-- Cấu trúc bảng cho bảng `users`
 --
 
-INSERT INTO `traloi` (`TraLoiId`, `LanLamBaiId`, `CauHoiId`, `LuaChonIds`, `DungHaySai`, `ThoiGianGiay`) VALUES
-(3, 9, 25, '[397]', NULL, 5),
-(4, 10, 23, '[392,393,391]', NULL, 0),
-(5, 10, 1, '[3]', NULL, 0);
+CREATE TABLE `users` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -581,6 +521,13 @@ ALTER TABLE `cauhoi`
   ADD KEY `BaiHocId` (`BaiHocId`);
 
 --
+-- Chỉ mục cho bảng `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
+
+--
 -- Chỉ mục cho bảng `ghidanh`
 --
 ALTER TABLE `ghidanh`
@@ -624,6 +571,12 @@ ALTER TABLE `luachon`
   ADD UNIQUE KEY `CauHoiId` (`CauHoiId`,`ThuTu`);
 
 --
+-- Chỉ mục cho bảng `migrations`
+--
+ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Chỉ mục cho bảng `nganhangcauhoi`
 --
 ALTER TABLE `nganhangcauhoi`
@@ -635,7 +588,8 @@ ALTER TABLE `nganhangcauhoi`
 --
 ALTER TABLE `nguoidung`
   ADD PRIMARY KEY (`NguoiDungId`),
-  ADD UNIQUE KEY `Email` (`Email`);
+  ADD UNIQUE KEY `Email` (`Email`),
+  ADD UNIQUE KEY `UX_GoogleId` (`GoogleId`);
 
 --
 -- Chỉ mục cho bảng `nguoidung_vaitro`
@@ -651,6 +605,12 @@ ALTER TABLE `noidungbaihoc`
   ADD PRIMARY KEY (`NoiDungId`),
   ADD KEY `IX_NoiDung_BaiHoc` (`BaiHocId`),
   ADD KEY `IX_NoiDung_ThuTu` (`ThuTu`);
+
+--
+-- Chỉ mục cho bảng `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD PRIMARY KEY (`email`);
 
 --
 -- Chỉ mục cho bảng `personal_access_tokens`
@@ -669,6 +629,13 @@ ALTER TABLE `traloi`
   ADD KEY `CauHoiId` (`CauHoiId`);
 
 --
+-- Chỉ mục cho bảng `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `users_email_unique` (`email`);
+
+--
 -- Chỉ mục cho bảng `vaitro`
 --
 ALTER TABLE `vaitro`
@@ -683,13 +650,13 @@ ALTER TABLE `vaitro`
 -- AUTO_INCREMENT cho bảng `baihoc`
 --
 ALTER TABLE `baihoc`
-  MODIFY `BaiHocId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `BaiHocId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT cho bảng `baikiemtra`
 --
 ALTER TABLE `baikiemtra`
-  MODIFY `BaiKiemTraId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `BaiKiemTraId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `cauhoi`
@@ -698,10 +665,16 @@ ALTER TABLE `cauhoi`
   MODIFY `CauHoiId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
+-- AUTO_INCREMENT cho bảng `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT cho bảng `khoahoc`
 --
 ALTER TABLE `khoahoc`
-  MODIFY `KhoaHocId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `KhoaHocId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT cho bảng `kynang`
@@ -713,43 +686,55 @@ ALTER TABLE `kynang`
 -- AUTO_INCREMENT cho bảng `lanlambai`
 --
 ALTER TABLE `lanlambai`
-  MODIFY `LanLamBaiId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `LanLamBaiId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT cho bảng `luachon`
 --
 ALTER TABLE `luachon`
-  MODIFY `LuaChonId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=496;
+  MODIFY `LuaChonId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=548;
+
+--
+-- AUTO_INCREMENT cho bảng `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `nganhangcauhoi`
 --
 ALTER TABLE `nganhangcauhoi`
-  MODIFY `NganHangId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `NganHangId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `nguoidung`
 --
 ALTER TABLE `nguoidung`
-  MODIFY `NguoiDungId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `NguoiDungId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `noidungbaihoc`
 --
 ALTER TABLE `noidungbaihoc`
-  MODIFY `NoiDungId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `NoiDungId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT cho bảng `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT cho bảng `traloi`
 --
 ALTER TABLE `traloi`
-  MODIFY `TraLoiId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `TraLoiId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=234;
+
+--
+-- AUTO_INCREMENT cho bảng `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `vaitro`
