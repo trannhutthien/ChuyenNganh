@@ -1,9 +1,9 @@
 <template>
   <!-- Phần bên trái -->
   <div class="flex-shrink-0">
-      <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+      <a href="/" class="flex gap-3 items-center transition-opacity hover:opacity-80">
         
-        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+        <div class="flex justify-center items-center w-10 h-10 rounded-lg bg-primary">
         
         </div>
         
@@ -15,19 +15,22 @@
     </div>
 
     <!-- Phần giữa -->
-    <div class="flex-1 flex justify-center">
+    <div class="flex flex-1 justify-center">
       <SearchInput
         v-model="searchQuery"
         @search="handleSearch"
+        @select="handleSelectCourse"
         placeholder="Tìm kiếm khóa học, bài viết, video...."
         container-class="w-full max-w-[392px]"
+        :enable-autocomplete="true"
+        :search-function="searchCourses"
       />
     </div>
 
     <!-- Phần bên phải -->
-    <div class="flex-shrink-0 flex items-center gap-3">
+    <div class="flex flex-shrink-0 gap-3 items-center">
       <!-- Khi CHƯA đăng nhập: Hiển thị button Đăng nhập & Đăng ký -->
-      <div v-if="!isLoggedIn" class="flex items-center gap-3">
+      <div v-if="!isLoggedIn" class="flex gap-3 items-center">
         <BaseButton 
           @click="handleLogin"
           variant="outline"
@@ -46,12 +49,12 @@
       </div>
 
       <!-- Khi ĐÃ đăng nhập: Hiển thị icon chuông thông báo & avatar -->
-      <div v-else class="flex items-center gap-4">
+      <div v-else class="flex gap-4 items-center">
         <!-- Icon chuông thông báo -->
         <div class="relative">
           <button 
             @click="toggleNotifications"
-            class="relative p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
+            class="relative p-2 text-gray-600 rounded-lg transition-colors hover:text-primary hover:bg-gray-100"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -71,7 +74,7 @@
             <!-- Badge số lượng thông báo -->
             <span 
               v-if="notificationCount > 0"
-              class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center"
+              class="flex absolute -top-1 -right-1 justify-center items-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full"
             >
               {{ notificationCount > 9 ? '9+' : notificationCount }}
             </span>
@@ -81,37 +84,37 @@
           <Transition name="fade-slide">
             <div 
               v-if="showNotifications"
-              class="absolute right-0 top-12 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50"
+              class="overflow-hidden absolute right-0 top-12 z-50 w-80 bg-white rounded-xl border border-gray-200 shadow-2xl"
             >
               <!-- Header -->
-              <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+              <div class="flex justify-between items-center p-4 border-b border-gray-200">
                 <h3 class="font-semibold text-gray-800">Thông báo</h3>
                 <button class="text-xs text-primary hover:text-primary-600">Đánh dấu đã đọc</button>
               </div>
 
               <!-- Danh sách thông báo -->
-              <div class="max-h-96 overflow-y-auto">
+              <div class="overflow-y-auto max-h-96">
                 <div 
                   v-for="notification in notifications" 
                   :key="notification.id"
-                  class="p-4 hover:bg-gray-50 border-b border-gray-100 cursor-pointer transition-colors"
+                  class="p-4 border-b border-gray-100 transition-colors cursor-pointer hover:bg-gray-50"
                   :class="{ 'bg-blue-50': !notification.read }"
                 >
                   <div class="flex gap-3">
-                    <div class="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <div class="flex flex-shrink-0 justify-center items-center w-10 h-10 rounded-full bg-primary/10">
                       <span class="text-lg">{{ notification.icon }}</span>
                     </div>
                     <div class="flex-1">
-                      <p class="text-sm text-gray-800 font-medium">{{ notification.title }}</p>
-                      <p class="text-xs text-gray-600 mt-1">{{ notification.message }}</p>
-                      <p class="text-xs text-gray-400 mt-1">{{ notification.time }}</p>
+                      <p class="text-sm font-medium text-gray-800">{{ notification.title }}</p>
+                      <p class="mt-1 text-xs text-gray-600">{{ notification.message }}</p>
+                      <p class="mt-1 text-xs text-gray-400">{{ notification.time }}</p>
                     </div>
                   </div>
                 </div>
 
                 <!-- Nếu không có thông báo -->
                 <div v-if="notifications.length === 0" class="p-8 text-center text-gray-500">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 mx-auto mb-2 text-gray-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-auto mb-2 w-12 h-12 text-gray-300">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
                   </svg>
                   <p class="text-sm">Chưa có thông báo mới</p>
@@ -119,8 +122,8 @@
               </div>
 
               <!-- Footer -->
-              <div class="p-3 border-t border-gray-200 text-center">
-                <a href="#" class="text-sm text-primary hover:text-primary-600 font-medium">Xem tất cả</a>
+              <div class="p-3 text-center border-t border-gray-200">
+                <a href="#" class="text-sm font-medium text-primary hover:text-primary-600">Xem tất cả</a>
               </div>
             </div>
           </Transition>
@@ -130,13 +133,13 @@
         <div class="relative">
           <button 
             @click="toggleUserMenu"
-            class="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            class="flex gap-2 items-center transition-opacity hover:opacity-80"
           >
             <!-- Avatar -->
             <img 
               :src="currentUser.avatar" 
               :alt="currentUser.name"
-              class="w-10 h-10 rounded-full object-cover border-2 border-primary"
+              class="object-cover w-10 h-10 rounded-full border-2 border-primary"
             />
             
             <!-- Icon dropdown -->
@@ -156,15 +159,15 @@
           <Transition name="fade-slide">
             <div 
               v-if="showUserMenu"
-              class="absolute right-0 top-14 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50"
+              class="overflow-hidden absolute right-0 top-14 z-50 w-64 bg-white rounded-xl border border-gray-200 shadow-2xl"
             >
               <!-- User Info -->
-              <div class="p-4 bg-gradient-to-r from-primary/10 to-purple-500/10 border-b border-gray-200">
-                <div class="flex items-center gap-3">
+              <div class="p-4 bg-gradient-to-r border-b border-gray-200 from-primary/10 to-purple-500/10">
+                <div class="flex gap-3 items-center">
                   <img 
                     :src="currentUser.avatar" 
                     :alt="currentUser.name"
-                    class="w-12 h-12 rounded-full object-cover border-2 border-white"
+                    class="object-cover w-12 h-12 rounded-full border-2 border-white"
                   />
                   <div>
                     <p class="font-semibold text-gray-800">{{ currentUser.name }}</p>
@@ -177,7 +180,7 @@
               <div class="py-2">
                 <a 
                   href="#" 
-                  class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                  class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
@@ -187,7 +190,7 @@
 
                 <a 
                   href="#" 
-                  class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                  class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
@@ -197,7 +200,7 @@
 
                 <a 
                   href="#" 
-                  class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                  class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
@@ -211,7 +214,7 @@
               <div class="border-t border-gray-200">
                 <button 
                   @click="handleLogout"
-                  class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors"
+                  class="flex gap-3 items-center px-4 py-3 w-full text-red-600 transition-colors hover:bg-red-50"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
@@ -248,11 +251,14 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import BaseButton from '../../components/ui/BaseButton.vue'
-import SearchInput from '../../components/ui/SearchInput.vue'
-import RegisterModal from '../../components/modal/RegisterModal.vue'
-import LoginModal from '../../components/modal/LoginModal.vue'
-import { authService } from '../../services/courseService.js'
+import { useRouter } from 'vue-router'
+import BaseButton from '../components/ui/BaseButton.vue'
+import SearchInput from '../components/ui/SearchInput.vue'
+import RegisterModal from '../components/modal/RegisterModal.vue'
+import LoginModal from '../components/modal/LoginModal.vue'
+import { authService, courseService } from '../services/courseService.js'
+
+const router = useRouter()
 
 // State
 const searchQuery = ref('')
@@ -313,8 +319,28 @@ const showUserMenu = ref(false)
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
     console.log('Tìm kiếm:', searchQuery.value)
-    // Thêm logic tìm kiếm
+    // Navigate đến trang tìm kiếm với keyword
+    router.push({ path: '/tim-kiem', query: { q: searchQuery.value } })
   }
+}
+
+// Hàm search khóa học cho autocomplete
+const searchCourses = async (keyword) => {
+  try {
+    const response = await courseService.search(keyword, { per_page: 6 })
+    return response.data || []
+  } catch (error) {
+    console.error('Lỗi tìm kiếm:', error)
+    return []
+  }
+}
+
+// Xử lý khi user chọn khóa học từ dropdown
+const handleSelectCourse = (course) => {
+  console.log('handleSelectCourse called:', course) // Debug
+  searchQuery.value = ''
+  // Navigate đến trang học khóa học
+  router.push(`/learn/${course.id}`)
 }
 
 const handleLogin = () => {
