@@ -65,16 +65,20 @@ class NguoiDungController extends Controller
             $nguoiDung = NguoiDung::create([
                 'HoTen' => $request->HoTen,
                 'Email' => $request->Email,
-                'MatKhauHash' => Hash::make($request->MatKhau),
+                'MatKhauHash' => $request->MatKhau, // Lưu trực tiếp không hash (demo)
                 'TrangThai' => $request->TrangThai ?? 1
             ]);
 
-            // Gán vai trò
-            $roleName = $this->mapRoleToVaiTro($request->VaiTro ?? 'student');
-            $vaiTro = VaiTro::where('TenVaiTro', $roleName)->first();
-            if ($vaiTro) {
-                $nguoiDung->vaiTros()->attach($vaiTro->VaiTroId);
+            // Gán vai trò - mặc định VaiTroId = 2 (STUDENT)
+            $vaiTroId = 2; // Mặc định là STUDENT
+            if ($request->VaiTro) {
+                $roleName = $this->mapRoleToVaiTro($request->VaiTro);
+                $vaiTro = VaiTro::where('TenVaiTro', $roleName)->first();
+                if ($vaiTro) {
+                    $vaiTroId = $vaiTro->VaiTroId;
+                }
             }
+            $nguoiDung->vaiTros()->attach($vaiTroId);
 
             return $nguoiDung;
         });
@@ -100,6 +104,7 @@ class NguoiDungController extends Controller
         $validator = Validator::make($request->all(), [
             'HoTen' => 'required|string|max:100',
             'Email' => 'required|email|unique:NguoiDung,Email,' . $id . ',NguoiDungId',
+            'MatKhau' => 'nullable|string|min:6',
             'SoDienThoai' => 'nullable|string|max:20',
             'VaiTro' => 'nullable|string|in:admin,instructor,student',
             'TrangThai' => 'nullable|integer|in:0,1'
@@ -110,11 +115,18 @@ class NguoiDungController extends Controller
         }
 
         DB::transaction(function () use ($request, $nguoiDung) {
-            $nguoiDung->update([
+            $updateData = [
                 'HoTen' => $request->HoTen,
                 'Email' => $request->Email,
                 'TrangThai' => $request->TrangThai ?? $nguoiDung->TrangThai
-            ]);
+            ];
+
+            // Cập nhật mật khẩu nếu có
+            if ($request->filled('MatKhau')) {
+                $updateData['MatKhauHash'] = $request->MatKhau; // Lưu trực tiếp không hash (demo)
+            }
+
+            $nguoiDung->update($updateData);
 
             // Cập nhật vai trò nếu có
             if ($request->has('VaiTro')) {

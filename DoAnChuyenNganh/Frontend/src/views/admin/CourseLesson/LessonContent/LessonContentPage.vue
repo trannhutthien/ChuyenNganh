@@ -10,116 +10,28 @@
       </BackButton>
 
       <!-- Lesson Info Header -->
-      <div class="p-6 bg-white rounded-xl border border-gray-100 shadow-sm">
-        <div class="flex gap-4 items-start">
-          <!-- Lesson Type Icon -->
-          <div
-            :class="[
-              'w-16 h-16 rounded-xl flex items-center justify-center',
-              typeIconClass,
-            ]"
-          >
-            <svg
-              v-if="lesson.type === 'video'"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-8 h-8"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
-              />
-            </svg>
-            <svg
-              v-else-if="lesson.type === 'text' || lesson.type === 'paragraph'"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-8 h-8"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-              />
-            </svg>
-            <svg
-              v-else
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-8 h-8"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
-              />
-            </svg>
-          </div>
-
-          <div class="flex-1">
-            <div class="flex gap-3 items-center mb-2">
-              <span
-                class="px-3 py-1 text-sm font-medium rounded-full bg-primary/10 text-primary"
-              >
-                Bài {{ lesson.order }}
-              </span>
-              <BadgeLabel :value="lesson.status" type="status" />
-            </div>
-            <h1 class="text-2xl font-bold text-gray-800">{{ lesson.title }}</h1>
-            <p class="mt-1 text-gray-600">
-              {{
-                lesson.description || "Quản lý nội dung chi tiết của bài học"
-              }}
-            </p>
-            <div class="flex gap-4 items-center mt-3 text-sm text-gray-500">
-              <span class="flex gap-1 items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-4 h-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                </svg>
-                {{ lesson.duration || 0 }} phút
-              </span>
-              <span class="flex gap-1 items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-4 h-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                  />
-                </svg>
-                {{ contents.length }} phần nội dung
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        :title="lesson.title"
+        :subtitle="lesson.description || 'Quản lý nội dung chi tiết của bài học'"
+        :badge="`Bài ${lesson.order}`"
+        :icon-class="typeIconClass"
+        :stats="headerStats"
+      >
+        <template #icon>
+          <svg v-if="lesson.type === 'video'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
+          </svg>
+          <svg v-else-if="lesson.type === 'text' || lesson.type === 'paragraph'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+          </svg>
+        </template>
+        <template #badge-extra>
+          <BadgeLabel :value="lesson.status" type="status" />
+        </template>
+      </PageHeader>
     </div>
 
     <!-- Actions Bar -->
@@ -459,8 +371,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import draggable from "vuedraggable";
+import { useRoute } from "vue-router";
+import PageHeader from "../../../../layouts/PageHeader.vue";
 import BackButton from "../../../../components/ui/BackButton.vue";
 import BaseButton from "../../../../components/ui/BaseButton.vue";
 import BadgeLabel from "../../../../components/admin/BadgeLabel.vue";
@@ -602,6 +514,20 @@ const typeIconClass = computed(() => {
   };
   return classes[lesson.value.type] || "bg-blue-100 text-blue-600";
 });
+
+// Header stats for PageHeader
+const headerStats = computed(() => [
+  {
+    iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>',
+    value: lesson.value.duration || 0,
+    label: 'phút'
+  },
+  {
+    iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>',
+    value: contents.value.length,
+    label: 'phần nội dung'
+  }
+]);
 
 // Fetch lesson info
 const fetchLesson = async () => {

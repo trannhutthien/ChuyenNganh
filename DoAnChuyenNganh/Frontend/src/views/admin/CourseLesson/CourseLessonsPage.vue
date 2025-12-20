@@ -7,12 +7,11 @@
       </BackButton>
 
       <!-- Course Info -->
-      <LessonHeader
+      <PageHeader
         :title="course.title"
-        :thumbnail="course.thumbnail"
-        :lesson-count="lessons.length"
-        :quiz-count="quizzes.length"
-        :total-duration="totalDuration"
+        :subtitle="course.description || 'Quản lý bài học của khóa học này'"
+        :image="course.thumbnail"
+        :stats="headerStats"
       />
     </div>
 
@@ -142,10 +141,10 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import PageHeader from "../../../layouts/PageHeader.vue";
 import SearchInput from "../../../components/ui/SearchInput.vue";
 import BaseButton from "../../../components/ui/BaseButton.vue";
 import BackButton from "../../../components/ui/BackButton.vue";
-import LessonHeader from "../../../components/admin/CourseLesson/LessonHeader.vue";
 import LessonList from "../../../components/admin/CourseLesson/LessonList.vue";
 import FormAddModal from "../../../components/modal/FormAddModal.vue";
 import FormAddQuizModal from "../../../components/modal/FormAddQuizModal.vue";
@@ -263,6 +262,33 @@ const nganHangs = ref([]);
 // Computed
 const totalDuration = computed(() => {
   return lessons.value.reduce((sum, lesson) => sum + (lesson.duration || 0), 0);
+});
+
+// Header stats for PageHeader
+const headerStats = computed(() => {
+  const stats = [
+    {
+      iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg>',
+      value: lessons.value.length,
+      label: 'bài học'
+    }
+  ];
+  
+  if (quizzes.value.length > 0) {
+    stats.push({
+      iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" /></svg>',
+      value: quizzes.value.length,
+      label: 'bài kiểm tra'
+    });
+  }
+  
+  stats.push({
+    iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>',
+    value: totalDuration.value,
+    label: 'phút'
+  });
+  
+  return stats;
 });
 
 // Gộp bài học và bài kiểm tra thành một danh sách

@@ -2,70 +2,29 @@
   <div class="p-6">
     <!-- Header -->
     <div class="mb-6">
-      <div class="p-6 bg-white rounded-xl border border-gray-100 shadow-sm">
-        <div class="flex gap-4 items-start">
-          <div
-            class="flex justify-center items-center w-16 h-16 text-blue-600 bg-blue-100 rounded-xl"
+      <PageHeader
+        title="Quản lý người dùng"
+        subtitle="Quản lý tài khoản người dùng trong hệ thống"
+        icon-class="text-blue-600 bg-blue-100"
+        :stats="headerStats"
+      >
+        <template #icon>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-8 h-8"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-8 h-8"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
-              />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <h1 class="text-2xl font-bold text-gray-800">Quản lý người dùng</h1>
-            <p class="mt-1 text-gray-600">
-              Quản lý tài khoản người dùng trong hệ thống
-            </p>
-            <div class="flex gap-4 items-center mt-3 text-sm text-gray-500">
-              <span class="flex gap-1 items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-4 h-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                  />
-                </svg>
-                {{ users.length }} người dùng
-              </span>
-              <span class="flex gap-1 items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-4 h-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                </svg>
-                {{ activeUsersCount }} đang hoạt động
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+            />
+          </svg>
+        </template>
+      </PageHeader>
     </div>
 
     <!-- Actions Bar -->
@@ -265,6 +224,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import PageHeader from "../../../layouts/PageHeader.vue";
 import SearchInput from "../../../components/ui/SearchInput.vue";
 import BaseButton from "../../../components/ui/BaseButton.vue";
 import BadgeLabel from "../../../components/admin/BadgeLabel.vue";
@@ -286,6 +246,22 @@ const deletingUser = ref(null);
 const activeUsersCount = computed(
   () => users.value.filter((u) => u.status === 1).length
 );
+
+// Header stats for PageHeader component
+const headerStats = computed(() => [
+  {
+    iconHtml:
+      '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>',
+    value: users.value.length,
+    label: "người dùng",
+  },
+  {
+    iconHtml:
+      '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>',
+    value: activeUsersCount.value,
+    label: "đang hoạt động",
+  },
+]);
 
 const filteredUsers = computed(() => {
   let result = users.value;
@@ -321,12 +297,13 @@ const userFormFields = computed(() => [
   },
   {
     name: "MatKhau",
-    label: "Mật khẩu",
+    label: isEditing.value
+      ? "Mật khẩu mới (để trống nếu không đổi)"
+      : "Mật khẩu",
     type: "password",
     placeholder: "••••••••",
     required: !isEditing.value,
     default: "",
-    showIf: () => !isEditing.value,
   },
   {
     name: "SoDienThoai",
@@ -414,7 +391,10 @@ const handleUserSubmit = async (formData) => {
       VaiTro: formData.VaiTro,
       TrangThai: formData.TrangThai,
     };
-    if (!isEditing.value && formData.MatKhau) data.MatKhau = formData.MatKhau;
+    // Thêm mật khẩu nếu có nhập
+    if (formData.MatKhau) {
+      data.MatKhau = formData.MatKhau;
+    }
     if (isEditing.value) await api.put(`/users/${editingUser.value.id}`, data);
     else await api.post("/users", data);
     showUserModal.value = false;
