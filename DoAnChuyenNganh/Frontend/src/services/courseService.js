@@ -95,19 +95,56 @@ export const courseService = {
   }
 }
 
-// Roadmap Service
+// Roadmap Service - Lộ trình học tập
 export const roadmapService = {
+  // Lấy danh sách lộ trình active
   getAll() {
-    return api.get('/roadmaps')
+    return api.get('/lo-trinh')
   },
 
-  getById(id) {
-    return api.get(`/roadmaps/${id}`)
+  // Lấy tất cả lộ trình (Admin)
+  getAllAdmin() {
+    return api.get('/lo-trinh/all')
+  },
+
+  // Lấy chi tiết lộ trình theo slug
+  getBySlug(slug) {
+    return api.get(`/lo-trinh/${slug}`)
   },
 
   // Lấy các khóa học trong lộ trình
   getCourses(id) {
-    return api.get(`/roadmaps/${id}/courses`)
+    return api.get(`/lo-trinh/${id}/khoa-hoc`)
+  },
+
+  // Tạo lộ trình mới (Admin)
+  create(data) {
+    return api.post('/lo-trinh', data)
+  },
+
+  // Cập nhật lộ trình (Admin)
+  update(id, data) {
+    return api.put(`/lo-trinh/${id}`, data)
+  },
+
+  // Xóa lộ trình (Admin)
+  delete(id) {
+    return api.delete(`/lo-trinh/${id}`)
+  },
+
+  // Thêm khóa học vào lộ trình (Admin)
+  addCourse(id, data) {
+    return api.post(`/lo-trinh/${id}/khoa-hoc`, data)
+  },
+
+  // Cập nhật khóa học trong lộ trình (Admin)
+  updateCourse(id, khoaHocId, data) {
+    return api.put(`/lo-trinh/${id}/khoa-hoc/${khoaHocId}`, data)
+  },
+
+  // Xóa khóa học khỏi lộ trình (Admin)
+  removeCourse(id, khoaHocId) {
+    return api.delete(`/lo-trinh/${id}/khoa-hoc/${khoaHocId}`)
   }
 }
 

@@ -172,6 +172,91 @@ CREATE TABLE GhiDanh (
     FOREIGN KEY (KhoaHocId) REFERENCES KhoaHoc(KhoaHocId) ON DELETE CASCADE,
     FOREIGN KEY (BaiHocCuoiCungId) REFERENCES BaiHoc(BaiHocId)
 );
+CREATE TABLE LoTrinh (
+    LoTrinhId INT AUTO_INCREMENT PRIMARY KEY,
+    TieuDe NVARCHAR(200) NOT NULL,
+    Slug VARCHAR(255) NOT NULL UNIQUE,
+    MoTa NVARCHAR(600),
+    HinhAnhUrl NVARCHAR(300),
+    Icon NVARCHAR(50), -- emoji hoặc class icon
+    ThoiGianHoanThanh NVARCHAR(50), -- ví dụ: "6 tháng"
+    CapDo TINYINT DEFAULT 1, -- 1=Beginner, 2=Intermediate, 3=Advanced
+    TrangThai TINYINT DEFAULT 0, -- 0=draft, 1=active
+    ThuTu INT DEFAULT 1,
+    TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE LoTrinh_KhoaHoc (
+    LoTrinhId INT NOT NULL,
+    KhoaHocId INT NOT NULL,
+    ThuTu INT DEFAULT 1, -- thứ tự học trong lộ trình
+    BatBuoc BOOLEAN DEFAULT 1, -- 1=bắt buộc, 0=tùy chọn
+    GhiChu NVARCHAR(255),
+
+    PRIMARY KEY (LoTrinhId, KhoaHocId),
+
+    FOREIGN KEY (LoTrinhId) REFERENCES LoTrinh(LoTrinhId) ON DELETE CASCADE,
+    FOREIGN KEY (KhoaHocId) REFERENCES KhoaHoc(KhoaHocId) ON DELETE CASCADE,
+
+    UNIQUE KEY UX_LoTrinh_KhoaHoc_ThuTu (LoTrinhId, ThuTu)
+);
+CREATE TABLE BaiViet (
+    BaiVietId INT AUTO_INCREMENT PRIMARY KEY,
+
+    TieuDe NVARCHAR(255) NOT NULL,
+    Slug VARCHAR(255) NOT NULL,
+    TomTat NVARCHAR(500),
+    NoiDung LONGTEXT NOT NULL,
+    HinhAnhUrl NVARCHAR(300),
+
+    DanhMuc ENUM('frontend','backend','devops','tips','other') DEFAULT 'other',
+    Tags JSON,
+
+    TrangThai TINYINT DEFAULT 0, -- 0=draft, 1=published, 2=archived
+    LuotXem INT DEFAULT 0,
+
+    NguoiTaoId INT NOT NULL,
+
+    TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    -- ràng buộc
+    UNIQUE KEY UX_BaiViet_DanhMuc_Slug (DanhMuc, Slug),
+
+    FOREIGN KEY (NguoiTaoId)
+        REFERENCES NguoiDung(NguoiDungId)
+        ON DELETE CASCADE
+);
+CREATE TABLE BinhLuan (
+    BinhLuanId INT AUTO_INCREMENT PRIMARY KEY,
+
+    BaiVietId INT NOT NULL,
+    NguoiDungId INT NOT NULL,
+
+    NoiDung TEXT NOT NULL,
+
+    TrangThai TINYINT DEFAULT 1, 
+    -- 0=ẩn, 1=hiển thị, 2=chờ duyệt
+
+    TaoLuc DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CapNhatLuc DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (BaiVietId)
+        REFERENCES BaiViet(BaiVietId)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (NguoiDungId)
+        REFERENCES NguoiDung(NguoiDungId)
+        ON DELETE CASCADE
+);
+CREATE INDEX IX_BaiViet_NguoiTaoId ON BaiViet(NguoiTaoId);
+CREATE INDEX IX_BaiViet_TrangThai ON BaiViet(TrangThai);
+CREATE INDEX IX_BinhLuan_BaiVietId ON BinhLuan(BaiVietId);
+CREATE INDEX IX_BinhLuan_NguoiDungId ON BinhLuan(NguoiDungId);
+CREATE INDEX IX_LoTrinh_KhoaHoc_LoTrinhId ON LoTrinh_KhoaHoc(LoTrinhId);
+CREATE INDEX IX_LoTrinh_KhoaHoc_KhoaHocId ON LoTrinh_KhoaHoc(KhoaHocId);
+CREATE INDEX IX_LoTrinh_TrangThai ON LoTrinh(TrangThai);
+CREATE INDEX IX_LoTrinh_ThuTu ON LoTrinh(ThuTu);
 CREATE INDEX IX_BaiHoc_KhoaHocId ON BaiHoc(KhoaHocId);
 CREATE INDEX IX_NganHangCauHoi_KhoaHocId ON NganHangCauHoi(KhoaHocId);
 CREATE INDEX IX_CauHoi_NganHangId ON CauHoi(NganHangId);

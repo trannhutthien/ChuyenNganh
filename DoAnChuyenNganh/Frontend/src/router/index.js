@@ -3,6 +3,8 @@ import HomePage from '../views/HomePage.vue'
 import CourseLearningPage from '../views/CourseLearningPage.vue'
 import QuizPage from '../views/QuizPage.vue'
 import FinalExamPage from '../views/FinalExamPage.vue'
+import RoadmapListPage from '../views/RoadmapListPage.vue'
+import RoadmapDetailPage from '../components/map/RoadmapDetailPage.vue'
 import CourseManagementPage from '../views/admin/CourseManagementPage.vue'
 import CourseLessonsPage from '../views/admin/CourseLesson/CourseLessonsPage.vue'
 import LessonContentPage from '../views/admin/CourseLesson/LessonContent/LessonContentPage.vue'
@@ -15,6 +17,17 @@ const routes = [
     path: '/',
     name: 'Home',
     component: HomePage
+  },
+  {
+    path: '/lo-trinh',
+    name: 'RoadmapList',
+    component: RoadmapListPage
+  },
+  {
+    path: '/lo-trinh/:slug',
+    name: 'RoadmapDetail',
+    component: RoadmapDetailPage,
+    props: true
   },
   {
     path: '/learn/:courseId',

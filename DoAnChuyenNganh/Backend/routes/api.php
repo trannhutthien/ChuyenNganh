@@ -12,6 +12,7 @@ use App\Http\Controllers\LanLamBaiController;
 use App\Http\Controllers\BaiKiemTraCuoiKhoaController;
 use App\Http\Controllers\NoiDungBaiHocController;
 use App\Http\Controllers\NguoiDungController;
+use App\Http\Controllers\LoTrinhController;
 
 // ========== AUTH ROUTES ==========
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -146,4 +147,23 @@ Route::middleware('auth:sanctum')->prefix('users')->group(function () {
     Route::post('/', [NguoiDungController::class, 'store']);        // Tạo người dùng
     Route::put('/{id}', [NguoiDungController::class, 'update']);    // Cập nhật người dùng
     Route::delete('/{id}', [NguoiDungController::class, 'destroy']); // Xóa người dùng
+});
+
+
+// ========== LỘ TRÌNH ROUTES (PUBLIC) ==========
+Route::prefix('lo-trinh')->group(function () {
+    Route::get('/', [LoTrinhController::class, 'index']);              // Danh sách lộ trình active
+    Route::get('/all', [LoTrinhController::class, 'getAll']);          // Tất cả lộ trình (Admin)
+    Route::get('/{slug}', [LoTrinhController::class, 'show']);         // Chi tiết lộ trình theo slug
+    Route::get('/{id}/khoa-hoc', [LoTrinhController::class, 'getCourses']); // Khóa học trong lộ trình
+});
+
+// ========== LỘ TRÌNH ROUTES (PROTECTED - ADMIN) ==========
+Route::middleware('auth:sanctum')->prefix('lo-trinh')->group(function () {
+    Route::post('/', [LoTrinhController::class, 'store']);             // Tạo lộ trình
+    Route::put('/{id}', [LoTrinhController::class, 'update']);         // Cập nhật lộ trình
+    Route::delete('/{id}', [LoTrinhController::class, 'destroy']);     // Xóa lộ trình
+    Route::post('/{id}/khoa-hoc', [LoTrinhController::class, 'addCourse']);           // Thêm khóa học
+    Route::put('/{id}/khoa-hoc/{khoaHocId}', [LoTrinhController::class, 'updateCourse']); // Cập nhật khóa học
+    Route::delete('/{id}/khoa-hoc/{khoaHocId}', [LoTrinhController::class, 'removeCourse']); // Xóa khóa học
 });
