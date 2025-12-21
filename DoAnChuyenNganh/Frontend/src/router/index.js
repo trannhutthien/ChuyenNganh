@@ -11,6 +11,8 @@ import LessonContentPage from '../views/admin/CourseLesson/LessonContent/LessonC
 import CourseQuestionBank from '../views/admin/CourseLesson/CourseQuestionBank.vue'
 import QuestionPage from '../views/admin/CourseLesson/QuestionBank/QuestionPage.vue'
 import UserManagementPage from '../views/admin/UserManagement/UserManagementPage.vue'
+import RoadmapManagementPage from '../views/admin/map/RoadmapManagementPage.vue'
+import RoadmapCoursesPage from '../views/admin/map/RoadmapCoursesPage.vue'
 
 const routes = [
   {
@@ -84,6 +86,18 @@ const routes = [
     name: 'UserManagement',
     component: UserManagementPage,
     meta: { requiresAuth: true, roles: ['ADMIN'] }
+  },
+  {
+    path: '/quan-ly/lo-trinh',
+    name: 'RoadmapManagement',
+    component: RoadmapManagementPage,
+    meta: { requiresAuth: true, roles: ['ADMIN', 'EDITOR'] }
+  },
+  {
+    path: '/quan-ly/lo-trinh/:id/khoa-hoc',
+    name: 'RoadmapCourses',
+    component: RoadmapCoursesPage,
+    meta: { requiresAuth: true, roles: ['ADMIN', 'EDITOR'] }
   },
   // Catch-all route - redirect về trang chủ nếu không tìm thấy route
   {

@@ -1,28 +1,29 @@
 <template>
-  <aside class="w-[100px] bg-white border-r border-gray-200 sticky left-0 top-[65px] self-start z-40 shadow-sm h-[calc(100vh-65px)]">
-    <nav class="h-full py-6 overflow-y-auto">
+  <aside
+    class="w-[100px] bg-white border-r border-gray-200 sticky left-0 top-[65px] self-start z-40 shadow-sm h-[calc(100vh-65px)]"
+  >
+    <nav class="overflow-y-auto py-6 h-full">
       <ul class="flex flex-col gap-2">
-        
         <!-- ========== MENU CHUNG (Tất cả roles) ========== -->
         <!-- Trang chủ -->
         <li>
-          <router-link 
-            to="/" 
-            class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
+          <router-link
+            to="/"
+            class="flex flex-col gap-2 justify-center items-center px-2 py-4 text-gray-600 rounded-xl transition-all hover:text-primary hover:bg-primary/5 group"
             :class="{ 'text-primary bg-primary/10': isActive('/') }"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke-width="1.5" 
-              stroke="currentColor" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
               class="w-6 h-6"
             >
-              <path 
-                stroke-linecap="round" 
-                stroke-linejoin="round" 
-                d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" 
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
               />
             </svg>
             <span class="text-xs font-medium text-center">Trang chủ</span>
@@ -31,23 +32,23 @@
 
         <!-- Lộ trình -->
         <li>
-          <router-link 
-            to="/lo-trinh" 
-            class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
+          <router-link
+            to="/lo-trinh"
+            class="flex flex-col gap-2 justify-center items-center px-2 py-4 text-gray-600 rounded-xl transition-all hover:text-primary hover:bg-primary/5 group"
             :class="{ 'text-primary bg-primary/10': isActive('/lo-trinh') }"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke-width="1.5" 
-              stroke="currentColor" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
               class="w-6 h-6"
             >
-              <path 
-                stroke-linecap="round" 
-                stroke-linejoin="round" 
-                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" 
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"
               />
             </svg>
             <span class="text-xs font-medium text-center">Lộ trình</span>
@@ -56,23 +57,23 @@
 
         <!-- Bài viết -->
         <li>
-          <router-link 
-            to="/bai-viet" 
-            class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
+          <router-link
+            to="/bai-viet"
+            class="flex flex-col gap-2 justify-center items-center px-2 py-4 text-gray-600 rounded-xl transition-all hover:text-primary hover:bg-primary/5 group"
             :class="{ 'text-primary bg-primary/10': isActive('/bai-viet') }"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke-width="1.5" 
-              stroke="currentColor" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
               class="w-6 h-6"
             >
-              <path 
-                stroke-linecap="round" 
-                stroke-linejoin="round" 
-                d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" 
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"
               />
             </svg>
             <span class="text-xs font-medium text-center">Bài viết</span>
@@ -82,32 +83,65 @@
         <!-- ========== MENU EDITOR (EDITOR + ADMIN) ========== -->
         <template v-if="isEditor || isAdmin">
           <!-- Divider -->
-          <li class="my-2 px-4">
+          <li class="px-4 my-2">
             <hr class="border-gray-200" />
           </li>
 
           <!-- Quản lý khóa học/bài học -->
           <li>
-            <router-link 
-              to="/quan-ly/khoa-hoc" 
-              class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
-              :class="{ 'text-primary bg-primary/10': isActive('/quan-ly/khoa-hoc') }"
+            <router-link
+              to="/quan-ly/khoa-hoc"
+              class="flex flex-col gap-2 justify-center items-center px-2 py-4 text-gray-600 rounded-xl transition-all hover:text-primary hover:bg-primary/5 group"
+              :class="{
+                'text-primary bg-primary/10': isActive('/quan-ly/khoa-hoc'),
+              }"
             >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke-width="1.5" 
-                stroke="currentColor" 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
                 class="w-6 h-6"
               >
-                <path 
-                  stroke-linecap="round" 
-                  stroke-linejoin="round" 
-                  d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" 
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
                 />
               </svg>
-              <span class="text-xs font-medium text-center leading-tight">Quản lý khóa học</span>
+              <span class="text-xs font-medium leading-tight text-center"
+                >Quản lý khóa học</span
+              >
+            </router-link>
+          </li>
+
+          <!-- Quản lý lộ trình -->
+          <li>
+            <router-link
+              to="/quan-ly/lo-trinh"
+              class="flex flex-col gap-2 justify-center items-center px-2 py-4 text-gray-600 rounded-xl transition-all hover:text-primary hover:bg-primary/5 group"
+              :class="{
+                'text-primary bg-primary/10': isActive('/quan-ly/lo-trinh'),
+              }"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z"
+                />
+              </svg>
+              <span class="text-xs font-medium leading-tight text-center"
+                >Quản lý lộ trình</span
+              >
             </router-link>
           </li>
         </template>
@@ -116,108 +150,115 @@
         <template v-if="isAdmin">
           <!-- Quản lý người dùng -->
           <li>
-            <router-link 
-              to="/quan-ly/nguoi-dung" 
-              class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
-              :class="{ 'text-primary bg-primary/10': isActive('/quan-ly/nguoi-dung') }"
+            <router-link
+              to="/quan-ly/nguoi-dung"
+              class="flex flex-col gap-2 justify-center items-center px-2 py-4 text-gray-600 rounded-xl transition-all hover:text-primary hover:bg-primary/5 group"
+              :class="{
+                'text-primary bg-primary/10': isActive('/quan-ly/nguoi-dung'),
+              }"
             >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke-width="1.5" 
-                stroke="currentColor" 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
                 class="w-6 h-6"
               >
-                <path 
-                  stroke-linecap="round" 
-                  stroke-linejoin="round" 
-                  d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" 
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
                 />
               </svg>
-              <span class="text-xs font-medium text-center leading-tight">Quản lý người dùng</span>
+              <span class="text-xs font-medium leading-tight text-center"
+                >Quản lý người dùng</span
+              >
             </router-link>
           </li>
 
           <!-- Quản lý bài viết -->
           <li>
-            <router-link 
-              to="/quan-ly/bai-viet" 
-              class="flex flex-col rounded-xl items-center justify-center gap-2 py-4 px-2 text-gray-600 hover:text-primary hover:bg-primary/5 transition-all group"
-              :class="{ 'text-primary bg-primary/10': isActive('/quan-ly/bai-viet') }"
+            <router-link
+              to="/quan-ly/bai-viet"
+              class="flex flex-col gap-2 justify-center items-center px-2 py-4 text-gray-600 rounded-xl transition-all hover:text-primary hover:bg-primary/5 group"
+              :class="{
+                'text-primary bg-primary/10': isActive('/quan-ly/bai-viet'),
+              }"
             >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke-width="1.5" 
-                stroke="currentColor" 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
                 class="w-6 h-6"
               >
-                <path 
-                  stroke-linecap="round" 
-                  stroke-linejoin="round" 
-                  d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" 
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
                 />
               </svg>
-              <span class="text-xs font-medium text-center leading-tight">Quản lý bài viết</span>
+              <span class="text-xs font-medium leading-tight text-center"
+                >Quản lý bài viết</span
+              >
             </router-link>
           </li>
         </template>
-
       </ul>
     </nav>
   </aside>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useRoute } from "vue-router";
 
 // Sử dụng vue-router để theo dõi route
-const route = useRoute()
+const route = useRoute();
 
 // User roles từ localStorage
-const userRoles = ref([])
+const userRoles = ref([]);
 
 // Hàm load roles từ localStorage
 const loadUserRoles = () => {
-  const savedUser = localStorage.getItem('user')
+  const savedUser = localStorage.getItem("user");
   if (savedUser) {
     try {
-      const userData = JSON.parse(savedUser)
-      userRoles.value = userData.roles || []
+      const userData = JSON.parse(savedUser);
+      userRoles.value = userData.roles || [];
     } catch (error) {
-      console.error('Lỗi đọc user data:', error)
-      userRoles.value = []
+      console.error("Lỗi đọc user data:", error);
+      userRoles.value = [];
     }
   } else {
-    userRoles.value = []
+    userRoles.value = [];
   }
-}
+};
 
 // Lấy roles từ localStorage khi component mount
 onMounted(() => {
-  loadUserRoles()
-  
+  loadUserRoles();
+
   // Lắng nghe event auth-changed từ Header
-  window.addEventListener('auth-changed', loadUserRoles)
-})
+  window.addEventListener("auth-changed", loadUserRoles);
+});
 
 // Cleanup listener khi component unmount
 onUnmounted(() => {
-  window.removeEventListener('auth-changed', loadUserRoles)
-})
+  window.removeEventListener("auth-changed", loadUserRoles);
+});
 
 // Kiểm tra role
-const isStudent = computed(() => userRoles.value.includes('STUDENT'))
-const isEditor = computed(() => userRoles.value.includes('EDITOR'))
-const isAdmin = computed(() => userRoles.value.includes('ADMIN'))
+const isStudent = computed(() => userRoles.value.includes("STUDENT"));
+const isEditor = computed(() => userRoles.value.includes("EDITOR"));
+const isAdmin = computed(() => userRoles.value.includes("ADMIN"));
 
 // Hàm kiểm tra active - dùng route.path từ vue-router
 const isActive = (path) => {
-  return route.path === path
-}
+  return route.path === path;
+};
 </script>
 
 <style scoped>
